@@ -13,7 +13,7 @@ export default class StudentView extends React.Component{
     }
 
     handleOpenItemClick(event, task){
-        console.log("taskclicked" +task["task-name"]);
+        //console.log("taskclicked" +task["task-name"]);
         this.setState({mode:"submit", currentTask:task})
     }
 
@@ -24,8 +24,8 @@ export default class StudentView extends React.Component{
     handleViewComponent(){
         const viewMode = this.state.mode;
         if(viewMode === "submit"){
-            console.log("cliked" +this.state.currentTask["task-name"]);
-            return <TaskSubmit currentTask = {this.state.currentTask}/>
+            //console.log("cliked" +this.state.currentTask["task-name"]);
+            return <TaskSubmit currentTask = {this.state.currentTask} netId={this.props.netId}/>
 
 
         }

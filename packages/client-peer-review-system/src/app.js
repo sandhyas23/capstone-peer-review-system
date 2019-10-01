@@ -1,8 +1,9 @@
 import React from 'react';
-import {Button, Form, Grid,Header,Segment,Message} from 'semantic-ui-react'
+import {Button, Form,Grid,Header,Segment,Message} from 'semantic-ui-react'
 import students from './students.json';
 import StudentView from './studentView';
-import TeacherView from './TeacherView';
+import TeacherView from './teacherView';
+
 
 
 
@@ -44,30 +45,25 @@ export default class App extends React.Component {
                 this.setState({ role:"none"});
             }
         }
-
-
-
     }
 
 
     render() {
         if(this.state.role === "") {
-            return<Grid centered columns={2}>
-                <Grid.Column>
-                    <Header as="h2" textAlign="center">
-                        Login
+            return<Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
+                <Grid.Column style={{ maxWidth: 450 }}>
+                    <Header as='h2' color='blue' textAlign='center'>
+                         Log-in to your account
                     </Header>
-                    <Segment>
-                        <Form size="large">
+                    <Form size='large'>
+                        <Segment stacked>
                             <Form.Input
-                                fluid
-                                icon="user"
-                                iconPosition="left"
-                                placeholder="Net ID"
+                                fluid icon='user'
+                                iconPosition='left'
+                                placeholder='Net ID'
                                 name="netId"
                                 value={this.state.netId}
-                                onChange={(event) => this.handleChange(event)}
-                            />
+                                onChange={(event) => this.handleChange(event)}/>
                             <Form.Input
                                 fluid
                                 icon="lock"
@@ -78,11 +74,12 @@ export default class App extends React.Component {
                                 value={this.state.password}
                                 onChange={(event) => this.handleChange(event)}
                             />
-                            <Button onClick={() => this.login()} color="blue" fluid size="large">
+
+                            <Button type ="button" color='blue' onClick={() => this.login()} fluid size='large'>
                                 Login
                             </Button>
-                        </Form>
-                    </Segment>
+                        </Segment>
+                    </Form>
                     <Message>
                         <Header as='h4' color='red'>
                             {this.state.message}
@@ -91,7 +88,6 @@ export default class App extends React.Component {
                     </Message>
                 </Grid.Column>
             </Grid>
-
         }
 
         else if(this.state.role === "instructor"){
@@ -99,7 +95,7 @@ export default class App extends React.Component {
         }
 
         else if(this.state.role === "student"){
-            return <StudentView />
+            return <StudentView netId={this.state.netId} role={this.state.role}/>
         }
 
         else if(this.state.role === "none"){

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Grid, Icon, Label} from 'semantic-ui-react'
-import TaskCreator from "./taskCreator";
+import TaskSubmit from "./taskSubmit";
 
 
 export default class TaskViewer extends React.Component {
@@ -15,7 +15,7 @@ export default class TaskViewer extends React.Component {
 
     showQuestions(){
         if(this.state.mode ==="add"){
-            return<TaskCreator tasks={this.state.tasks} mode={this.state.mode} currentTask={this.state.currentTask}/>
+            return<TaskSubmit tasks={this.state.tasks} mode={this.state.mode} currentTask={this.state.currentTask}/>
         }
         else{
 
