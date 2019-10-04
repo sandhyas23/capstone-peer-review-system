@@ -50,7 +50,7 @@ export default class App extends React.Component {
 
     render() {
         if(this.state.role === "") {
-            return<Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
+            return <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
                 <Grid.Column style={{ maxWidth: 450 }}>
                     <Header as='h2' color='blue' textAlign='center'>
                          Log-in to your account

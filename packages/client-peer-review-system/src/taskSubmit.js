@@ -6,14 +6,14 @@ import 'prismjs/themes/prism-coy.css';
 import {Grid,Image,Segment,Header,Label,Icon,Form,Container,Input,TextArea,Button} from "semantic-ui-react";
 
 
+
+
 export default class TaskSubmit extends React.Component{
     constructor(props){
         super(props);
         this.state ={currentTask: this.props.currentTask , submissions:submissions, netId: this.props.netId,
-            taskName:this.props.currentTask["task-name"],newTask:{taskName:props.currentTask["task-name"] ,
-                netId: props.netId, instruction:""}
-
-        }
+            taskName:this.props.currentTask["task-name"], instruction:"Upload a markdown file to view the submission",
+            theInputKey: "", fileName:""}
         //console.log(this.state.newTask);
     }
 
@@ -22,101 +22,116 @@ export default class TaskSubmit extends React.Component{
         if(props.currentTask===state.currentTask){
             return null;
         }
-        else{
-            let task = state.submissions.find((tas , index, array) => {
-                // console.log(tas["task-name"]);
-                return (tas.taskName === state.taskName && tas.netId === state.netId);
+        else {
+            let task = state.submissions.find((task ,index,array) =>{
+
+                return (task["taskName"] === props.currentTask["task-name"] && task["netId"] === props.netId)
             })
-            if(typeof task ==="undefined"){
-                console.log("handled undesfined");
-                return {currentTask: props.currentTask,taskName: props.currentTask["task-name"],
-                    newTask:{taskName:props.currentTask["task-name"] , netId: props.netId,
-                        instruction:""}
+            if(typeof task === "undefined"){
+                //console.log("inside undefined");
+                //console.log("props",props ,"state",state);
+                return {
+                    currentTask: props.currentTask, taskName: props.currentTask["task-name"],
+                    instruction:"Upload a markdown file to view the submission",
+                    fileName:""
                 }
             }
             else{
-                return {currentTask: props.currentTask,taskName: props.currentTask["task-name"],
-                    newTask:{taskName:props.currentTask["task-name"] , netId: props.netId,
-                        instruction:task.instruction}
+                console.log("inside found result");
+                return {
+                    currentTask: props.currentTask, taskName: props.currentTask["task-name"],
+                    instruction:task["instruction"],fileName: task["fileName"]
                 }
             }
         }
     }
 
+
     componentDidUpdate() {
         Prism.highlightAll();
-        let task = this.state.submissions.find((tas , index, array) => {
-           // console.log(tas["task-name"]);
-            return (tas.taskName === this.state.taskName);
-        })
-        if(typeof task ==="undefined"){
-            console.log("handled undesfined");
-        }
-        else{
-            console.log("componentdidupdate" + task.instruction);
-
-        }
-
-        // this.setState({
-        //     newTask:{instruction: this.state.submissions.currentTask["instructions"]}
-        // })
 
     }
     componentDidMount() {
         Prism.highlightAll();
     }
 
-    handleChange(event) {
-
-       // console.log("newtask" +this.state.newTask["instruction"]);
-        let task = Object.assign({}, this.state.newTask);    //creating copy of object
-        task[event.target.name] = event.target.value;                        //updating value
-        this.setState({ newTask:task });
-        console.log("task"+task["instruction"]);
-        console.log("newtask" +this.state.newTask["instruction"]);
-
-
-        // const target = event.target;
-        // const value = target.value;
-        // const name = target.name;
-        //
-        // this.setState({ newTask:{instruction:value} });
-        // console.log("newtask" +this.state.newTask["instruction"]);
-    }
 
     handleSubmit(){
-        let addTask = {taskName: this.state.taskName, netId: this.props.netId, instruction: this.state.instruction,
-        stat:"submitted"};
-        this.state.submissions.push(addTask);
+        const addTask = {taskName:this.state.taskName , netId:this.state.netId, instruction:this.state.instruction,
+                        fileName:this.state.fileName, submittedOn:new Date().toLocaleString()};
+
+        let index = this.state.submissions.findIndex((task) => {
+            return (task["taskName"] === this.state.taskName && task["netId"] === this.state.netId);
+        });
+
+        if (index >= 0 ){
+            this.state.submissions.splice(index,1,addTask);
+            //console.log(this.state.submissions);
+        }
+        else{
+           this.state.submissions.push(addTask);
+           //console.log(this.state.submissions);
+        }
+        let randomString = Math.random().toString(36);
+
+        this.setState({
+            theInputKey: randomString
+        });
        //console.log(this.state.submissions);
     }
-    handleSave(){
-        this.setState({newTask:{stat:"saved"}});
-        this.state.submissions.push(this.state.newTask);
-        console.log(this.state.submissions);
+
+
+    handleFile = async(e) => {
+        let reader = new FileReader();
+        let file = e.target.files[0];
+        reader.onloadend = async(e)=> {
+            // The file's text will be printed here
+
+            this.setState({instruction:e.target.result, fileName:file.name});
+            //console.log(this.state.instruction);
+        };
+
+        reader.readAsText(file);
     }
 
+
         render(){
-        const markdownInstruction = this.state.newTask["instruction"];
-        const rawHtml =<div id="rawHtml" className="language-html">
+        let submissionStatus ="";
+        let submittedDate ="";
+        let taskSubmitted = this.state.submissions.find((task,index,array) => {
+            return (task["taskName"] === this.state.taskName && task["netId"] === this.state.netId);
+            });
+        if(typeof taskSubmitted === "undefined"){
+             submissionStatus = "Not Submitted";
+        }
+        else{
+             submissionStatus = "Submitted";
+             submittedDate = taskSubmitted["submittedOn"];
+        }
 
+        const markdownInstruction = this.state.instruction;
+        const rawHtml = <div id="rawHtml" className="language-html">
             <ReactCommonmark source={markdownInstruction} />
-
         </div>
 
 
-        return <Grid.Column  computer={15} tablet={10}>
+        console.log("rawhtml",rawHtml);
+        return<Grid.Row>
+           <Grid.Column computer={14}>
             <Grid.Row>
-                <Grid.Column>
+
                     <Segment style={{boxShadow:"none"}}>
-                        <Header textAlign={"center"} as={"h4"}><Icon name='tag'/>
+
+                        <Label ribbon icon='star' content={`${submissionStatus} : ${submittedDate}`} color="blue"/>
+                        <span><Header  textAlign={"center"} as={"h4"}>
+                            <Icon name='tag'/>
                             {this.state.currentTask["task-name"]}
                         </Header>
+                        </span>
+
                     </Segment>
-                </Grid.Column>
+
             </Grid.Row>
-
-
 
             <Grid.Row centered={"true"}>
 
@@ -136,32 +151,44 @@ export default class TaskSubmit extends React.Component{
                         </Form.Group>
                             <Form.Group centered={"true"} widths='equal'>
                                 <Form.Field>
-                                    <Label icon='keyboard' content="Instruction"/>
-                                    <Segment>
-                                    <TextArea style={{ minHeight: 400 }}
+                                    <Label icon='file code' content="Markdown Preview "/>
+                                    <Label basic>
+                                        <Icon name={'file'}/>
+                                        Filename : {this.state.fileName}
+                                    </Label>
+                                    <Segment style={{overflow: 'auto',minHeight:330,maxHeight:330,maxWidth:600,minWidth:200 }} >
+
+                                    <TextArea readOnly style={{ minHeight: 300, minWidth:200, }}
                                               name={"instruction"}
-                                              value={this.state.newTask["instruction"]}
+                                              value={this.state.instruction}
                                               onChange={(event)=> this.handleChange(event)}
                                     />
                                     </Segment>
                                 </Form.Field>
                                 <Form.Field>
-                                    <Label icon='code' content="Preview"/>
-                                    <Segment style={{minHeight:430}} textAlign="left">
+                                    <Label icon='code' content="Code Preview"/>
+                                    <Segment style={{overflow: 'auto',minHeight:330,maxHeight:330,maxWidth:600,minWidth:200 }} textAlign="left">
                                             {rawHtml}
                                     </Segment>
 
                                 </Form.Field>
                             </Form.Group>
-                            <Button icon='save' content='Save'  type={"button"} color={"blue"} onClick={() => this.handleSave()}/>
-                            <Button icon='file' content='Submit' type={"button"} color={"green"} onClick={() =>this.handleSubmit()}/>
+                            <input type="file" accept=".md" onChange={ (e) => this.handleFile(e) }
+                                   key={this.state.theInputKey || '' }
+                            />
+
+                            <Button icon='file' content='Submit' type={"button"} color={"green"}
+                                     onClick={() =>this.handleSubmit()}/>
+
+
                         </Segment>
                     </Form>
 
                 </Grid.Column>
+
             </Grid.Row>
         </Grid.Column>
-
+        </Grid.Row>
 
 
     }
