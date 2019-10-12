@@ -1,7 +1,8 @@
 import React from 'react';
-import {Menu, Sidebar, Icon, Grid, Header, Input, Container,Segment,Dropdown} from 'semantic-ui-react';
+import {Menu, Sidebar, Icon, Grid, Container} from 'semantic-ui-react';
 import tasks from './tasks1.json'
 import TaskSubmit from "./taskSubmit";
+import TaskReview from "./taskReview"
 
 //import TaskReview from "./taskReview"
 
@@ -14,12 +15,15 @@ export default class StudentView extends React.Component{
     }
 
     handleOpenItemClick(event, task){
-        //console.log("taskclicked" +task["task-name"]);
+       // console.log("taskclicked" +task["task-name"]);
         this.setState({mode:"submit", currentTask:task})
+        //console.log("ccc",this.state.currentTask);
     }
 
     handleClosedItemClick(event, task){
+        //console.log("taskclicked" +task["task-name"]);
         this.setState({mode:"review", currentTask:task})
+        //console.log("ddd",this.state.currentTask);
     }
 
     handleViewComponent(){
@@ -31,7 +35,8 @@ export default class StudentView extends React.Component{
 
         }
         else if(viewMode === "review"){
-            //return <TaskReview />
+           // console.log("cliked" +this.state.currentTask["task-name"]);
+            return <TaskReview currentTask = {this.state.currentTask} netId={this.props.netId}/>
         }
         else{
 
@@ -44,7 +49,7 @@ export default class StudentView extends React.Component{
             if(task["status"] === "open"){
                 return <Menu.Item
                     name={task["task-name"]}
-                    key = {`task${index}`}
+                    key = {`otask${index}`}
                     onClick={(event) => this.handleOpenItemClick(event,task)}
                 >
                     <span>
@@ -60,8 +65,8 @@ export default class StudentView extends React.Component{
             if(task["status"] === "closed"){
                 return <Menu.Item
                     name={task["task-name"]}
-                    key = {`task${index}`}
-                    onClick={(event,task) => this.handleClosedItemClick(event,task)}
+                    key = {`ctask${index}`}
+                    onClick={(event) => this.handleClosedItemClick(event,task)}
                 >
                     <span>
                         <Icon name ="tag" />
@@ -128,11 +133,9 @@ export default class StudentView extends React.Component{
                 <Menu.Item
                     as='a'
                     position={"right"}
-                    fitted={"true"}
                 >{`Welcome, ${this.props.netId}`}</Menu.Item>
                 <Menu.Item
                     as='a'
-                    fitted={"true"}
                     position={"right"}
                     margin-right={"150px"}
                 >Logout</Menu.Item>
@@ -143,7 +146,7 @@ export default class StudentView extends React.Component{
         <div style={{marginLeft: 170, minWidth: 550, marginTop:50}}>
         <Grid padded  stackable>
 
-            <Grid.Column width={"16"} >
+            <Grid.Column >
 
             {this.handleViewComponent()}
 

@@ -28,7 +28,7 @@ export default class App extends React.Component {
         const userPwd = this.state.password;
 
         const user = this.state.students.find((student, index, array) => {
-            return (student.netid === this.state.netId && student.password === this.state.password)
+            return (student["netid"] === userId && student.password === userPwd)
         });
         //console.log(user.role);
         if(typeof user ==="undefined"){

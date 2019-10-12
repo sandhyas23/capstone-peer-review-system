@@ -3,7 +3,7 @@ import Prism from 'prismjs';
 import ReactCommonmark from 'react-commonmark';
 import submissions from './submissionsHw';
 import 'prismjs/themes/prism-coy.css';
-import {Grid,Image,Segment,Header,Label,Icon,Form,Container,Input,TextArea,Button} from "semantic-ui-react";
+import {Grid,Segment,Header,Label,Icon,Form,Input,TextArea,Button} from "semantic-ui-react";
 
 
 
@@ -66,18 +66,18 @@ export default class TaskSubmit extends React.Component{
 
         if (index >= 0 ){
             this.state.submissions.splice(index,1,addTask);
-            //console.log(this.state.submissions);
+            console.log(this.state.submissions);
         }
         else{
            this.state.submissions.push(addTask);
-           //console.log(this.state.submissions);
+           console.log(this.state.submissions);
         }
         let randomString = Math.random().toString(36);
 
         this.setState({
             theInputKey: randomString
         });
-       //console.log(this.state.submissions);
+       console.log(this.state.submissions);
     }
 
 
@@ -115,7 +115,7 @@ export default class TaskSubmit extends React.Component{
         </div>
 
 
-        console.log("rawhtml",rawHtml);
+        //console.log("rawhtml",rawHtml);
         return<Grid.Row>
            <Grid.Column computer={14}>
             <Grid.Row>
@@ -133,7 +133,7 @@ export default class TaskSubmit extends React.Component{
 
             </Grid.Row>
 
-            <Grid.Row centered={"true"}>
+            <Grid.Row >
 
                 <Grid.Column>
                     <Form centered={"true"}>
@@ -179,9 +179,8 @@ export default class TaskSubmit extends React.Component{
 
                             <Button icon='file' content='Submit' type={"button"} color={"green"}
                                      onClick={() =>this.handleSubmit()}/>
-
-
                         </Segment>
+
                     </Form>
 
                 </Grid.Column>
