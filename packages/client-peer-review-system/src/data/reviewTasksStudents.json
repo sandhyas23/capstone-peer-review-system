@@ -1,0 +1,829 @@
+[
+  {"pr-id": "some kind of UID", "submission-id": "UID of original submission",
+  "reviewer-id": "ef4389", "submitter-id": "ab4378",
+  "assignment-name": "HW1.1",
+  "review": {"general-comments": "", "total-points":8,
+    "rubric": [
+      {"rubric-name": "Format", "possible-pts":10, "points-given":8,
+      "comments": "comments in markdown"},
+      {"rubric-name": "Question Quality", "possible-pts":10,
+        "points-given":9,
+        "comments": "Great idea!"}]
+  }
+},
+  {
+    "assignment-name": "HW2",
+    "reviewer-id": "mr6262",
+    "submitter-id": "ff5627",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+
+  {
+    "assignment-name": "HW2",
+    "reviewer-id": "ih1407",
+    "submitter-id": "ff5627",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW2",
+    "reviewer-id": "ps6501",
+    "submitter-id": "ff5627",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW2",
+    "reviewer-id": "ot7092",
+    "submitter-id": "ff5627",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW2",
+    "reviewer-id": "ix5133",
+    "submitter-id": "ff5627",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW2",
+    "reviewer-id": "ps6501",
+    "submitter-id": "ih1407",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW2",
+    "reviewer-id": "ot7092",
+    "submitter-id": "ih1407",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW2",
+    "reviewer-id": "ix5133",
+    "submitter-id": "ih1407",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW2",
+    "reviewer-id": "py9469",
+    "submitter-id": "ih1407",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW2",
+    "reviewer-id": "ub5418",
+    "submitter-id": "ih1407",
+    "review": {
+      "general-comments": "", "total-points":5,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":3,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW2",
+    "reviewer-id": "qq2862",
+    "submitter-id": "jy1945",
+    "review": {
+      "general-comments": "", "total-points":7,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":4,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+
+  {
+    "assignment-name": "HW2",
+    "reviewer-id": "ff5627",
+          "submitter-id": "jy1945",
+          "review": {
+            "general-comments": "", "total-points":9,
+            "rubric": [
+              {"rubric-name": "question1",
+                "possible-pts":10,
+                "points-given":8,
+                "comments": "comments in markdown"},
+              {"rubric-name": "question2",
+                "possible-pts":10,
+                "points-given":8,
+                "comments": "comments in markdown"},
+              {"rubric-name": "question3",
+                "possible-pts":10,
+                "points-given":8,
+                "comments": "comments in markdown"},
+              {"rubric-name": "question4",
+                "possible-pts":10,
+                "points-given":8,
+                "comments": "comments in markdown"},
+              {"rubric-name": "question5",
+                "possible-pts":10,
+                "points-given":8,
+                "comments": "comments in markdown"}
+            ]
+          }
+    },
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "mr6262",
+    "submitter-id": "ps6501",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":9,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "qq2862",
+    "submitter-id": "ps6501",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "ix5133",
+    "submitter-id": "ps6501",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "ub5418",
+    "submitter-id": "ix5133",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "ps6501",
+    "submitter-id": "ix5133",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "mr6262",
+    "submitter-id": "ix5133",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "ix5133",
+    "submitter-id": "qq2862",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "ub5418",
+    "submitter-id": "qq2862",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "ps6501",
+    "submitter-id": "qq2862",
+    "review": {
+      "general-comments": "", "total-points":7,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "ps6501",
+    "submitter-id": "ub5418",
+    "review": {
+      "general-comments": "", "total-points":5,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "mr6262",
+    "submitter-id": "ub5418",
+    "review": {
+      "general-comments": "", "total-points":6,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "qq2862",
+    "submitter-id": "ub5418",
+    "review": {
+      "general-comments": "", "total-points":7,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "qq2862",
+    "submitter-id": "mr6262",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "ix5133",
+    "submitter-id": "mr6262",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":5,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  },
+  {
+    "assignment-name": "HW1",
+    "reviewer-id": "ub5418",
+    "submitter-id": "mr6262",
+    "review": {
+      "general-comments": "", "total-points":8,
+      "rubric": [
+        {"rubric-name": "question1",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "** comments in markdown **"},
+        {"rubric-name": "question2",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question3",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "# comments in markdown"},
+        {"rubric-name": "question4",
+          "possible-pts":10,
+          "points-given":5,
+          "comments": "comments in markdown"},
+        {"rubric-name": "question5",
+          "possible-pts":10,
+          "points-given":8,
+          "comments": "comments in markdown"}
+      ]
+    }
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {"peer-review-for": "HW2", "instructions": "general grading instructions",
+    "status": "open",
+    "due": "2018-12-01T00:00:00.000Z",
+    "rubric": [{"points": 10, "rubric-name": "question1",
+      "criteria": "instructions related to these points in MD"},
+      {"points": 10, "rubric-name": "question2",
+        "criteria": "** instructions related to these points in MD **"},
+      {"points": 10, "rubric-name": "question3",
+        "criteria": "instructions related to these points in MD"},
+      {"points": 10, "rubric-name": "question4",
+        "criteria": "instructions related to these points in MD"},
+      {"points": 10, "rubric-name": "question5",
+        "criteria": "instructions related to these points in MD"}
+    ]
+  },
+  {"peer-review-for": "HW1", "instructions": "general grading instructions",
+    "status": "closed",
+    "due": "2018-12-01T00:00:00.000Z",
+    "rubric": [{"points": 10, "rubric-name": "question1",
+      "criteria": "instructions related to these points in MD"},
+      {"points": 10, "rubric-name": "question2",
+        "criteria": "instructions related to these points in MD"},
+      {"points": 10, "rubric-name": "question3",
+        "criteria": "instructions related to these points in MD"},
+      {"points": 10, "rubric-name": "question4",
+        "criteria": "instructions related to these points in MD"},
+      {"points": 5, "rubric-name": "question5",
+        "criteria": "instructions related to these points in MD"}
+    ]
+  }
+]

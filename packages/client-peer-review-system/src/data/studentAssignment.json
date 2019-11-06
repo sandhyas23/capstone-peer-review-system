@@ -1,0 +1,46 @@
+[{
+  "peer-review-for": "HW2",
+  "studentsAssignment": [
+
+    {"reviewers": ["mr6262", "ih1407", "ps6501", "ot7092", "ix5133"],
+      "reviewees": ["ub5418", "jy1945", "qq2862", "ix5133", "py9469"],
+      "student": "ff5627"},
+
+    {"reviewers": ["ps6501", "ot7092", "ix5133", "py9469", "ub5418"],
+      "reviewees": ["ub5418", "jy1945", "qq2862", "ff5627", "mr6262"],
+      "student": "ih1407"},
+
+    {"reviewers": ["py9469", "ub5418", "jy1945", "qq2862", "ff5627"],
+      "reviewees": ["ff5627", "mr6262", "ih1407", "ps6501", "ot7092"],
+      "student": "ix5133"},
+
+    {"reviewers":  ["qq2862", "ff5627", "mr6262", "ih1407", "ps6501"],
+      "reviewees": ["ub5418", "ps6501", "ot7092", "ix5133", "py9469"],
+      "student": "jy1945"},
+
+    {"reviewers": ["ih1407", "ps6501", "ot7092", "ix5133", "py9469"],
+      "reviewees": ["ub5418", "jy1945", "qq2862", "ff5627", "py9469"],
+      "student": "mr6262"},
+
+    {"reviewers": ["ix5133", "py9469", "ub5418", "jy1945", "qq2862"],
+      "reviewees": ["qq2862", "ff5627", "mr6262", "ih1407", "ps6501"],
+      "student": "ot7092"},
+
+    {"reviewers": ["ot7092", "ix5133", "py9469", "ub5418", "jy1945"],
+      "reviewees": ["jy1945", "qq2862", "ff5627", "mr6262", "ih1407"],
+      "student": "ps6501"},
+
+    {"reviewers": ["ub5418", "jy1945", "qq2862", "ff5627", "mr6262"],
+      "reviewees":  ["mr6262", "ih1407", "ps6501", "ot7092", "ix5133"],
+      "student": "py9469"},
+
+    {"reviewers": ["ff5627", "mr6262", "ih1407", "ps6501", "ot7092"],
+      "reviewees": ["ub5418", "jy1945", "ot7092", "ix5133", "py9469"],
+      "student": "qq2862"},
+
+    {"reviewers":  ["jy1945", "qq2862", "ff5627", "mr6262", "ih1407"],
+      "reviewees": ["ih1407", "ps6501", "ot7092", "ix5133", "py9469"],
+      "student": "ub5418"}
+  ]
+}
+]
