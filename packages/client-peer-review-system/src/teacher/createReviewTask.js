@@ -14,7 +14,7 @@ import {
 //import createdTasks from '../data/createdSubmissionTasks';
 
 import Prism from "prismjs";
-import ReactCommonmark from "react-commonmark";
+//import ReactCommonmark from "react-commonmark";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -212,7 +212,7 @@ export default class CreateReviewTask extends React.Component {
             </Button>
             <Button basic icon size={"mini"} circular
                     onClick={(e) => this.deleteRubrics(e,element,index)}
-                    disabled={this.state.rubricIds.length == 1}>
+                    disabled={this.state.rubricIds.length === 1}>
                 <Icon name='delete'/>
             </Button>
         </Form.Group>
@@ -233,7 +233,7 @@ Fixed assignment, with array shuffle
            return item["assignment-name"] === this.state.selectedReview;
         });
         console.log(currentSubmissions);
-        const numStudents = 15;
+        //const numStudents = 15;
         const numReviews = num;
         const length = currentSubmissions.length;
 
@@ -308,11 +308,11 @@ Fixed assignment, with array shuffle
         /**
          From: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
          */
-        function getRandomIntInclusive(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
-        }
+        // function getRandomIntInclusive(min, max) {
+        //     min = Math.ceil(min);
+        //     max = Math.floor(max);
+        //     return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
+        // }
 
         /* Shuffle an array in JavaScript the right way.
             From: https://medium.com/@nitinpatel_20236/how-to-shuffle-correctly-shuffle-an-array-in-javascript-15ea3f84bfb
@@ -418,10 +418,10 @@ Fixed assignment, with array shuffle
         //console.log("review tasks",options)
         const taskType = this.state.selectedType;
 
-        const markdownInstruction = this.state.instructions;
-        const rawHtml = <div id="rawHtml" className="language-html">
-            <ReactCommonmark source={markdownInstruction} />
-        </div>
+        // const markdownInstruction = this.state.instructions;
+        // const rawHtml = <div id="rawHtml" className="language-html">
+        //     <ReactCommonmark source={markdownInstruction} />
+        // </div>
 
          if(this.state.isSubmitted === true){
              return <ViewTask createdTask={this.state.currentTask} type={this.state.selectedType}

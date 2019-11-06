@@ -2,8 +2,6 @@ import React from 'react';
 import {
     Icon,
     Grid,
-    Container,
-    Input,
     Table,
     Header,
     Segment

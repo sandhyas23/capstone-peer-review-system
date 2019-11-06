@@ -63,7 +63,7 @@ export default class StudentReviewSummary extends React.Component{
         });
 
         let reviewDetails = this.state.specificReviews.filter((element,index,array)=>{
-            return element["submitter-id"] == item;
+            return element["submitter-id"] === item;
 
         });
         console.log("reviewDetails",reviewDetails);

@@ -1,8 +1,10 @@
 import React from 'react';
 import {Button, Form,Grid,Header,Segment,Message} from 'semantic-ui-react'
-import students from './students.json';
-import StudentView from './studentView';
-import TeacherView from './teacherView';
+import students from './data/students.json';
+import StudentView from './student/studentView';
+import TeacherView from './teacher/teacherView';
+import submissionTasks from './data/createdSubmissionTasks';
+import reviewTasks from './data/createdReviewTasks'
 
 
 
@@ -10,7 +12,8 @@ import TeacherView from './teacherView';
 export default class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { netId: "" , password:"" , students:students, role:"", message:""};
+        this.state = { netId: "" , password:"" , students:students, role:"", message:"", submissionTasks:submissionTasks,
+        reviewTasks:reviewTasks};
     }
 
     handleChange(event) {
@@ -91,11 +94,13 @@ export default class App extends React.Component {
         }
 
         else if(this.state.role === "instructor"){
-            return <TeacherView />
+            return <TeacherView netId={this.state.netId} role={this.state.role}
+                                submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks}/>
         }
 
         else if(this.state.role === "student"){
-            return <StudentView netId={this.state.netId} role={this.state.role}/>
+            return <StudentView netId={this.state.netId} role={this.state.role}
+                                submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks}/>
         }
 
         else if(this.state.role === "none"){
