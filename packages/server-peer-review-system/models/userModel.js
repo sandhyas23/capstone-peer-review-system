@@ -8,10 +8,10 @@ const path = require("path");
 const Datastore = require("nedb-promises");
 const dbFile = path.join(__dirname, '../', 'userDB')
 
-const taskDb = Datastore.create({
+const userDb = Datastore.create({
     filename: dbFile,
     autoload: true
 });
-taskDb.ensureIndex({ fieldName: "netId", unique: true });
+userDb.ensureIndex({ fieldName: "netId", unique: true });
 
-module.exports = taskDb;
+module.exports = userDb;

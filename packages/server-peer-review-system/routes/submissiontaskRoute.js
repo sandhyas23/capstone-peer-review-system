@@ -10,7 +10,7 @@ const submissionTaskDb = require("../models/submissionTaskModel");
 
 // You can add more task validations in this function.
 function validateTask(taskInfo) {
-    const allowedFields = ["task-name", "due", "status"];
+    const allowedFields = ["peer-review-for", "due", "status"];
     let error = false;
     let message = "";
     if (!taskInfo["task-name"]) {
