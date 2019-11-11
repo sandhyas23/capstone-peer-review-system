@@ -5,11 +5,12 @@ import {
     Grid,
     Header,
     Segment,
-    Table
+    Table, Input, Form, Label, Select, Button, Modal
 } from 'semantic-ui-react';
 
 import Prism from "prismjs";
 import ReactCommonmark from "react-commonmark";
+import DatePicker from "react-datepicker";
 
 
 
@@ -17,7 +18,9 @@ export default class StudentReviewSummary extends React.Component{
     constructor(props){
         super(props);
         this.state = {specificReviews:props.specificReviews, currentRTask:props.currentRTask ,content:"bbb",
-                      specSubmissions:props.specSubmissions, reviewDetails:[],rubric:[]}
+                      specSubmissions:props.specSubmissions, reviewDetails:[],rubric:[],
+            "peer-review-for":props.currentRTask["peer-review-for"], status:props.currentRTask["status"] ,
+            due:new Date(props.currentRTask["due"]), specAssignments:props.specAssignments}
 
     }
 
@@ -87,6 +90,103 @@ export default class StudentReviewSummary extends React.Component{
 
     }
 
+    handleEditTask(e){
+        const _this= this;
+        let reviewTask = {
+            "peer-review-for": this.state["peer-review-for"], status: this.state.status,
+            due: this.state.due.toISOString()
+        };
+        fetch('/reviewTask/'+this.state.currentRTask["peer-review-for"], {
+            method: 'PUT',
+            headers: {
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify(reviewTask)
+        }).then(function (response) {
+            //_this.state.submissions.push(addTask);
+            _this.setState({});
+            // console.log("submitted",this.state.submissions);
+            // console.log(this.state.submissions);
+            _this.props.update();
+            // event.preventDefault();
+        });
+    }
+
+    handleDeleteTask(){
+        const _this= this;
+        fetch('/ReviewTask/'+this.state.currentRTask["peer-review-for"], {
+            method: 'DELETE',
+            headers: {
+                "Content-type": "application/json"
+            }
+        }).then(function (response) {
+            //_this.state.submissions.push(addTask);
+            _this.setState({});
+            // console.log("submitted",this.state.submissions);
+            // console.log(this.state.submissions);
+            _this.props.update();
+            // event.preventDefault();
+        });
+    }
+
+
+    displayAssignments(){
+        //console.log("function called");
+        function bb(element){
+            let cq = element["reviewers"].map((item,index,array)=>{
+                return <Table.Cell key={`cell2${index}`}>
+                    {item}
+
+                </Table.Cell>
+
+            });
+            return cq;
+        }
+
+
+
+        let cc = this.state.specAssignments["studentsAssignment"].map((element,index,array)=>{
+            return <Table.Row key={`row${index}`}>
+                <Table.Cell key={`cell${index}`}>
+                  {element["student"]}
+                </Table.Cell>
+                {bb(element)}
+            </Table.Row>
+        });
+
+
+
+        return  <Modal trigger={<Button >View assignments</Button>}>
+            <Modal.Header>Rubrics</Modal.Header>
+            <Modal.Content  scrolling>
+
+                <Modal.Description>
+                    <Header>Modal Header</Header>
+                    <Table celled>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Submitter Id</Table.HeaderCell>
+                                <Table.HeaderCell colSpan={this.state.num}>Reviewed by
+                                </Table.HeaderCell>
+
+                            </Table.Row>
+                        </Table.Header>
+
+                        <Table.Body>
+                            {cc}
+                        </Table.Body>
+                    </Table>
+
+                </Modal.Description>
+            </Modal.Content>
+
+        </Modal>
+    }
+
+
+
+
+
     render(){
         let submittersSet = new Set();
         let students = this.state.specificReviews.map((item,index,array)=>{
@@ -130,7 +230,7 @@ export default class StudentReviewSummary extends React.Component{
                     {item["rubric-name"]}
                 </Table.Cell>
                 <Table.Cell key={`possiblepts${index}${item["rubric-name"]}`}>
-                    {item["possible-pts"]}
+                    {item["possible-points"]}
                 </Table.Cell>
                 <Table.Cell key={`pointsGiven${index}${item["rubric-name"]}`}>
                     {item["points-given"]}
@@ -146,11 +246,52 @@ export default class StudentReviewSummary extends React.Component{
                 <Grid.Row>
                     <Segment style={{boxShadow:"none"}}>
                         <span><Header  textAlign={"center"} as={"h4"}>
-                            <Icon name='tag'/>
-                            {this.state.currentRTask["peer-review-for"]}
+                            <Input label={"peer-review-for"} size='small' icon={"pencil"} name={"peer-review-for"}
+                                   value={this.state["peer-review-for"]}
+                                   onChange={(e)=> this.setState({"peer-review-for":e.target.value})}/>
                         </Header>
                         </span>
                     </Segment>
+                </Grid.Row>
+
+                <Grid.Row>
+                    <Grid.Column>
+                        <Form centered={"true"}>
+                            <Segment textAlign={"center"}>
+                                <Form.Group centered={"true"} widths='equal'>
+                                    <Form.Field inline>
+                                        <Label icon='calendar alternate' content="Due"/>
+                                        <DatePicker
+                                            selected={this.state.due}
+                                            onChange={date => this.setState({due:date})}
+                                            showTimeSelect
+                                            timeFormat="p"
+                                            timeIntervals={15}
+                                            dateFormat="Pp"
+                                        />
+                                    </Form.Field>
+                                    <Form.Field inline>
+                                        <Label icon='lock open' content="Status"/>
+                                        <Select placeholder='Select the status'
+                                                name="status"
+                                                value={this.state.status}
+                                                options={[
+                                                    { key: 'hw1', text: 'Open', value: 'open' },
+                                                    { key: 'hw2', text: 'Closed', value: 'closed' },
+
+                                                ]} onChange={(e,data)=> this.setState({[data.name]: data.value})}/>
+                                    </Form.Field>
+                                    <Button onClick={(e)=>this.handleEditTask(e)}>Save task details!</Button>
+                                    <Button onClick={(e)=>this.handleDeleteTask(e)}> Delete task</Button>
+                                </Form.Group>
+
+                            </Segment>
+                        </Form>
+                    </Grid.Column>
+
+                </Grid.Row>
+                <Grid.Row>
+                    {this.displayAssignments()}
                 </Grid.Row>
                 <Grid.Row>
                     <Grid>
@@ -197,4 +338,6 @@ export default class StudentReviewSummary extends React.Component{
         </Grid>
 
     }
+
+
 }

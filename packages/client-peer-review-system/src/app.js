@@ -5,6 +5,7 @@ import StudentView from './student/studentView';
 import TeacherView from './teacher/teacherView';
 import submissionTasks from './data/createdSubmissionTasks';
 import reviewTasks from './data/createdReviewTasks'
+import Prism from "prismjs";
 
 
 
@@ -25,6 +26,7 @@ export default class App extends React.Component {
         });
 
     }
+
     login() {
         //console.log(this.state.netId, this.state.password);
         const userId = this.state.netId;

@@ -71,6 +71,19 @@ router.get("/:taskName", function(req, res) {
             res.status(500).json({ error: "internal error" });
         });
 });
+// Teacher interface get submissions for all tasks from all students
+router.get("/", function(req, res) {
+    submissionsHwDb
+        .find({})
+        .then(function(docs) {
+            let curDate = new Date();
+            res.json({ submissions: docs });
+        })
+        .catch(function(err) {
+            console.log(`Something bad happened: ${err}`);
+            res.status(500).json({ error: "internal error" });
+        });
+});
 
 // Student interface get all submissions for a particular student
 // Access control: a student can only see their own work
@@ -138,7 +151,7 @@ router.put("/:taskName/student/:netId", function(req, res) {
     let submissionInfo = req.body;
     submissionInfo["assignment-name"] = taskName;
     submissionInfo["netId"] = netId;
-    submissionInfo.submittedOn = new Date().toJSON();
+    //submissionInfo.submittedOn = new Date().toJSON();
 
     validateSubmission(submissionInfo).then(function(errMessage) {
         let [error, message] = errMessage;

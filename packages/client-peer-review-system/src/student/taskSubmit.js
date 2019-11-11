@@ -11,39 +11,45 @@ import {Grid,Segment,Header,Label,Icon,Form,Input,TextArea,Button} from "semanti
 export default class TaskSubmit extends React.Component{
     constructor(props){
         super(props);
-        this.state ={currentTask: this.props.currentTask , submissions:submissions, netId: this.props.netId,
+        this.state ={currentTask: this.props.currentTask , submissions:[], netId: this.props.netId,
             "assignment-name":this.props.currentTask["task-name"], content:"Upload a markdown file to view the submission",
             theInputKey: "", fileName:""}
         //console.log(this.state.newTask);
     }
 
     static getDerivedStateFromProps(props, state){
-        console.log(props,state);
-        if(props.currentTask===state.currentTask){
+        //console.log(props,state);
+        if(props.currentTask === state.currentTask){
             return null;
         }
-        else {
-            let task = state.submissions.find((task ,index,array) =>{
 
-                return (task["assignment-name"] === props.currentTask["task-name"] && task["netId"] === props.netId)
-            })
-            if(typeof task === "undefined"){
-                //console.log("inside undefined");
-                //console.log("props",props ,"state",state);
-                return {
-                    currentTask: props.currentTask, "assignment-name": props.currentTask["task-name"],
-                    content:"Upload a markdown file to view the submission",
-                    fileName:""
+        else {
+
+            let cc = state.submissions.find((element,index,array)=>{
+                return element["assignment-name"] === props.currentTask["task-name"];
+            });
+            console.log("cc",cc);
+
+                if (typeof cc !== "undefined") {
+
+                    let content = cc.content;
+                    let fileName = cc.fileName;
+                    //_this.setState({"submissions": _this.state.submissions, "content": content});
+                    return {
+                        currentTask: props.currentTask, "assignment-name": props.currentTask["task-name"],
+                        content: content,
+                        fileName: fileName
+                    }
+                } else {
+                    console.log("iiiiiiii");
+
+                    return {
+                        currentTask: props.currentTask, "assignment-name": props.currentTask["task-name"],
+                        content: "Upload a markdown file to view the submission",
+                        fileName: ""
+                    }
                 }
             }
-            else{
-                console.log("inside found result");
-                return {
-                    currentTask: props.currentTask, "assignment-name": props.currentTask["task-name"],
-                    content:task["content"],fileName: task["fileName"]
-                }
-            }
-        }
     }
 
 
@@ -52,11 +58,38 @@ export default class TaskSubmit extends React.Component{
 
     }
     componentDidMount() {
+        let _this = this;
+        fetch('/submissions/student/'+this.state.netId,{
+            method: "GET",
+            headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json()).then(function(data) {
+
+            let aa = data.submissions.find((element,index,array)=>{
+                return element["assignment-name"] === _this.state.currentTask["task-name"];
+            })
+
+            console.log("this is what we got in task submit" +data.submissions);
+            //_this.state.submissions.push(data.submission);
+            if(typeof aa !== "undefined"){
+                _this.setState({"submissions": data.submissions,"content":aa["content"],"fileName":aa["fileName"]});
+
+            }
+            else{
+                _this.setState({"submissions":data.submissions});
+            }
+
+        });
+
+
         Prism.highlightAll();
     }
 
 
     handleSubmit(){
+       const _this = this;
         const addTask = {"assignment-name":this.state["assignment-name"] , netId:this.state.netId,
             content:this.state.content, fileName:this.state.fileName, submittedOn:new Date().toISOString()};
 
@@ -65,19 +98,47 @@ export default class TaskSubmit extends React.Component{
         });
 
         if (index >= 0 ){
-            this.state.submissions.splice(index,1,addTask);
-            console.log(this.state.submissions);
+            fetch('/submissions/'+this.state["assignment-name"]+'/student/'+this.state.netId, {
+                method: 'PUT',
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify(addTask)
+            }).then(function (response) {
+                _this.state.submissions.splice(index,1,addTask);
+                _this.setState({
+                    submissions:_this.state.submissions
+                });
+                console.log("submitted",this.state.submissions);
+                //_this.props.update();
+                //event.preventDefault();
+            });
+
         }
         else{
-           this.state.submissions.push(addTask);
-           console.log(this.state.submissions);
+            fetch('/submissions/'+this.state["assignment-name"]+'/student/'+this.state.netId, {
+                method: 'PUT',
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify(addTask)
+            }).then(function (response) {
+                _this.state.submissions.push(addTask);
+                _this.setState({
+                   submissions:_this.state.submissions
+                });
+                //console.log("submitted",this.state.submissions);
+                //console.log(this.state.submissions);
+               // _this.props.update();
+                //event.preventDefault();
+            });
         }
         let randomString = Math.random().toString(36);
 
         this.setState({
             theInputKey: randomString
         });
-       console.log(this.state.submissions);
+       //console.log(this.state.submissions);
     }
 
 
@@ -96,6 +157,7 @@ export default class TaskSubmit extends React.Component{
 
 
         render(){
+       // console.log("state", this.state);
         let submissionStatus ="";
         let submittedDate ="";
         let taskSubmitted = this.state.submissions.find((task,index,array) => {

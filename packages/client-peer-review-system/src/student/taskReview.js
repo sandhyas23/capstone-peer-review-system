@@ -12,17 +12,48 @@ import ReactCommonmark from "react-commonmark";
 export default class TaskReview extends React.Component{
     constructor(props){
         super(props);
-        this.state ={currentTask: this.props.currentTask , studentsReview:studentsReview, netId: this.props.netId,
+        this.state ={currentTask: this.props.currentTask , studentsReview:props.reviews, netId: this.props.netId,
             "assignment-name":this.props.currentTask["peer-review-for"],content:"Click a review link to view the submission",
             totalQuestions:[],
             theInputKey: "", fileName:"",
             reviewTasks:props.reviewTasks,
-            studentAssignment:studentAssignment,
-            submissions:submissions,
+            studentAssignment:props.studentAssignment,
+            submissions:props.submissions,
             totalRubricsToReview:[],
             rubric:[]}
             //console.log(this.state);
     }
+    componentDidMount() {
+        let _this = this;
+        fetch('/reviews/'+this.state["assignment-name"]+'/reviewer/'+this.state.netId,{
+            method: "GET",
+            headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json()).then(function(data) {
+
+            console.log("this is what we got in task submit" +data.reviews);
+            //_this.state.submissions.push(data.submission);
+            const reviewerReviews = data.reviews;
+            console.log("reviewerReviews", reviewerReviews);
+
+            let foundElements = reviewerReviews.map((element,index,array)=>{
+                return element["review"]["rubric"].map((rubric,ind,arr)=>{
+                   return  _this.setState({[`pointGiven${element["reviewer-id"]}${element["submitter-id"]}${rubric["rubric-name"]}`]:
+                     rubric["points-given"],
+                        [`comment${element["reviewer-id"]}${element["submitter-id"]}${rubric["rubric-name"]}`]:
+                            rubric["comments"]})
+                })
+            })
+
+               // _this.setState({"submissions":data.reviews});
+
+        });
+        Prism.highlightAll();
+    }
+
+
 
     static getDerivedStateFromProps(props,state){
         if(props === state){
@@ -84,20 +115,20 @@ export default class TaskReview extends React.Component{
         if(!newElement){
             this.state.rubric.push({"rubric-name": rubrics["rubric-name"],
                 "possible-points":rubrics["points"],
-                "points-given":this.state[`pointGiven${this.state.reviewNo}${index}`],
-                "comments":this.state[`comment${this.state.reviewNo}${index}`],
+                "points-given":this.state[`pointGiven${this.state.netId}${this.state.reviewNo}${rubrics["rubric-name"]}`],
+                "comments":this.state[`comment${this.state.netId}${this.state.reviewNo}${rubrics["rubric-name"]}`],
               });
             this.setState({rubric:this.state.rubric});
 
         }
         else{
-            if(name === `pointGiven${this.state.reviewNo}${index}`){
+            if(name === `pointGiven${this.state.netId}${this.state.reviewNo}${rubrics["rubric-name"]}`){
                 let tempArray = this.state.rubric;
                 tempArray[index]["points-given"] = value;
                 this.setState({rubric:tempArray});
 
             }
-            if(name === `comment${this.state.reviewNo}${index}`){
+            if(name === `comment${this.state.netId}${this.state.reviewNo}${rubrics["rubric-name"]}`){
                 let tempArray = this.state.rubric;
                 tempArray[index]["comments"] = value;
                 this.setState({rubric:tempArray});
@@ -108,6 +139,15 @@ export default class TaskReview extends React.Component{
     }
 
     handleSubmit(event){
+        let totalPoints =0;
+        for (let i=0;i<this.state.rubric.length;i++){
+            totalPoints += this.state.rubric[i]["points-given"];
+        }
+        let outOf =0;
+        for (let i=0;i<this.state.rubric.length;i++){
+            totalPoints += this.state.rubric[i]["possible-points"];
+        }
+
        let reviewToPost = this.state.studentsReview.findIndex((element,index,array)=>{
            return (element["assignment-name"] === this.state["assignment-name"] &&
                element["reviewer-id"] === this.state.netId  && element["submitter-id"]=== this.state.reviewNo);
@@ -116,63 +156,99 @@ export default class TaskReview extends React.Component{
        if(reviewToPost === -1){
            console.log("inside if");
             let reviewTask ={"reviewerId": this.state.netId , "submitter-id":this.state.reviewNo,
-            "assignment-name":this.state["assignment-name"],review:{"general-comments":"", rubric:this.state.rubric}};
+            "assignment-name":this.state["assignment-name"],review:{"general-comments":"", rubric:this.state.rubric,
+                "total-points":totalPoints}};
 
-            this.state.studentsReview.push(reviewTask);
-            console.log("review to post",reviewTask);
+            const _this =this;
+           fetch('/reviews/'+this.state["assignment-name"]+'/reviewer/'+this.state.netId+'/submitter/'+this.state.reviewNo
+               , {
+               method: 'PUT',
+               headers: {
+                   "Content-type": "application/json"
+               },
+               body: JSON.stringify(reviewTask)
+           }).then(function (response) {
+               _this.state.studentsReview.push(reviewTask);
+               _this.setState({
+                   studentsReview:_this.state.studentsReview
+               });
+               alert("submitted task");
+               //console.log("submitted",this.state.submissions);
+               //_this.props.update();
+               //event.preventDefault();
+           });
+
+
             alert("submitted task");
 
        }
-       else{
-           console.log("inside else");
-           this.state.studentsReview.splice(reviewToPost,1);
+       else {
 
-           let reviewTask ={"reviewerId": this.state.netId , "submitter-id":this.state.reviewNo,
-               "assignment-name":this.state["assignment-name"],review:{"general-comments":"", rubric:this.state.rubric}};
+           let reviewTask = {
+               "reviewerId": this.state.netId,
+               "submitter-id": this.state.reviewNo,
+               "assignment-name": this.state["assignment-name"],
+               review: {"general-comments": "", rubric: this.state.rubric},
+               "total-points":totalPoints
+           };
 
-           this.state.studentsReview.push(reviewTask);
-           console.log("review to post",reviewTask);
-           alert("submitted task");
-
-
+           const _this = this;
+           fetch('/reviews/' + this.state["assignment-name"] + '/reviewer/' + this.state.netId + '/submitter/' + this.state.reviewNo
+               , {
+                   method: 'PUT',
+                   headers: {
+                       "Content-type": "application/json"
+                   },
+                   body: JSON.stringify(reviewTask)
+               }).then(function (response) {
+               _this.state.studentsReview.splice(reviewToPost, 1);
+               _this.state.studentsReview.push(reviewTask);
+               _this.setState({
+                   studentsReview: _this.state.studentsReview
+               });
+               alert("submitted task");
+           });
        }
 
-    }
+       }
 
     componentDidUpdate() {
         Prism.highlightAll();
 
     }
-    componentDidMount() {
-        Prism.highlightAll();
-    }
+
 
 
 
     render(){
+        let reviewsToPost;
         console.log("content in state", this.state);
 
         let currentReview = this.state.studentAssignment.find((review,index,array)=>{
                 return review["peer-review-for"] === this.state["assignment-name"];
             });
             //console.log("aaaa",currentReview);
-            let currentStudent = currentReview["studentsAssignment"].find((student,index,array)=>{
-                return student["student"] === this.state.netId;
-            });
+         if(typeof currentReview !== "undefined") {
+             let currentStudent = currentReview["studentsAssignment"].find((student, index, array) => {
+                 return student["student"] === this.state.netId;
+             });
 
-            let reviewsToPost = currentStudent["reviewees"].map((review,index,array)=> {
+              reviewsToPost = currentStudent["reviewees"].map((review, index, array) => {
 
-                      //console.log("printed this",count+1,"times");
-                        return <Menu.Item
-                            name={`Review${index}`}
-                            as='a'
-                            onClick={(event) => this.handleItemClick(event,review)}
-                            key={`Review${review}${index}`}
-                        >
-                            {`Review${index}`}
-                        </Menu.Item>
-            });
-
+                 //console.log("printed this",count+1,"times");
+                 return <Menu.Item
+                     name={`Review${index}`}
+                     as='a'
+                     onClick={(event) => this.handleItemClick(event, review)}
+                     key={`Review${review}${index}`}
+                 >
+                     {`Review${index}`}
+                 </Menu.Item>
+             });
+         }
+         else{
+             return "nothing to display"
+         }
         const markdownInstruction = this.state.content;
         const rawHtml = <div id="rawHtml" className="language-html">
             <ReactCommonmark source={markdownInstruction} />
@@ -182,13 +258,13 @@ export default class TaskReview extends React.Component{
             return <Form.Group key={`rubric${rubric["rubric-name"]}${index}`}>
                 <Label tag content={rubric["rubric-name"]}/>
                 <Label content={rubric["points"]} />
-                <Form.Input name={`pointGiven${this.state.reviewNo}${index}`} type= 'number' label='Points'
+                <Form.Input name={`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`} type= 'number' label='Points'
                             placeholder='Points' width={4}
-                            onChange={(e)=>this.handleChange(e,rubric,index)} key={`pointGiven${this.state.reviewNo}${index}`}
-                            value ={this.state[`pointGiven${this.state.reviewNo}${index}`] || ""}/>
-                <Form.Input name={`comment${this.state.reviewNo}${index}`} label='Comments' placeholder='comments' width={10}
-                            onChange={(e)=>this.handleChange(e,rubric,index)} key={`comment${this.state.reviewNo}${index}`}
-                            value = {this.state[`comment${this.state.reviewNo}${index}`] || ""} />
+                            onChange={(e)=>this.handleChange(e,rubric,index)} key={`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`}
+                            value ={this.state[`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`] || ""}/>
+                <Form.Input name={`comment${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`} label='Comments' placeholder='comments' width={10}
+                            onChange={(e)=>this.handleChange(e,rubric,index)} key={`comment${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`}
+                            value = {this.state[`comment${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`] || ""} />
 
             </Form.Group>
         });

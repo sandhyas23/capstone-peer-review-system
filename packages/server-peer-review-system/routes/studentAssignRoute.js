@@ -1,27 +1,28 @@
 /*
-    Task related routes
+    ReviewTask related routes
  */
 
 const express = require("express");
 const router = express.Router();
 router.use(express.json());
 
-const submissionTaskDb = require("../models/submissionTaskModel");
+const reviewTaskDb = require("../models/reviewTaskModel");
+const studentAssignDb = require("../models/studentAssignModel");
 
 // You can add more task validations in this function.
 function validateTask(taskInfo) {
-    const allowedFields = ["peer-review-for", "due", "status"];
+    const allowedFields = ["peer-review-for", "studentsAssignment"];
     let error = false;
     let message = "";
-    if (!taskInfo["task-name"]) {
+    if (!taskInfo["peer-review-for"]) {
         // Required field
         error = true;
-        message += "missing task-name \n";
+        message += "missing peer-review-for \n";
     }
-    if (!taskInfo.status) {
+    if (!taskInfo["studentsAssignment"]) {
         // Required field
         error = true;
-        message += "missing status \n";
+        message += "missing assignments \n";
     }
 
     return [error, message];
@@ -29,23 +30,23 @@ function validateTask(taskInfo) {
 
 // Used to create new tasks
 router.post("/",  function(req, res) {
-    let submissionTaskInfo = req.body; // This should be a JS Object
-    let [error, message] = validateTask(submissionTaskInfo);
+    let reviewTaskInfo = req.body; // This should be a JS Object
+    let [error, message] = validateTask(reviewTaskInfo);
     if (error) {
         res.status(400).json({ error: message });
         return;
     }
-    submissionTaskDb
-        .find({ "task-name": submissionTaskInfo["task-name"] }) // task name already used?
+    studentAssignDb
+        .find({ "peer-review-for": reviewTaskInfo["peer-review-for"] }) // task name already used?
         .then(function(docs) {
             // console.log(`docs: ${docs}`);
             if (docs.length > 0) {
-                // console.log(`Task: ${taskInfo["task-name"]} already in DB`);
+                // console.log(`Task: ${taskInfo["peer-review-for"]} already in DB`);
                 res.status(400); // Bad request
-                return { error: "task-name already used" };
+                return { error: "peer-review-for already used" };
             } else {
                 // Not in DB so insert it
-                return submissionTaskDb.insert(submissionTaskInfo).then(function(newDoc) {
+                return studentAssignDb.insert(reviewTaskInfo).then(function(newDoc) {
                     //console.log(`new doc: ${JSON.stringify(newDoc)}`);
                     res.status(201); // Created
                     return { ...newDoc };
@@ -67,10 +68,10 @@ router.post("/",  function(req, res) {
 
 // Get all the tasks
 router.get("/", function(req, res) {
-    submissionTaskDb
+    studentAssignDb
         .find({})
         .then(function(docs) {
-            res.json({ submissionTasks: docs });
+            res.json({ studentAssignment: docs });
         })
         .catch(function(err) {
             console.log(`Something bad happened: ${err}`);
@@ -80,11 +81,11 @@ router.get("/", function(req, res) {
 
 // Get a specific task
 router.get("/:taskName", function(req, res) {
-    submissionTaskDb
-        .findOne({ "task-name": req.params.taskName })
+    studentAssignDb
+        .findOne({ "peer-review-for": req.params.taskName })
         .then(function(doc) {
             if (doc) {
-                res.json({ submissionTask: doc });
+                res.json({ studentAssignment: doc });
             } else {
                 res.status(404).json({ error: "Not Found;" });
             }
@@ -98,8 +99,8 @@ router.get("/:taskName", function(req, res) {
 router.delete("/:taskName", function(req, res) {
     let taskName = req.params.taskName;
     // console.log(taskName);
-    submissionTaskDb
-        .remove({ "task-name": taskName })
+    reviewTaskDb
+        .remove({ "peer-review-for": taskName })
         .then(function(num) {
             if (num > 0) {
                 res.status(200).json({ success: true });
@@ -113,28 +114,37 @@ router.delete("/:taskName", function(req, res) {
 });
 
 // Used to update a task
-router.put("/:taskName", function(req, res) {
-    let taskName = req.params.taskName;
-    let submissionTaskInfo = req.body;
-    let [error, message] = validateTask(submissionTaskInfo);
+router.put("/:taskName/", function(req, res) {
+    const taskName = req.params.taskName;
+    let submissionInfo = req.body;
+    submissionInfo["peer-review-for"] = taskName;
+    //submissionInfo.submittedOn = new Date().toJSON();
+
+    let [error, message] = validateTask(submissionInfo);
     if (error) {
         res.status(400).json({ error: message });
         return;
     }
-    // if (taskName !== submissionTaskInfo["task-name"]) {
-    //     res.status(400).json({ error: "task-name and path don't match" });
-    //     return;
-    // }
-    submissionTaskDb
-        .update({ "task-name": taskName }, submissionTaskInfo, { returnUpdatedDocs: true })
-        .then(function(doc) {
-            if (doc) {
-                // console.log(doc);
-                res.status(200).json(doc);
-            } else {
-                res.status(404).json({ error: "Task not found" });
-            }
-        });
+    if (taskName !== submissionInfo["peer-review-for"]) {
+        res.status(400).json({ error: "peer-review-for and path don't match" });
+        return;
+    }
+        // Uses an "upsert", i.e., allows both update and insert.
+        studentAssignDb
+            .update(
+                { "peer-review-for": taskName},
+                submissionInfo,
+                { returnUpdatedDocs: true, upsert: true }
+            )
+            .then(function(doc) {
+                if (doc) {
+                    // console.log(doc);
+                    res.status(200).json(doc);
+                } else {
+                    res.status(404).json({ error: "Task not found" });
+                }
+            });
 });
+
 
 module.exports = router;

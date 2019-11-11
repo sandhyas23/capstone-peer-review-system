@@ -18,10 +18,9 @@ import StudentReviewSummary from './studentReviewSummary';
 export default class TeacherView extends React.Component{
     constructor(props){
         super(props);
-        this.state = {submissionTasks:createdSubmissionTasks ,reviewTasks:createdReviewTasks, mode:"",
-        submissions:submissionsHW,reviews:reviews, specificSubmissions:[], currentSubmissionTask:"",specificReview:[],
-        currentReviewTask:""}
-
+        this.state = {submissionTasks:[] ,reviewTasks:[], mode:"",
+        submissions:[],reviews:[], specificSubmissions:[], currentSubmissionTask:"",specificReview:[],
+        currentReviewTask:"", studentAssignment:[],specAssignments:[]}
     }
 
 
@@ -30,23 +29,99 @@ export default class TeacherView extends React.Component{
 
     }
     componentDidMount() {
+        let _this = this;
+        fetch('/submissionTask',{
+            method: "GET",
+            headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json()).then(function(data) {
+
+            console.log("this is what we got" +data);
+            _this.setState({submissionTasks: data.submissionTasks});
+
+        });
+
+        fetch('/submissions/',{
+            method: "GET",
+            headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json()).then(function(data) {
+
+            console.log("this is what we got in task submit" +data.submissions);
+            //_this.state.submissions.push(data.submission);
+                _this.setState({"submissions": data.submissions});
+
+
+        });
+        fetch('/reviewTask',{
+            method: "GET",
+            headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json()).then(function(data) {
+
+            console.log("this is what we got" +data);
+            _this.setState({reviewTasks: data.reviewTasks});
+
+        });
+        fetch('/reviews/',{
+            method: "GET",
+            headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json()).then(function(data) {
+
+            console.log("this is what we got in task submit" +data.reviews);
+            //_this.state.submissions.push(data.submission);
+            _this.setState({"reviews": data.reviews});
+
+
+        });
+
+        fetch('/studentAssignment/',{
+            method: "GET",
+            headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json()).then(function(data) {
+
+            console.log("this is what we got in task submit" +data.studentAssignment);
+            //_this.state.submissions.push(data.submission);
+            _this.setState({"studentAssignment": data.studentAssignment});
+
+
+        });
         Prism.highlightAll();
+    }
+
+    updateArray() {
+        this.setState({ submissionTasks: this.state.submissionTasks });
     }
 
 
 
     handleViewComponent(){
         if(this.state.mode === "createTask"){
-            return <CreateReviewTask submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks} />
+            return <CreateReviewTask submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks}
+                                     update={this.updateArray.bind(this)} submissions={this.state.submissions}/>
         }
         else if(this.state.mode === "viewSubmissionSummary"){
              return <StudentSubmissionSummary specificSubmissions={this.state.specificSubmissions}
-                                    currentSTask={this.state.currentSubmissionTask}/>
+                                    currentSTask={this.state.currentSubmissionTask} update={this.updateArray.bind(this)}/>
          }
         else if(this.state.mode === "viewReviewSummary"){
             return <StudentReviewSummary specificReviews={this.state.specificReviews}
                                          currentRTask={this.state.currentReviewTask}
-                                         specSubmissions ={this.state.specSubmissions}/>
+                                         specSubmissions ={this.state.specSubmissions}
+                                         specAssignments = {this.state.specAssignments}
+                                         update={this.updateArray.bind(this)}/>
         }
         else{
             return <div>You are not authorized to view this!</div>
@@ -72,9 +147,13 @@ export default class TeacherView extends React.Component{
         let specSubmissions = this.state.submissions.filter((item,index,array)=>{
             return item["assignment-name"] === element["peer-review-for"];
         });
+
+        let specAssignments = this.state.studentAssignment.find((item,index,array)=>{
+            return item["peer-review-for"] === element["peer-review-for"];
+        })
         //console.log("spec sub",ppp);
         this.setState({mode:"viewReviewSummary", currentReviewTask:element, specificReviews:specificReviews,
-                            specSubmissions:specSubmissions});
+                            specSubmissions:specSubmissions, specAssignments:specAssignments});
     }
 
 

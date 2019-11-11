@@ -87,6 +87,20 @@ router.get("/:taskName", function(req, res) {
         });
 });
 
+router.get("/", function(req, res) {
+    const taskName = req.params.taskName;
+    reviewsDb
+        .find({})
+        .then(function(docs) {
+            let curDate = new Date();
+            res.json({ reviews: docs });
+        })
+        .catch(function(err) {
+            console.log(`Something bad happened: ${err}`);
+            res.status(500).json({ error: "internal error" });
+        });
+});
+
 // Student interface get all reviews for a particular student
 // Access control: a student can only see their own work
 router.get("/reviewer/:reviewerId", function(req, res) {

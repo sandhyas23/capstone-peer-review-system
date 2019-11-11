@@ -7,25 +7,117 @@ import {
     Sidebar,
     Container
 } from 'semantic-ui-react';
-import TaskReview from "./taskReview"
+import TaskReview from "./taskReview";
+import ViewSubmission from "./viewSubmission";
+import ViewReviewed from './viewReviewed';
+import Prism from "prismjs";
 
 
 export default class StudentView extends React.Component{
     constructor(props){
         super(props);
-        this.state = {submissionTasks:props.submissionTasks ,reviewTasks:props.reviewTasks, mode:"" }
+        this.state = {submissionTasks:[] ,reviewTasks:[], mode:"", submissions:[], studentAssignment:[],
+        reviews:[]}
 
     }
 
-    handleOpenItemClick(event, task){
+    componentDidMount() {
+        let _this = this;
+        fetch('/submissionTask',{
+            method: "GET",
+            headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json()).then(function(data) {
+
+            console.log("this is what we got" +data.submissionTasks);
+            _this.setState({submissionTasks: data.submissionTasks});
+
+        });
+
+        fetch('/reviewTask',{
+            method: "GET",
+            headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json()).then(function(data) {
+
+            console.log("this is what we got" +data.reviewTasks);
+            _this.setState({reviewTasks: data.reviewTasks});
+
+        });
+
+
+        fetch('/submissions/',{
+            method: "GET",
+            headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json()).then(function(data) {
+
+            console.log("this is what we got in task submit" +data.submissions);
+            //_this.state.submissions.push(data.submission);
+            _this.setState({"submissions": data.submissions});
+
+
+        });
+
+        fetch('/reviews/',{
+            method: "GET",
+            headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json()).then(function(data) {
+
+            console.log("this is what we got in task submit" +data.reviews);
+            //_this.state.submissions.push(data.submission);
+            _this.setState({"reviews": data.reviews});
+
+
+        });
+
+        fetch('/studentAssignment/',{
+            method: "GET",
+            headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json()).then(function(data) {
+
+            console.log("this is what we got in task submit" +data.studentAssignment);
+            //_this.state.submissions.push(data.submission);
+            _this.setState({"studentAssignment": data.studentAssignment});
+
+
+        });
+        Prism.highlightAll();
+    }
+
+    handleOpenSubmissionItemClick(event, task){
        // console.log("taskclicked" +task["task-name"]);
         this.setState({mode:"submit", currentTask:task})
         //console.log("ccc",this.state.currentTask);
     }
 
-    handleClosedItemClick(event, task){
+    handleClosedSubmissionItemClick(event, task){
+        // console.log("taskclicked" +task["task-name"]);
+        this.setState({mode:"submitted", currentTask:task})
+        //console.log("ccc",this.state.currentTask);
+    }
+
+    handleOpenReviewItemClick(event, task){
         //console.log("taskclicked" +task["task-name"]);
         this.setState({mode:"review", currentTask:task})
+        //console.log("ddd",this.state.currentTask);
+    }
+
+    handleClosedReviewItemClick(event, task){
+        //console.log("taskclicked" +task["task-name"]);
+        this.setState({mode:"reviewed", currentTask:task})
         //console.log("ddd",this.state.currentTask);
     }
 
@@ -40,10 +132,21 @@ export default class StudentView extends React.Component{
         else if(viewMode === "review"){
            // console.log("cliked" +this.state.currentTask["task-name"]);
             return <TaskReview currentTask = {this.state.currentTask} netId={this.props.netId}
-            reviewTask = {this.state.reviewTasks}/>
+            reviewTask = {this.state.reviewTasks} studentAssignment={this.state.studentAssignment}
+            submissions={this.state.submissions} reviews={this.state.reviews}/>
         }
-        else{
+        else if(viewMode === "submitted"){
+            // console.log("cliked" +this.state.currentTask["task-name"]);
+            return <ViewSubmission currentTask = {this.state.currentTask} netId={this.props.netId}
+                               reviewTask = {this.state.reviewTasks} studentAssignment={this.state.studentAssignment}
+                               submissions={this.state.submissions} reviews={this.state.reviews}/>
+        }
 
+        else if(viewMode === "reviewed"){
+            // console.log("cliked" +this.state.currentTask["task-name"]);
+            return <ViewReviewed currentTask = {this.state.currentTask} netId={this.props.netId}
+                               reviewTask = {this.state.reviewTasks} studentAssignment={this.state.studentAssignment}
+                               submissions={this.state.submissions} reviews={this.state.reviews}/>
         }
     }
 
@@ -53,8 +156,23 @@ export default class StudentView extends React.Component{
             if(task["status"] === "open"){
                 return <Menu.Item
                     name={task["task-name"]}
-                    key = {`otask${index}`}
-                    onClick={(event) => this.handleOpenItemClick(event,task)}
+                    key = {`ostask${index}`}
+                    onClick={(event) => this.handleOpenSubmissionItemClick(event,task)}
+                >
+                    <span>
+                        <Icon name ="tag" />
+                        {task["task-name"]}
+                    </span>
+                </Menu.Item>
+
+            }
+        });
+        let closedSubmissionTaskItems = this.state.submissionTasks.map((task , index , array) => {
+            if(task["status"] === "closed"){
+                return <Menu.Item
+                    name={task["task-name"]}
+                    key = {`cstask${index}`}
+                    onClick={(event) => this.handleClosedSubmissionItemClick(event,task)}
                 >
                     <span>
                         <Icon name ="tag" />
@@ -69,8 +187,24 @@ export default class StudentView extends React.Component{
             if(task["status"] === "open"){
                 return <Menu.Item
                     name={task["peer-review-for"]}
-                    key = {`ctask${index}`}
-                    onClick={(event) => this.handleClosedItemClick(event,task)}
+                    key = {`ortask${index}`}
+                    onClick={(event) => this.handleOpenReviewItemClick(event,task)}
+                >
+                    <span>
+                        <Icon name ="tag" />
+                        {task["peer-review-for"]}
+                    </span>
+                </Menu.Item>
+
+            }
+        });
+
+        let closedReviewTaskItems = this.state.reviewTasks.map((task , index , array) => {
+            if(task["status"] === "closed"){
+                return <Menu.Item
+                    name={task["peer-review-for"]}
+                    key = {`crtask${index}`}
+                    onClick={(event) => this.handleClosedReviewItemClick(event,task)}
                 >
                     <span>
                         <Icon name ="tag" />
@@ -110,21 +244,23 @@ export default class StudentView extends React.Component{
             </Menu.Item>
 
             <Menu.Item>
-                <Icon name ="tasks"></Icon><Menu.Header>Reviewed tasks</Menu.Header>
+                <Icon name ="tasks"></Icon><Menu.Header>my Submissions</Menu.Header>
 
                 <Menu.Menu>
-                    <Menu.Item
-                        name='shared'
-
-                        onClick={this.handleItemClick}
-                    />
-                    <Menu.Item
-                        name='dedicated'
-
-                        onClick={this.handleItemClick}
-                    />
+                    {closedSubmissionTaskItems}
                 </Menu.Menu>
+
             </Menu.Item>
+
+            <Menu.Item>
+                <Icon name ="tasks"></Icon><Menu.Header>my Reviewed tasks</Menu.Header>
+
+                <Menu.Menu>
+                    {closedReviewTaskItems}
+                </Menu.Menu>
+
+            </Menu.Item>
+
         </Sidebar>
         </div>
         <Menu fixed='top' stackable inverted>

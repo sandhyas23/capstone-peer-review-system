@@ -38,7 +38,7 @@ export default class CreateReviewTask extends React.Component {
             status: "open",
             rubricIds: [1],
             rubric: [],
-            submissions:submissions,
+            submissions:this.props.submissions,
             newAssignments:[],
             reviews:[],
             num:0,
@@ -64,7 +64,7 @@ export default class CreateReviewTask extends React.Component {
         this.setState({
             [data.name]: data.value
         });
-        console.log("onchanges", data.name);
+        //console.log("onchanges", data.name);
     }
 
     handleChanges(e) {
@@ -74,7 +74,7 @@ export default class CreateReviewTask extends React.Component {
         this.setState({
             [name]: value
         });
-        console.log("onchanges", value);
+        //console.log("onchanges", value);
     }
 
     handleRubricChange(e,element,index){
@@ -118,6 +118,7 @@ export default class CreateReviewTask extends React.Component {
     }
 
     handleSubmit(e,num) {
+        const _this = this;
         this.assignTask(e,num).then(()=>{
             let submissionTask = {
                 type: this.state.selectedType, "task-name": this.state.selectedReview, status: this.state.status,
@@ -134,28 +135,49 @@ export default class CreateReviewTask extends React.Component {
                 "peer-review-for":this.state.selectedReview, studentsAssignment:this.state.newAssignments
             }
             if (this.state.selectedType === "submission") {
-                this.state.submissionTasks.push(submissionTask);
-                this.setState({
-                    selectedType: "submission", instructions: "",
-                    selectedReview: "", dueDate: new Date(), status: "open",
-                    submissionTasks:this.state.submissionTasks,currentTask:submissionTask
-                });
-                alert("submission task created successfully");
-                console.log("submitted",this.state.submissionTasks);
 
+                fetch('/submissionTask',{
+                    method: 'POST',
+                    headers:{
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify((submissionTask))
+                })
+                    .then(function(response){
+                        _this.state.submissionTasks.push(submissionTask);
+                        _this.setState({
+                            selectedType: "submission", instructions: "",
+                            selectedReview: "", dueDate: new Date(), status: "open",
+                            submissionTasks:_this.state.submissionTasks,currentTask:submissionTask
+                        });
+                        _this.props.update();
+                        alert("submission task created successfully");
+                        console.log("submitted",_this.state.submissionTasks);
+                        //e.preventDefault();
+                    })
             } else {
-                this.state.reviewTasks.push(reviewTask);
-                this.state.studentAssignment.push(studentAssignments);
-
-                this.setState({
-                    selectedType: "review", instructions: "",
-                    dueDate: new Date(), status: "open",num:0,
-                    reviewTasks:this.state.reviewTasks,studentAssignment:this.state.studentAssignment,
-                    currentTask:reviewTask,
-                    // selectedReview: "",isSubmitted:true,
-                });
-                alert("Review task created successfully");
-                console.log("reviewed",this.state.reviewTasks);
+                fetch('/reviewTask',{
+                    method: 'POST',
+                    headers:{
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify((reviewTask))
+                })
+                    .then(function(response){
+                        _this.state.reviewTasks.push(reviewTask);
+                        _this.state.studentAssignment.push(studentAssignments);
+                        _this.setState({
+                            selectedType: "review", instructions: "",
+                            dueDate: new Date(), status: "open",num:0,
+                            reviewTasks:_this.state.reviewTasks,studentAssignment:_this.state.studentAssignment,
+                            currentTask:reviewTask,
+                            // selectedReview: "",isSubmitted:true,
+                        });
+                        _this.props.update();
+                        alert("review task created successfully");
+                        console.log("review task",_this.state.reviewTasks);
+                        //e.preventDefault();
+                    });
             }
 
         });
@@ -299,11 +321,31 @@ Fixed assignment, with array shuffle
             let assignedReviewees = Array.from(reviews[i]["reviewees"]);
             newAssignments.push({student:assignments[i]["student"],reviewers:assignedReviewers,
                 reviewees:assignedReviewees});
-            console.log(reviews[i]);
-            console.log("\n");
+            console.log("newAssignments",newAssignments);
+            //console.log(reviews[i]);
+            //console.log("\n");
         }
 
-        this.setState({newAssignments:newAssignments,reviews:reviews});
+        let assignmentsOfStudents ={"peer-review-for":this.state.selectedReview,
+            "studentsAssignment": newAssignments};
+        console.log("assignment",assignmentsOfStudents);
+
+
+            const _this = this;
+
+             fetch('/studentAssignment/'+this.state.selectedReview, {
+                method: 'PUT',
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify(assignmentsOfStudents)
+            }).then(function (response) {
+                _this.setState({newAssignments:newAssignments,reviews:reviews});
+            });
+
+
+
+        //this.setState({newAssignments:newAssignments,reviews:reviews});
 
         /**
          From: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
@@ -338,7 +380,7 @@ Fixed assignment, with array shuffle
     }
 
     displayAssignments(){
-              console.log("function called");
+              //console.log("function called");
                 function bb(element){
                     let cq = element["reviewers"].map((item,index,array)=>{
                         return <Table.Cell key={`cell2${index}`}>
@@ -352,7 +394,13 @@ Fixed assignment, with array shuffle
 
             let cc = this.state.newAssignments.map((element,index,array)=>{
                 return <Table.Row key={`row${index}`}>
-                    <Table.Cell key={`cell${index}`}>{element["student"]}</Table.Cell>
+                    <Table.Cell key={`cell${index}`}>
+                        <Input transparent
+                               key={`AssignmentValue${index}`}
+                               name={`AssignmentValue${index}`}
+                        >{element["student"]}
+                        </Input>
+                    </Table.Cell>
                     {bb(element)}
                 </Table.Row>
             });
@@ -387,7 +435,7 @@ Fixed assignment, with array shuffle
 
 
     render(){
-        console.log("STATE",this.state);
+        //console.log("STATE",this.state);
         let options=[];
         const reviewTasksDisplayed = this.state.submissionTasks.filter((element)=>{
             //console.log(element["task-name"]);
