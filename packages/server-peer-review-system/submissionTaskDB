@@ -1,5 +1,6 @@
-{"type":"submission","task-name":"HW2","status":"closed","due":"2018-12-01T00:00:00.000Z","_id":"AvHtysMbj6n3qG4X"}
-{"type":"submission","task-name":"HW5","status":"open","due":"2019-11-08T09:30:00.252Z","_id":"F4sW3HbZ0Ga0kSqE"}
-{"type":"submission","task-name":"HW4","status":"open","due":"2019-11-08T09:35:05.059Z","_id":"fb9BhQcUH8Qsddce"}
-{"task-name":"HW1","due":"2018-12-02T00:00:00.000Z","status":"closed","_id":"q4BJrQMoCAp3DcKG"}
+{"type":"submission","task-name":"HW1","due":"2019-11-15T19:00:00.000Z","_id":"46kGHJkJmjaCD2WM"}
+{"type":"submission","task-name":"HW2","due":"2019-11-15T19:00:00.145Z","_id":"6VoSYREzbvb4Ff6C"}
+{"type":"submission","task-name":"HW3","due":"2019-11-15T22:30:00.348Z","_id":"yzeQ3ayu0Zw9O37m"}
 {"$$indexCreated":{"fieldName":"task-name","unique":true,"sparse":false}}
+{"type":"submission","task-name":"HW3","due":"2019-11-17T22:30:00.000Z","_id":"yzeQ3ayu0Zw9O37m"}
+{"type":"submission","task-name":"HW3","due":"2019-11-18T22:30:00.000Z","_id":"yzeQ3ayu0Zw9O37m"}

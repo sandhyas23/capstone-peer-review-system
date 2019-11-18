@@ -18,13 +18,31 @@ export default class ViewReviewed extends React.Component {
         //console.log(this.state.newTask);
     }
 
+    static getDerivedStateFromProps(props,state){
+        if(props.currentTask == state.currentTask){
+            return null;
+        }
+        else{
+            return {
+                currentTask: props.currentTask , reviews:props.reviews,
+                "assignment-name":props.currentTask["peer-review-for"],rubric:[],
+                submissions:props.submissions
+            }
+        }
+    }
+
     componentDidUpdate() {
         Prism.highlightAll();
+
+
 
     }
 
     componentDidMount() {
         Prism.highlightAll();
+
+
+
     }
 
     handleItemClick(event,review){
@@ -89,6 +107,23 @@ export default class ViewReviewed extends React.Component {
             </Table.Row>
         });
 
+        const generalInstructionmarkdown = this.state.currentTask["instructions"];
+        const generalInstruction = <div id="rawHtml" className="language-html">
+            <ReactCommonmark source={generalInstructionmarkdown} />
+        </div>
+
+        let tableBody = this.state.currentTask["rubric"].map((item,index,array)=>{
+            const markdownInstruction = item["criteria"];
+            const rawHtml = <div id="rawHtml" className="language-html">
+                <ReactCommonmark source={markdownInstruction} />
+            </div>
+            return <Table.Row key={`row${item["rubric-name"]}${index}`}>
+                <Table.Cell key={`points${item["rubric-name"]}${index}`}>{item["points"]}</Table.Cell>
+                <Table.Cell key={`rubric${item["rubric-name"]}${index}`}>{item["rubric-name"]}</Table.Cell>
+                <Table.Cell key={`criteria${item["rubric-name"]}${index}`}>{rawHtml}</Table.Cell>
+            </Table.Row>
+        });
+
 
         return  <Grid  stackable>
 
@@ -120,7 +155,7 @@ export default class ViewReviewed extends React.Component {
                                 <Form.Field inline>
                                     <Label icon='lock open' content="Status"/>
 
-                                    <Input readOnly style={{color:"green"}}>{this.state.currentTask["status"]}</Input>
+                                    <Input readOnly style={{color:"red"}}>Closed</Input>
                                 </Form.Field>
                             </Form.Group>
                         </Segment>
@@ -132,28 +167,32 @@ export default class ViewReviewed extends React.Component {
                     <Icon name='code'/>
                     Submit Review
                 </Header>
-                <span> <Modal trigger={<Button>View Rubrics</Button>}>
+                <span> <Modal className={"modal1"} trigger={<Button>View Rubrics</Button>}>
+
                     <Modal.Header>Rubrics</Modal.Header>
                     <Modal.Content  scrolling>
 
                         <Modal.Description>
-                            <Header>Modal Header</Header>
-                            <p>
-                                This is an example of expanded content that will cause the modal's
-                                dimmer to scroll This is an example of expanded content that will cause the modal's
-                                dimmer to scroll This is an example of expanded content that will cause the modal's
-                                dimmer to scroll This is an example of expanded content that will cause the modal's
-                                dimmer to scroll This is an example of expanded content that will cause the modal's
-
-                            </p>
+                            <Header>Rubrics for {this.state.currentTask["peer-review-for"]}</Header>
+                            <div>
+                                General Instructions: {generalInstruction}
+                            </div>
+                            <Table>
+                                <Table.Header>
+                                    <Table.Row>
+                                    <Table.HeaderCell> Possible points</Table.HeaderCell>
+                                        <Table.HeaderCell> Rubric name</Table.HeaderCell>
+                                        <Table.HeaderCell> Criteria</Table.HeaderCell>
+                                    </Table.Row>
+                                </Table.Header>
+                                <Table.Body>
+                                    {tableBody}
+                                </Table.Body>
+                            </Table>
 
                         </Modal.Description>
                     </Modal.Content>
-                    <Modal.Actions>
-                        <Button primary>
-                            Download <Icon name='chevron right' />
-                        </Button>
-                    </Modal.Actions>
+
                 </Modal>
                     </span>
 

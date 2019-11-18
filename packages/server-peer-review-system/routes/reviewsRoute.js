@@ -23,10 +23,10 @@ function validateSubmission(subInfo) {
         .then(function(task) {
             if (task) {
                 // is the task open
-                if (task.status !== "open") {
-                    error = true;
-                    message += `Task ${task["peer-review-for"]} is not open. \n`;
-                }
+                // if (task.status !== "open") {
+                //     error = true;
+                //     message += `Task ${task["peer-review-for"]} is not open. \n`;
+                // }
                 // More synchronous checks on submission here if desired
                 return [error, message];
             } else {
@@ -178,6 +178,23 @@ router.delete("/:taskName/reviewer/:reviewerId/submitter/:submitterId", function
         });
 });
 
+router.delete("/:taskName", function(req, res) {
+    const taskName = req.params.taskName;
+    // console.log(taskName);
+    reviewsDb
+        .remove({ "assignment-name": taskName})
+        .then(function(num) {
+            if (num > 0) {
+                res.status(200).json({ success: true });
+            } else {
+                res.status(404).json({ error: "not found" });
+            }
+        })
+        .catch(function(err) {
+            res.status(500).json({ error: err });
+        });
+});
+
 // Put a specific task submission for a particular student
 // Access control: 1. student's ID must match their logon student ID.
 //                 2. can only update an "open" assignment.
@@ -190,6 +207,7 @@ router.put("/:taskName/reviewer/:reviewerId/submitter/:submitterId", function(re
     reviewInfo["assignment-name"] = taskName;
     reviewInfo["reviewer-id"] = reviewerId;
     reviewInfo["submitter-id"] = submitterId;
+    reviewInfo.submittedOn = new Date().toJSON();
     //submissionInfo.submittedOn = new Date().toJSON();
 
     validateSubmission(reviewInfo).then(function(errMessage) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Form, Grid, Header, Icon, Input, Label, Segment,Menu,Modal} from "semantic-ui-react";
+import {Button, Form, Grid, Header, Icon, Input, Label, Segment,Menu,Modal,Table} from "semantic-ui-react";
 import studentsReview from "../data/reviewTasksStudents";
 import studentAssignment from '../data/studentAssignment';
 import submissions from '../data/submissionsHw';
@@ -20,37 +20,43 @@ export default class TaskReview extends React.Component{
             studentAssignment:props.studentAssignment,
             submissions:props.submissions,
             totalRubricsToReview:[],
-            rubric:[]}
+            rubric:[],
+            rubricName:""}
             //console.log(this.state);
     }
     componentDidMount() {
+
         let _this = this;
-        fetch('/reviews/'+this.state["assignment-name"]+'/reviewer/'+this.state.netId,{
+        fetch('/reviews/' + this.state["assignment-name"] + '/reviewer/' + this.state.netId, {
             method: "GET",
-            headers : {
+            headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             }
-        }).then(response => response.json()).then(function(data) {
+        }).then(response => response.json()).then(function (data) {
 
-            console.log("this is what we got in task submit" +data.reviews);
+            console.log("this is what we got in task submit" + data.reviews);
             //_this.state.submissions.push(data.submission);
             const reviewerReviews = data.reviews;
             console.log("reviewerReviews", reviewerReviews);
 
-            let foundElements = reviewerReviews.map((element,index,array)=>{
-                return element["review"]["rubric"].map((rubric,ind,arr)=>{
-                   return  _this.setState({[`pointGiven${element["reviewer-id"]}${element["submitter-id"]}${rubric["rubric-name"]}`]:
-                     rubric["points-given"],
+            let foundElements = reviewerReviews.map((element, index, array) => {
+                _this.setState({rubric:element["review"]["rubric"]});
+                return [element["review"]["rubric"].map((rubric, ind, arr) => {
+                    return _this.setState({
+                        [`pointGiven${element["reviewer-id"]}${element["submitter-id"]}${rubric["rubric-name"]}`]:
+                            rubric["points-given"],
                         [`comment${element["reviewer-id"]}${element["submitter-id"]}${rubric["rubric-name"]}`]:
-                            rubric["comments"]})
-                })
-            })
+                            rubric["comments"],
 
-               // _this.setState({"submissions":data.reviews});
+                    })
+                }), _this.setState({[`submittedOn${element["submitter-id"]}${element["reviewer-id"]}`]:element["submittedOn"]})]
 
+                // _this.setState({"submissions":data.reviews});
+
+            });
+            Prism.highlightAll();
         });
-        Prism.highlightAll();
     }
 
 
@@ -89,17 +95,35 @@ export default class TaskReview extends React.Component{
         let submission = this.state.submissions.find((element,index,array)=>{
             return element["assignment-name"] === this.state["assignment-name"] && element["netId"] === review;
         });
-
         let totalRubricsToReview = this.state.currentTask["rubric"];
         console.log("content when clicked",submission["content"]);
 
-        this.setState({totalRubricsToReview:totalRubricsToReview,content:submission["content"],
-        reviewNo:review});
-        //console.log("questions", this.state.questions);
-        //console.log("content when clicked",this.state.content);
+
+
+            let cc = this.state.totalRubricsToReview.map((item,index,array)=> {
+                 if (this.state[`pointGiven${this.state.netId}${review}${item["rubric-name"]}`] &&
+                    this.state[`comment${this.state.netId}${review}${item["rubric-name"]}`]) {
+                    console.log("inside if....");
+                    let rubric_task = {
+                        "rubric-name": item["rubric-name"],
+                        "possible-points": item["points"],
+                        "points-given": this.state[`pointGiven${this.state.netId}${review}${item["rubric-name"]}`],
+                        "comments": this.state[`comment${this.state.netId}${review}${item["rubric-name"]}`],
+                    };
+
+                     this.state.rubric.splice(index,1,rubric_task);
+                     console.log("spliced array",this.state.rubric);
+
+
+                }
+            });
+            this.setState({rubric:this.state.rubric,reviewNo:review,totalRubricsToReview:totalRubricsToReview,
+                content:submission["content"]});
+
+
     }
 
-    handleChange(e,rubrics,index){
+    handleChange = async(e,rubrics,index) =>{
 
         const target = e.target;
         const value = target.value;
@@ -111,41 +135,37 @@ export default class TaskReview extends React.Component{
             [name]:value
         });
 
-        let newElement = this.state.rubric[index];
-        if(!newElement){
-            this.state.rubric.push({"rubric-name": rubrics["rubric-name"],
-                "possible-points":rubrics["points"],
-                "points-given":this.state[`pointGiven${this.state.netId}${this.state.reviewNo}${rubrics["rubric-name"]}`],
-                "comments":this.state[`comment${this.state.netId}${this.state.reviewNo}${rubrics["rubric-name"]}`],
-              });
-            this.setState({rubric:this.state.rubric});
-
-        }
-        else{
-            if(name === `pointGiven${this.state.netId}${this.state.reviewNo}${rubrics["rubric-name"]}`){
-                let tempArray = this.state.rubric;
-                tempArray[index]["points-given"] = value;
-                this.setState({rubric:tempArray});
-
-            }
-            if(name === `comment${this.state.netId}${this.state.reviewNo}${rubrics["rubric-name"]}`){
-                let tempArray = this.state.rubric;
-                tempArray[index]["comments"] = value;
-                this.setState({rubric:tempArray});
-
-            }
-        }
 
     }
+
+    afterHandleChange(e,rubrics,index){
+        this.handleChange(e,rubrics,index).then(()=> {
+
+            let rubric_task = {
+                "rubric-name": rubrics["rubric-name"],
+                "possible-points": rubrics["points"],
+                "points-given": this.state[`pointGiven${this.state.netId}${this.state.reviewNo}${rubrics["rubric-name"]}`],
+                "comments": this.state[`comment${this.state.netId}${this.state.reviewNo}${rubrics["rubric-name"]}`],
+            }
+            this.state.rubric.splice(index, 1, rubric_task);
+            this.setState({
+                rubric: this.state.rubric, rubricName: rubrics["rubric-name"],
+                "possible-points": rubrics["points"]
+            });
+        });
+
+    }
+
+
 
     handleSubmit(event){
         let totalPoints =0;
         for (let i=0;i<this.state.rubric.length;i++){
-            totalPoints += this.state.rubric[i]["points-given"];
+            totalPoints += parseInt(this.state.rubric[i]["points-given"]);
         }
         let outOf =0;
         for (let i=0;i<this.state.rubric.length;i++){
-            totalPoints += this.state.rubric[i]["possible-points"];
+            totalPoints += parseInt(this.state.rubric[i]["possible-points"]);
         }
 
        let reviewToPost = this.state.studentsReview.findIndex((element,index,array)=>{
@@ -173,7 +193,7 @@ export default class TaskReview extends React.Component{
                    studentsReview:_this.state.studentsReview
                });
                alert("submitted task");
-               //console.log("submitted",this.state.submissions);
+               console.log("submitted",_this.state.studentsReview);
                //_this.props.update();
                //event.preventDefault();
            });
@@ -201,11 +221,12 @@ export default class TaskReview extends React.Component{
                    },
                    body: JSON.stringify(reviewTask)
                }).then(function (response) {
-               _this.state.studentsReview.splice(reviewToPost, 1);
-               _this.state.studentsReview.push(reviewTask);
+               _this.state.studentsReview.splice(reviewToPost, 1,reviewTask);
+               //_this.state.studentsReview.push(reviewTask);
                _this.setState({
                    studentsReview: _this.state.studentsReview
                });
+               console.log("submitted",_this.state.studentsReview);
                alert("submitted task");
            });
        }
@@ -221,6 +242,8 @@ export default class TaskReview extends React.Component{
 
 
     render(){
+
+
         let reviewsToPost;
         console.log("content in state", this.state);
 
@@ -254,16 +277,33 @@ export default class TaskReview extends React.Component{
             <ReactCommonmark source={markdownInstruction} />
         </div>
 
+        const generalInstructionmarkdown = this.state.currentTask["instructions"];
+        const generalInstruction = <div id="rawHtml" className="language-html">
+            <ReactCommonmark source={generalInstructionmarkdown} />
+        </div>
+
+        let tableBody = this.state.currentTask["rubric"].map((item,index,array)=>{
+            const markdownInstruction = item["criteria"];
+            const rawHtml = <div id="rawHtml" className="language-html">
+                <ReactCommonmark source={markdownInstruction} />
+            </div>
+            return <Table.Row key={`row${item["rubric-name"]}${index}`}>
+                <Table.Cell key={`points${item["rubric-name"]}${index}`}>{item["points"]}</Table.Cell>
+                <Table.Cell key={`rubric${item["rubric-name"]}${index}`}>{item["rubric-name"]}</Table.Cell>
+                <Table.Cell key={`criteria${item["rubric-name"]}${index}`}>{rawHtml}</Table.Cell>
+            </Table.Row>
+        });
+
         let questionsToDisplay =  this.state.totalRubricsToReview.map((rubric,index,array)=>{
             return <Form.Group key={`rubric${rubric["rubric-name"]}${index}`}>
                 <Label tag content={rubric["rubric-name"]}/>
                 <Label content={rubric["points"]} />
                 <Form.Input name={`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`} type= 'number' label='Points'
-                            placeholder='Points' width={4}
-                            onChange={(e)=>this.handleChange(e,rubric,index)} key={`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`}
+                            placeholder='Points' width={4} min="0" max={rubric["points"]}
+                            onChange={(e)=>this.afterHandleChange(e,rubric,index)} key={`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`}
                             value ={this.state[`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`] || ""}/>
                 <Form.Input name={`comment${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`} label='Comments' placeholder='comments' width={10}
-                            onChange={(e)=>this.handleChange(e,rubric,index)} key={`comment${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`}
+                            onChange={(e)=>this.afterHandleChange(e,rubric,index)} key={`comment${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`}
                             value = {this.state[`comment${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`] || ""} />
 
             </Form.Group>
@@ -301,7 +341,7 @@ export default class TaskReview extends React.Component{
                                <Form.Field inline>
                                    <Label icon='lock open' content="Status"/>
 
-                                   <Input readOnly style={{color:"green"}}>{this.state.currentTask["status"]}</Input>
+                                   <Input readOnly style={{color:"green"}}>Open</Input>
                                </Form.Field>
                            </Form.Group>
                            </Segment>
@@ -318,23 +358,25 @@ export default class TaskReview extends React.Component{
                     <Modal.Content  scrolling>
 
                         <Modal.Description>
-                            <Header>Modal Header</Header>
-                            <p>
-                                This is an example of expanded content that will cause the modal's
-                                dimmer to scroll This is an example of expanded content that will cause the modal's
-                                dimmer to scroll This is an example of expanded content that will cause the modal's
-                                dimmer to scroll This is an example of expanded content that will cause the modal's
-                                dimmer to scroll This is an example of expanded content that will cause the modal's
-
-                            </p>
+                            <Header>Rubrics for {this.state.currentTask["peer-review-for"]}</Header>
+                            <div>
+                                General Instructions: {generalInstruction}
+                            </div>
+                            <Table>
+                                <Table.Header>
+                                    <Table.Row>
+                                    <Table.HeaderCell> Possible points</Table.HeaderCell>
+                                        <Table.HeaderCell> Rubric name</Table.HeaderCell>
+                                        <Table.HeaderCell> Criteria</Table.HeaderCell>
+                                    </Table.Row>
+                                </Table.Header>
+                                <Table.Body>
+                                    {tableBody}
+                                </Table.Body>
+                            </Table>
 
                         </Modal.Description>
                     </Modal.Content>
-                    <Modal.Actions>
-                        <Button primary>
-                            Download <Icon name='chevron right' />
-                        </Button>
-                    </Modal.Actions>
                 </Modal>
                     </span>
 
@@ -367,12 +409,25 @@ export default class TaskReview extends React.Component{
 
                         <Segment style={{overflow: 'auto',minHeight:330,maxHeight:330,maxWidth:500,minWidth:200 }}
                                  textAlign="left">
+
                             <Form>
                                {questionsToDisplay}
+
                                 <Button icon='file' content='Submit' type={"button"} color={"green"}
-                                        onClick={(event) =>this.handleSubmit(event)} />
+                                        onClick={(event) =>this.handleSubmit(event)}
+                                        disabled={!this.state[`pointGiven${this.state.netId}${this.state.reviewNo}${this.state.rubricName}`]  ||
+                                        !this.state[`comment${this.state.netId}${this.state.reviewNo}${this.state.rubricName}`] }
+                              />
+
+
 
                             </Form>
+                            &nbsp;
+                            <div>
+                            <Label ribbon icon='star' content={`Submitted :
+                             ${new Date(this.state[`submittedOn${this.state.reviewNo}${this.state.netId}`]).toLocaleString()}`}
+                                   color="blue"/>
+                            </div>
                         </Segment>
                     </Grid.Column>
                     </Grid>

@@ -110,21 +110,26 @@ export default class TeacherView extends React.Component{
     handleViewComponent(){
         if(this.state.mode === "createTask"){
             return <CreateReviewTask submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks}
-                                     update={this.updateArray.bind(this)} submissions={this.state.submissions}/>
+                                     update={this.updateArray.bind(this)} submissions={this.state.submissions}
+                                     mode={this.state.mode}/>
         }
         else if(this.state.mode === "viewSubmissionSummary"){
              return <StudentSubmissionSummary specificSubmissions={this.state.specificSubmissions}
-                                    currentSTask={this.state.currentSubmissionTask} update={this.updateArray.bind(this)}/>
+                                    currentSTask={this.state.currentSubmissionTask} update={this.updateArray.bind(this)}
+                                              mode={this.state.mode}
+                                              submissionTasks={this.state.submissionTasks}/>
          }
         else if(this.state.mode === "viewReviewSummary"){
             return <StudentReviewSummary specificReviews={this.state.specificReviews}
                                          currentRTask={this.state.currentReviewTask}
                                          specSubmissions ={this.state.specSubmissions}
                                          specAssignments = {this.state.specAssignments}
-                                         update={this.updateArray.bind(this)}/>
+                                         update={this.updateArray.bind(this)}
+                                         mode={this.state.mode}
+                                         reviewTasks={this.state.reviewTasks}/>
         }
         else{
-            return <div>You are not authorized to view this!</div>
+            return <div>Home page</div>
         }
 
     }

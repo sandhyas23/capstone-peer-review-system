@@ -95,7 +95,7 @@ export default class ViewSubmission extends React.Component{
                                     <Form.Field inline>
                                         <Label icon='lock open' content="Status"/>
 
-                                        <Input readOnly style={{color:"green"}}>{this.state.currentTask["status"]}</Input>
+                                        <Input readOnly style={{color:"red"}}>Closed</Input>
                                     </Form.Field>
                                 </Form.Group>
                                 <Form.Group centered={"true"} widths='equal'>

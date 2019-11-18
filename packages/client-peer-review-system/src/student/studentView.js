@@ -153,7 +153,11 @@ export default class StudentView extends React.Component{
     render(){
 
         let openSubmissionTaskItems = this.state.submissionTasks.map((task , index , array) => {
-            if(task["status"] === "open"){
+            let taskDue = new Date(task["due"]).getTime();
+            let now = new Date().getTime();
+            const timeDifference = now-taskDue;
+            //console.log("time of",task["task-name"],timeDifference);
+            if(timeDifference < 0){
                 return <Menu.Item
                     name={task["task-name"]}
                     key = {`ostask${index}`}
@@ -166,9 +170,14 @@ export default class StudentView extends React.Component{
                 </Menu.Item>
 
             }
+
+
         });
         let closedSubmissionTaskItems = this.state.submissionTasks.map((task , index , array) => {
-            if(task["status"] === "closed"){
+            let taskDue = new Date(task["due"]).getTime();
+            let now = new Date().getTime();
+            const timeDifference = now-taskDue;
+            if(timeDifference >= 0){
                 return <Menu.Item
                     name={task["task-name"]}
                     key = {`cstask${index}`}
@@ -184,7 +193,11 @@ export default class StudentView extends React.Component{
         });
 
         let openReviewTaskItems = this.state.reviewTasks.map((task , index , array) => {
-            if(task["status"] === "open"){
+            let taskDue = new Date(task["due"]).getTime();
+            let now = new Date().getTime();
+            const timeDifference = now-taskDue;
+            //console.log("time of",task["task-name"],timeDifference);
+            if(timeDifference < 0){
                 return <Menu.Item
                     name={task["peer-review-for"]}
                     key = {`ortask${index}`}
@@ -200,7 +213,11 @@ export default class StudentView extends React.Component{
         });
 
         let closedReviewTaskItems = this.state.reviewTasks.map((task , index , array) => {
-            if(task["status"] === "closed"){
+            let taskDue = new Date(task["due"]).getTime();
+            let now = new Date().getTime();
+            const timeDifference = now-taskDue;
+            //console.log("time of",task["task-name"],timeDifference);
+            if(timeDifference >= 0){
                 return <Menu.Item
                     name={task["peer-review-for"]}
                     key = {`crtask${index}`}

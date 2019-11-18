@@ -5,14 +5,16 @@ import {
     Table,
     Header,
     Segment,
-    Label, Form, Input, Select,Button
+    Label, Form, Input, Select,Button,Confirm
 } from 'semantic-ui-react';
 
 
 import "react-datepicker/dist/react-datepicker.css";
+import 'prismjs/themes/prism-coy.css';
 import Prism from "prismjs";
 import ReactCommonmark from "react-commonmark";
 import DatePicker from "react-datepicker";
+import TeacherView from "./teacherView";
 
 
 
@@ -20,8 +22,10 @@ export default class StudentSubmissionSummary extends React.Component{
     constructor(props){
         super(props);
         this.state = {specificSubmissions:props.specificSubmissions, currentSTask:props.currentSTask, content:"",
-        "task-name":props.currentSTask["task-name"], status:props.currentSTask["status"] ,
-        due:new Date(props.currentSTask["due"])}
+        "task-name":props.currentSTask["task-name"],open:false,isDeleted:false,
+        due:new Date(props.currentSTask["due"]),
+        mode:props.mode,
+        submissionTasks:props.submissionTasks}
 
     }
 
@@ -31,7 +35,8 @@ export default class StudentSubmissionSummary extends React.Component{
         }
         else{
             return {currentSTask:props.currentSTask ,specificSubmissions:props.specificSubmissions, content:"",
-                "task-name":props.currentSTask["task-name"]}
+                "task-name":props.currentSTask["task-name"],
+                due:new Date(props.currentSTask["due"])}
         }
 
     }
@@ -54,14 +59,39 @@ export default class StudentSubmissionSummary extends React.Component{
             <ReactCommonmark source={markdownInstruction} />
         </div>
         return <Segment style={{overflow: 'auto',minHeight:500,maxHeight:330,maxWidth:1000,minWidth:200 }}>
+            <Button onClick={(e)=>this.handleDeleteSubmission(e)}
+                disabled={this.state.content===""}>Delete submission</Button>
             {rawHtml}
         </Segment>
+    }
+
+    handleDeleteSubmission(e)
+    {
+        // let nextStudent="";
+        let clickedStudentIndex = this.state.specificSubmissions.findIndex((item,index,array)=>{
+                  return item["netId"] === this.state["student-id"];
+         });
+        // if(clickedStudentIndex === 0){
+        //     nextStudent = this.state.specificSubmissions
+        // }
+        const _this=this;
+        fetch('/submissions/'+this.state.currentSTask["task-name"]+'/student/'+this.state["student-id"], {
+            method: 'DELETE',
+            headers: {
+                "Content-type": "application/json"
+            }
+        }).then(function (response) {
+            console.log("inside this");
+            _this.state.specificSubmissions.splice(clickedStudentIndex,1);
+            _this.setState({specificSubmissions:_this.state.specificSubmissions, content:""});
+            _this.props.update();
+        })
     }
 
     handleEditTask(e){
         const _this= this;
         let submissionTask = {
-            type: "submission", "task-name": this.state["task-name"], status: this.state.status,
+            type: "submission", "task-name": this.state["task-name"],
             due: this.state.due.toISOString()
         };
         fetch('/submissionTask/'+this.state.currentSTask["task-name"], {
@@ -71,16 +101,25 @@ export default class StudentSubmissionSummary extends React.Component{
             },
             body: JSON.stringify(submissionTask)
         }).then(function (response) {
-            //_this.state.submissions.push(addTask);
-             _this.setState({});
-           // console.log("submitted",this.state.submissions);
-           // console.log(this.state.submissions);
+            _this.setState({});
             _this.props.update();
-           // event.preventDefault();
-        });
+        })
     }
 
+    // show = async () => this.setState({ open: true })
+
     handleDeleteTask(){
+        this.setState({ open: true })
+    }
+
+    handleCancel =() =>{
+        this.setState({open:false})
+    }
+
+    handleConfirm = ()=>{
+        let taskIndex = this.state.submissionTasks.findIndex((item,index,arry)=>{
+            return item["task-name"] === this.state["task-name"];
+        });
         const _this= this;
         fetch('/submissionTask/'+this.state.currentSTask["task-name"], {
             method: 'DELETE',
@@ -88,13 +127,23 @@ export default class StudentSubmissionSummary extends React.Component{
                 "Content-type": "application/json"
             }
         }).then(function (response) {
-            //_this.state.submissions.push(addTask);
-            _this.setState({});
-            // console.log("submitted",this.state.submissions);
-            // console.log(this.state.submissions);
+            _this.setState({open:false});
             _this.props.update();
-            // event.preventDefault();
+
+        }).then(()=>{
+            fetch('/submissions/'+this.state.currentSTask["task-name"], {
+                method: 'DELETE',
+                headers: {
+                    "Content-type": "application/json"
+                }
+            }).then(function (response) {
+                console.log("inside this");
+                _this.state.submissionTasks.splice(taskIndex,1);
+                _this.setState({isDeleted:true,submissionTasks:_this.state.submissionTasks});
+                _this.props.update();
+            })
         });
+
     }
 
 
@@ -108,6 +157,10 @@ export default class StudentSubmissionSummary extends React.Component{
            </Table.Row>
        })
 
+        if(this.state.isDeleted){
+            return <div>Home page</div>
+        }
+
 
         return <Grid stackable>
             <Grid.Column>
@@ -116,6 +169,7 @@ export default class StudentSubmissionSummary extends React.Component{
                         <span><Header  textAlign={"center"} as={"h4"}>
                             <Input label={"Task-name"} size='small' icon={"pencil"} name={"task-name"}
                                    value={this.state["task-name"]}
+                                   disabled={this.state.specificSubmissions.length >0}
                                    onChange={(e)=> this.setState({"task-name":e.target.value})}/>
                         </Header>
                         </span>
@@ -137,19 +191,13 @@ export default class StudentSubmissionSummary extends React.Component{
                                             dateFormat="Pp"
                                         />
                                     </Form.Field>
-                                    <Form.Field inline>
-                                        <Label icon='lock open' content="Status"/>
-                                        <Select placeholder='Select the status'
-                                                name="status"
-                                                value={this.state.status}
-                                                options={[
-                                                    { key: 'hw1', text: 'Open', value: 'open' },
-                                                    { key: 'hw2', text: 'Closed', value: 'closed' },
-
-                                                ]} onChange={(e,data)=> this.setState({[data.name]: data.value})}/>
-                                    </Form.Field>
                                     <Button onClick={(e)=>this.handleEditTask(e)}>Save task details!</Button>
                                     <Button onClick={(e)=>this.handleDeleteTask(e)}> Delete task</Button>
+                                    <Confirm
+                                        open={this.state.open}
+                                        onCancel={this.handleCancel}
+                                        onConfirm={this.handleConfirm}
+                                    />
                                 </Form.Group>
 
                             </Segment>
@@ -174,6 +222,7 @@ export default class StudentSubmissionSummary extends React.Component{
                     </Grid.Column>
                     <Grid.Column width={12}>
                         {this.viewContent()}
+
                     </Grid.Column>
                         </Grid.Row>
                     </Grid>

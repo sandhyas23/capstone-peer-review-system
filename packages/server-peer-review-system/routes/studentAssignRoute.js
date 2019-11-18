@@ -120,15 +120,15 @@ router.put("/:taskName/", function(req, res) {
     submissionInfo["peer-review-for"] = taskName;
     //submissionInfo.submittedOn = new Date().toJSON();
 
-    let [error, message] = validateTask(submissionInfo);
-    if (error) {
-        res.status(400).json({ error: message });
-        return;
-    }
-    if (taskName !== submissionInfo["peer-review-for"]) {
-        res.status(400).json({ error: "peer-review-for and path don't match" });
-        return;
-    }
+    // let [error, message] = validateTask(submissionInfo);
+    // if (error) {
+    //     res.status(400).json({ error: message });
+    //     return;
+    // }
+    // if (taskName !== submissionInfo["peer-review-for"]) {
+    //     res.status(400).json({ error: "peer-review-for and path don't match" });
+    //     return;
+    // }
         // Uses an "upsert", i.e., allows both update and insert.
         studentAssignDb
             .update(

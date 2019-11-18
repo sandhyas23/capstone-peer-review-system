@@ -10,18 +10,13 @@ const reviewTaskDb = require("../models/reviewTaskModel");
 
 // You can add more task validations in this function.
 function validateTask(taskInfo) {
-    const allowedFields = ["peer-review-for", "due", "status","instructions","rubric"];
+    const allowedFields = ["peer-review-for", "due","instructions","rubric"];
     let error = false;
     let message = "";
     if (!taskInfo["peer-review-for"]) {
         // Required field
         error = true;
         message += "missing peer-review-for \n";
-    }
-    if (!taskInfo.status) {
-        // Required field
-        error = true;
-        message += "missing status \n";
     }
 
     return [error, message];
@@ -116,15 +111,15 @@ router.delete("/:taskName", function(req, res) {
 router.put("/:taskName", function(req, res) {
     let taskName = req.params.taskName;
     let reviewTaskInfo = req.body;
-    let [error, message] = validateTask(reviewTaskInfo);
-    if (error) {
-        res.status(400).json({ error: message });
-        return;
-    }
-    if (taskName !== reviewTaskInfo["peer-review-for"]) {
-        res.status(400).json({ error: "peer-review-for and path don't match" });
-        return;
-    }
+    // let [error, message] = validateTask(reviewTaskInfo);
+    // if (error) {
+    //     res.status(400).json({ error: message });
+    //     return;
+    // }
+    // if (taskName !== reviewTaskInfo["peer-review-for"]) {
+    //     res.status(400).json({ error: "peer-review-for and path don't match" });
+    //     return;
+    // }
     reviewTaskDb
         .update({ "peer-review-for": taskName }, reviewTaskInfo, { returnUpdatedDocs: true })
         .then(function(doc) {

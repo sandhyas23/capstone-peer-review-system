@@ -141,6 +141,23 @@ router.delete("/:taskName/student/:netId", function(req, res) {
         });
 });
 
+router.delete("/:taskName/", function(req, res) {
+    const taskName = req.params.taskName;
+    // console.log(taskName);
+    submissionsHwDb
+        .remove({ "assignment-name": taskName})
+        .then(function(num) {
+            if (num > 0) {
+                res.status(200).json({ success: true });
+            } else {
+                res.status(404).json({ error: "not found" });
+            }
+        })
+        .catch(function(err) {
+            res.status(500).json({ error: err });
+        });
+});
+
 // Put a specific task submission for a particular student
 // Access control: 1. student's ID must match their logon student ID.
 //                 2. can only update an "open" assignment.
@@ -153,16 +170,16 @@ router.put("/:taskName/student/:netId", function(req, res) {
     submissionInfo["netId"] = netId;
     //submissionInfo.submittedOn = new Date().toJSON();
 
-    validateSubmission(submissionInfo).then(function(errMessage) {
-        let [error, message] = errMessage;
-        if (error) {
-            res.status(400).json({ error: message });
-            return;
-        }
-        if (taskName !== submissionInfo["assignment-name"]) {
-            res.status(400).json({ error: "task-name and path don't match" });
-            return;
-        }
+    // validateSubmission(submissionInfo).then(function(errMessage) {
+    //     let [error, message] = errMessage;
+    //     if (error) {
+    //         res.status(400).json({ error: message });
+    //         return;
+    //     }
+    //     if (taskName !== submissionInfo["assignment-name"]) {
+    //         res.status(400).json({ error: "task-name and path don't match" });
+    //         return;
+    //     }
         // Uses an "upsert", i.e., allows both update and insert.
         submissionsHwDb
             .update(
@@ -179,6 +196,6 @@ router.put("/:taskName/student/:netId", function(req, res) {
                 }
             });
     });
-});
+// });
 
 module.exports = router;

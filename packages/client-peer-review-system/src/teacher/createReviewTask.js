@@ -35,14 +35,13 @@ export default class CreateReviewTask extends React.Component {
             instructions: "",
             selectedReview: "",
             dueDate: new Date(),
-            status: "open",
             rubricIds: [1],
             rubric: [],
             submissions:this.props.submissions,
             newAssignments:[],
             reviews:[],
             num:0,
-            studentAssignment:studentAssignment,
+            studentAssignment:[],
             isSubmitted:false
         }
 
@@ -67,7 +66,7 @@ export default class CreateReviewTask extends React.Component {
         //console.log("onchanges", data.name);
     }
 
-    handleChanges(e) {
+    handleChanges = async(e) => {
         const target = e.target;
         const value = target.value;
         const name = target.name;
@@ -78,42 +77,19 @@ export default class CreateReviewTask extends React.Component {
     }
 
     handleRubricChange(e,element,index){
-        const target = e.target;
-        const value = target.value;
-        const name = target.name;
+        this.handleChanges(e).then(()=> {
 
-        this.setState({
-            [name]: value
-        });
-
-        let newElement = this.state.rubric[index];
-        if(!newElement){
-            this.state.rubric.push({points:this.state[`point${element}`],
+            let rubric_task = {
                 "rubric-name":this.state[`rubric${element}`],
-                criteria:this.state[`criteria${element}`]});
-            this.setState({rubric:this.state.rubric});
-
-        }
-        else{
-            if(name === `point${element}`){
-                let tempArray = this.state.rubric;
-                tempArray[index]["points"] = value;
-                this.setState({rubric:tempArray});
-
+                "points":this.state[`point${element}`],
+                "criteria":this.state[`criteria${element}`],
             }
-            if(name === `rubric${element}`){
-                let tempArray = this.state.rubric;
-                tempArray[index]["rubric-name"] = value;
-                this.setState({rubric:tempArray});
+            this.state.rubric.splice(index, 1, rubric_task);
+            this.setState({
+                rubric: this.state.rubric,
+            });
 
-            }
-            if(name === `criteria${element}`){
-                let tempArray = this.state.rubric;
-                tempArray[index]["criteria"] = value;
-                this.setState({rubric:tempArray});
-
-            }
-        }
+        });
 
     }
 
@@ -121,12 +97,12 @@ export default class CreateReviewTask extends React.Component {
         const _this = this;
         this.assignTask(e,num).then(()=>{
             let submissionTask = {
-                type: this.state.selectedType, "task-name": this.state.selectedReview, status: this.state.status,
+                type: this.state.selectedType, "task-name": this.state.selectedReview,
                 due: this.state.dueDate.toISOString()
             };
             //console.log("submission task", submissionTask);
             let reviewTask = {
-                "peer-review-for": this.state.selectedReview, status: this.state.status,
+                "peer-review-for": this.state.selectedReview,
                 due: this.state.dueDate.toISOString(), rubric: this.state.rubric,
                 instructions:this.state.instructions
             };
@@ -147,7 +123,7 @@ export default class CreateReviewTask extends React.Component {
                         _this.state.submissionTasks.push(submissionTask);
                         _this.setState({
                             selectedType: "submission", instructions: "",
-                            selectedReview: "", dueDate: new Date(), status: "open",
+                            selectedReview: "", dueDate: new Date(),
                             submissionTasks:_this.state.submissionTasks,currentTask:submissionTask
                         });
                         _this.props.update();
@@ -168,7 +144,7 @@ export default class CreateReviewTask extends React.Component {
                         _this.state.studentAssignment.push(studentAssignments);
                         _this.setState({
                             selectedType: "review", instructions: "",
-                            dueDate: new Date(), status: "open",num:0,
+                            dueDate: new Date(),num:0,
                             reviewTasks:_this.state.reviewTasks,studentAssignment:_this.state.studentAssignment,
                             currentTask:reviewTask,
                             // selectedReview: "",isSubmitted:true,
@@ -213,6 +189,7 @@ export default class CreateReviewTask extends React.Component {
                         type='number' label='Points' placeholder='Points' width={6}
                         onChange={(e) => this.handleRubricChange(e,element,index)}
                         key={`point${element}`}
+                        min="1"
                         value={this.state[`point${element}`] || ""}/>
             <Form.Input name={`rubric${element}`}
                         label='rubric-name' placeholder='rubric-name'
@@ -438,8 +415,13 @@ Fixed assignment, with array shuffle
         //console.log("STATE",this.state);
         let options=[];
         const reviewTasksDisplayed = this.state.submissionTasks.filter((element)=>{
-            //console.log(element["task-name"]);
-            return element["status"] === "closed"
+            let taskDue = new Date(element["due"]).getTime();
+            let now = new Date().getTime();
+            const timeDifference = now-taskDue;
+            if(timeDifference >= 0) {
+                //console.log(element["task-name"]);
+                return element;
+            }
         });
         //console.log(reviewTasksDisplayed);
         if(reviewTasksDisplayed.length >0){
@@ -528,17 +510,6 @@ Fixed assignment, with array shuffle
                                                          />
                                                      </Form.Field>
                                                      <Form.Field inline>
-                                                         <label>Status</label>
-                                                         <Select placeholder='Select the status'
-                                                                 name="status"
-                                                                 value={this.state.status}
-                                                                 options={[
-                                                                     { key: 'hw1', text: 'Open', value: 'open' },
-                                                                     { key: 'hw2', text: 'Closed', value: 'closed' },
-
-                                                                 ]} onChange={(e,data)=>this.handleChange(e,data)}/>
-                                                     </Form.Field>
-                                                     <Form.Field inline>
                                                          <label>General Instructions</label>
                                                          <TextArea style={{ minHeight: 100, minWidth:200, maxHeight: 100, maxWidth:300,}}
                                                                    placeholder={"markdown instructions"}
@@ -557,6 +528,7 @@ Fixed assignment, with array shuffle
                                                          <Input name={`num`}
                                                                 type='number' label='num' placeholder='num' width={4}
                                                                 onChange={(e) => this.handleChanges(e)}
+                                                                min={1} max={10}
                                                                 value={this.state.num}/>
                                                      </Form.Field>
                                                      {this.display()}
@@ -565,7 +537,8 @@ Fixed assignment, with array shuffle
                                                      {/*</Button>*/}
                                                      <span>
                                 <Button type='submit' onClick={(e)=> this.handleSubmit(e,this.state.num)}
-                                        disabled={!this.state.selectedReview}>Submit</Button>
+                                        disabled={!this.state.selectedReview || !this.state.num ||
+                                        !this.state.instructions || !this.state.rubric }>Submit</Button>
                                 </span>
                                                  </div>
                                                  :
@@ -588,20 +561,9 @@ Fixed assignment, with array shuffle
                                                              dateFormat="Pp"
                                                          />
                                                      </Form.Field>
-                                                     <Form.Field inline>
-                                                         <label>Status</label>
-                                                         <Select placeholder='Select the status'
-                                                                 name="status"
-                                                                 value={this.state.status}
-                                                                 options={[
-                                                                     { key: 'open', text: 'Open', value: 'open' },
-                                                                     { key: 'closed', text: 'Closed', value: 'closed' },
-
-                                                                 ]} onChange={(e,data)=>this.handleChange(e,data)}/>
-                                                     </Form.Field>
-
                                                      <span>
-                                <Button type='submit' onClick={(e)=> this.handleSubmit(e)}>Submit</Button>
+                                <Button type='submit' onClick={(e)=> this.handleSubmit(e)}
+                                disabled={!this.state.selectedReview}>Submit</Button>
                                 </span>
 
                                                  </div>

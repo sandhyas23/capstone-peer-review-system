@@ -109,7 +109,7 @@ export default class TaskSubmit extends React.Component{
                 _this.setState({
                     submissions:_this.state.submissions
                 });
-                console.log("submitted",this.state.submissions);
+                //console.log("submitted",this.state.submissions);
                 //_this.props.update();
                 //event.preventDefault();
             });
@@ -143,21 +143,36 @@ export default class TaskSubmit extends React.Component{
 
 
     handleFile = async(e) => {
+
         let reader = new FileReader();
         let file = e.target.files[0];
-        reader.onloadend = async(e)=> {
-            // The file's text will be printed here
 
-            this.setState({content:e.target.result, fileName:file.name});
-            //console.log(this.state.content);
-        };
+        if (e.target.value.length !== 0) {
+            reader.onloadend = async (e) => {
+                // The file's text will be printed here
 
-        reader.readAsText(file);
+                this.setState({content: e.target.result, fileName: file.name});
+                //console.log(this.state.content);
+            };
+
+            reader.readAsText(file);
+        }
+        else{
+            this.setState({content: this.state.content, fileName: this.state.fileName});
+        }
     }
+
+    // handleFile(e) {
+    //     let reader = new FileReader();
+    //     reader.onload = function(e) {
+    //         this.setState({content:reader.result})
+    //     }
+    //     reader.readAsDataURL(e.target.files[0]);
+    // }
 
 
         render(){
-       // console.log("state", this.state);
+        console.log("state", this.state);
         let submissionStatus ="";
         let submittedDate ="";
         let taskSubmitted = this.state.submissions.find((task,index,array) => {
@@ -208,7 +223,7 @@ export default class TaskSubmit extends React.Component{
                             <Form.Field inline>
                                 <Label icon='lock open' content="Status"/>
 
-                                <Input readOnly style={{color:"green"}}>{this.state.currentTask["status"]}</Input>
+                                <Input readOnly style={{color:"green"}}>Open</Input>
                             </Form.Field>
                         </Form.Group>
                             <Form.Group centered={"true"} widths='equal'>
@@ -229,7 +244,8 @@ export default class TaskSubmit extends React.Component{
                                 </Form.Field>
                                 <Form.Field>
                                     <Label icon='code' content="Code Preview"/>
-                                    <Segment style={{overflow: 'auto',minHeight:330,maxHeight:330,maxWidth:600,minWidth:200 }} textAlign="left">
+                                    <Segment style={{overflow: 'auto',minHeight:330,maxHeight:330,maxWidth:600,minWidth:200 }}
+                                             textAlign="left">
                                             {rawHtml}
                                     </Segment>
 
@@ -240,7 +256,8 @@ export default class TaskSubmit extends React.Component{
                             />
 
                             <Button icon='file' content='Submit' type={"button"} color={"green"}
-                                     onClick={() =>this.handleSubmit()}/>
+                                     onClick={() =>this.handleSubmit()}
+                            disabled={this.state.content === "Upload a markdown file to view the submission"}/>
                         </Segment>
 
                     </Form>
