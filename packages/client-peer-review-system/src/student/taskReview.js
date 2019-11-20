@@ -61,42 +61,42 @@ export default class TaskReview extends React.Component{
 
 
 
-    static getDerivedStateFromProps(props,state){
-        if(props === state){
-            return null;
-        }
-        else {
-            let task = state.studentsReview.find((task ,index,array) =>{
-
-                return (task["task"] === props.currentTask["peer-review-for"] && task["netId"] === props.netId)
-            })
-            if(typeof task === "undefined"){
-                console.log("inside undefined");
-                //console.log("props",props ,"state",state);
-                return {
-                    currentTask: props.currentTask, "assignment-name": props.currentTask["peer-review-for"],
-                    content:"Click a review link to view the submission",totalQuestions:[],
-                    fileName:""
-                }
-            }
-            else{
-
-                console.log("inside found result");
-                return {
-                    currentTask: props.currentTask, "assignment-name": props.currentTask["peer-review-for"],
-
-                }
-            }
-        }
-
-    }
+    // static getDerivedStateFromProps(props,state){
+    //     if(props === state){
+    //         return null;
+    //     }
+    //     else {
+    //         let task = state.studentsReview.find((task ,index,array) =>{
+    //
+    //             return (task["task"] === props.currentTask["peer-review-for"] && task["netId"] === props.netId)
+    //         })
+    //         if(typeof task === "undefined"){
+    //             console.log("inside undefined");
+    //             //console.log("props",props ,"state",state);
+    //             return {
+    //                 currentTask: props.currentTask, "assignment-name": props.currentTask["peer-review-for"],
+    //                 content:"Click a review link to view the submission",totalQuestions:[],
+    //                 fileName:""
+    //             }
+    //         }
+    //         else{
+    //
+    //             console.log("inside found result");
+    //             return {
+    //                 currentTask: props.currentTask, "assignment-name": props.currentTask["peer-review-for"],
+    //
+    //             }
+    //         }
+    //     }
+    //
+    // }
     handleItemClick(event, review){
 
         let submission = this.state.submissions.find((element,index,array)=>{
             return element["assignment-name"] === this.state["assignment-name"] && element["netId"] === review;
         });
         let totalRubricsToReview = this.state.currentTask["rubric"];
-        console.log("content when clicked",submission["content"]);
+       // console.log("content when clicked",submission["content"]);
 
 
 
@@ -117,8 +117,13 @@ export default class TaskReview extends React.Component{
 
                 }
             });
+       // console.log("content when clicked",submission["content"]);
+        console.log("stateeeee before ",this.state.content, this.state.rubric);
+
             this.setState({rubric:this.state.rubric,reviewNo:review,totalRubricsToReview:totalRubricsToReview,
-                content:submission["content"]});
+                content: submission["content"]
+            });
+        console.log("stateeeee after ",this.state.content,this.state.rubric);
 
 
     }
@@ -190,7 +195,8 @@ export default class TaskReview extends React.Component{
            }).then(function (response) {
                _this.state.studentsReview.push(reviewTask);
                _this.setState({
-                   studentsReview:_this.state.studentsReview
+                   studentsReview:_this.state.studentsReview,
+                   [`submittedOn${_this.state.reviewNo}${_this.state.netId}`]: new Date()
                });
                alert("submitted task");
                console.log("submitted",_this.state.studentsReview);
@@ -198,8 +204,6 @@ export default class TaskReview extends React.Component{
                //event.preventDefault();
            });
 
-
-            alert("submitted task");
 
        }
        else {
@@ -224,7 +228,8 @@ export default class TaskReview extends React.Component{
                _this.state.studentsReview.splice(reviewToPost, 1,reviewTask);
                //_this.state.studentsReview.push(reviewTask);
                _this.setState({
-                   studentsReview: _this.state.studentsReview
+                   studentsReview: _this.state.studentsReview,
+                   [`submittedOn${_this.state.reviewNo}${_this.state.netId}`]: new Date()
                });
                console.log("submitted",_this.state.studentsReview);
                alert("submitted task");
@@ -236,6 +241,18 @@ export default class TaskReview extends React.Component{
     componentDidUpdate() {
         Prism.highlightAll();
 
+    }
+
+    viewContent(){
+        const markdownInstruction = this.state.content;
+        const rawHtml1 = <div id="rawHtml" className="language-html">
+            <ReactCommonmark source={markdownInstruction} />
+        </div>
+        return <Segment style={{overflow: 'auto',minHeight:330,maxHeight:330,maxWidth:500,minWidth:200 }}
+                        textAlign="left">
+
+            {rawHtml1}
+        </Segment>
     }
 
 
@@ -261,6 +278,7 @@ export default class TaskReview extends React.Component{
                  //console.log("printed this",count+1,"times");
                  return <Menu.Item
                      name={`Review${index}`}
+                     active={review === this.state.reviewNo}
                      as='a'
                      onClick={(event) => this.handleItemClick(event, review)}
                      key={`Review${review}${index}`}
@@ -272,10 +290,10 @@ export default class TaskReview extends React.Component{
          else{
              return "nothing to display"
          }
-        const markdownInstruction = this.state.content;
-        const rawHtml = <div id="rawHtml" className="language-html">
-            <ReactCommonmark source={markdownInstruction} />
-        </div>
+        // const markdownInstruction = this.state.content;
+        // const rawHtml1 = <div id="rawHtml" className="language-html">
+        //     <ReactCommonmark source={markdownInstruction} />
+        // </div>
 
         const generalInstructionmarkdown = this.state.currentTask["instructions"];
         const generalInstruction = <div id="rawHtml" className="language-html">
@@ -392,11 +410,7 @@ export default class TaskReview extends React.Component{
 
                         </Menu>
 
-                        <Segment style={{overflow: 'auto',minHeight:330,maxHeight:330,maxWidth:500,minWidth:200 }}
-                                 textAlign="left">
-
-                            {rawHtml}
-                        </Segment>
+                        {this.viewContent()}
 
                     </Grid.Column>
                         {/*enter review*/}
@@ -413,21 +427,36 @@ export default class TaskReview extends React.Component{
                             <Form>
                                {questionsToDisplay}
 
-                                <Button icon='file' content='Submit' type={"button"} color={"green"}
-                                        onClick={(event) =>this.handleSubmit(event)}
-                                        disabled={!this.state[`pointGiven${this.state.netId}${this.state.reviewNo}${this.state.rubricName}`]  ||
-                                        !this.state[`comment${this.state.netId}${this.state.reviewNo}${this.state.rubricName}`] }
-                              />
+                                {this.state.reviewNo ?  <Button icon='file' content='Submit' type={"button"} color={"green"}
+                                                                onClick={(event) =>this.handleSubmit(event)}
+                                                                disabled={!this.state[`pointGiven${this.state.netId}${this.state.reviewNo}${this.state.rubricName}`]  ||
+                                                                !this.state[`comment${this.state.netId}${this.state.reviewNo}${this.state.rubricName}`] }
+                                />
+                                :
+                                <div>Click on a review id to submit reviews</div>}
+
+
 
 
 
                             </Form>
                             &nbsp;
-                            <div>
-                            <Label ribbon icon='star' content={`Submitted :
+                            {this.state.reviewNo?
+                                this.state[`submittedOn${this.state.reviewNo}${this.state.netId}`]?
+                                <div>
+                                    <Label ribbon icon='star' content={`Submitted :
                              ${new Date(this.state[`submittedOn${this.state.reviewNo}${this.state.netId}`]).toLocaleString()}`}
-                                   color="blue"/>
-                            </div>
+                                           color="blue"/>
+                                </div>
+                                :
+                                    <div>
+                                        <Label ribbon icon='star' content={`Submitted : Not submitted`}
+                                               color="blue"/>
+                                    </div>
+                                    :
+                                <div></div>
+                            }
+
                         </Segment>
                     </Grid.Column>
                     </Grid>

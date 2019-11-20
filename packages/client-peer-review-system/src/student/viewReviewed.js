@@ -46,7 +46,7 @@ export default class ViewReviewed extends React.Component {
     }
 
     handleItemClick(event,review){
-        this.setState({rubric:review["review"]["rubric"]});
+        this.setState({rubric:review["review"]["rubric"], "reviewer-id":review});
     }
 
 
@@ -75,6 +75,7 @@ export default class ViewReviewed extends React.Component {
                     as='a'
                     onClick={(event) => this.handleItemClick(event, review)}
                     key={`Review${review}${index}`}
+                    active={review=== this.state["reviewer-id"]}
                 >
                     {`Review${index}`}
                 </Menu.Item>
@@ -165,7 +166,7 @@ export default class ViewReviewed extends React.Component {
 
                 <Header  textAlign={"center"} as={"h4"}>
                     <Icon name='code'/>
-                    Submit Review
+                    View Reviews for my assignments
                 </Header>
                 <span> <Modal className={"modal1"} trigger={<Button>View Rubrics</Button>}>
 

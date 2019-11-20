@@ -21,7 +21,8 @@ import TeacherView from "./teacherView";
 export default class StudentSubmissionSummary extends React.Component{
     constructor(props){
         super(props);
-        this.state = {specificSubmissions:props.specificSubmissions, currentSTask:props.currentSTask, content:"",
+        this.state = {specificSubmissions:props.specificSubmissions, currentSTask:props.currentSTask,
+            content:"Click on a student ID to view their submission",
         "task-name":props.currentSTask["task-name"],open:false,isDeleted:false,
         due:new Date(props.currentSTask["due"]),
         mode:props.mode,
@@ -34,7 +35,8 @@ export default class StudentSubmissionSummary extends React.Component{
             return null;
         }
         else{
-            return {currentSTask:props.currentSTask ,specificSubmissions:props.specificSubmissions, content:"",
+            return {currentSTask:props.currentSTask ,specificSubmissions:props.specificSubmissions,
+                content:"Click on a student ID to view their submission",
                 "task-name":props.currentSTask["task-name"],
                 due:new Date(props.currentSTask["due"])}
         }
@@ -60,7 +62,8 @@ export default class StudentSubmissionSummary extends React.Component{
         </div>
         return <Segment style={{overflow: 'auto',minHeight:500,maxHeight:330,maxWidth:1000,minWidth:200 }}>
             <Button onClick={(e)=>this.handleDeleteSubmission(e)}
-                disabled={this.state.content===""}>Delete submission</Button>
+                disabled={this.state.content==="Click on a student ID to view their submission"}>
+                Delete submission</Button>
             {rawHtml}
         </Segment>
     }
@@ -167,7 +170,7 @@ export default class StudentSubmissionSummary extends React.Component{
                 <Grid.Row>
                     <Segment style={{boxShadow:"none"}}>
                         <span><Header  textAlign={"center"} as={"h4"}>
-                            <Input label={"Task-name"} size='small' icon={"pencil"} name={"task-name"}
+                            <Input label={"Submission Task-name"} size='small' icon={"pencil"} name={"task-name"}
                                    value={this.state["task-name"]}
                                    disabled={this.state.specificSubmissions.length >0}
                                    onChange={(e)=> this.setState({"task-name":e.target.value})}/>

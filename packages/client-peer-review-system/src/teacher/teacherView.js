@@ -164,13 +164,19 @@ export default class TeacherView extends React.Component{
 
     render(){
         let createdTasks = this.state.submissionTasks.map((element,index,array)=>{
-            return <Dropdown.Item onClick={(e)=>this.handleSubmissionTaskClick(e,element)} key={`stasks${index}`} >
+            return <Dropdown.Item
+                onClick={(e)=>this.handleSubmissionTaskClick(e,element)}
+                key={`stasks${index}`}
+                active={element=== this.state.currentSubmissionTask }>
                 {element["task-name"]}
             </Dropdown.Item>
         });
 
         let createdReview = this.state.reviewTasks.map((element,index,array)=>{
-            return <Dropdown.Item onClick={(e)=>this.handleReviewTaskClick(e,element)} key={`rtasks${index}`} >
+            return <Dropdown.Item
+                onClick={(e)=>this.handleReviewTaskClick(e,element)}
+                key={`rtasks${index}`}
+                active={element=== this.state.currentReviewTask }>
                 {element["peer-review-for"]}
             </Dropdown.Item>
         });
@@ -210,12 +216,14 @@ export default class TeacherView extends React.Component{
                         <Menu fluid stackable>
 
                             <Dropdown item text='Submission tasks'>
-                                <Dropdown.Menu>
+                                <Dropdown.Menu
+                                active={this.state.mode=== "viewSubmissionSummary"}>
                                     {createdTasks}
                                 </Dropdown.Menu>
                             </Dropdown>
                             <Dropdown item text='Review tasks'>
-                                <Dropdown.Menu>
+                                <Dropdown.Menu
+                                    active={this.state.mode=== "viewReviewSummary"}>
                                     {createdReview}
                                 </Dropdown.Menu>
                             </Dropdown>
@@ -224,8 +232,9 @@ export default class TeacherView extends React.Component{
                                 as='a'
                                 position={"right"}
                                 onClick = {(event)=> this.handleCreateTaskClick(event)}
+                                active={this.state.mode=== "createTask"}>
 
-                            >Create task</Menu.Item>
+                            Create task</Menu.Item>
                         </Menu>
                        {/* <Menu fluid stackable >
                                 <Menu.Item header>Tasks created</Menu.Item>

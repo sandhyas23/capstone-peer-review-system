@@ -162,6 +162,7 @@ export default class StudentView extends React.Component{
                     name={task["task-name"]}
                     key = {`ostask${index}`}
                     onClick={(event) => this.handleOpenSubmissionItemClick(event,task)}
+                    active={task === this.state.currentTask}
                 >
                     <span>
                         <Icon name ="tag" />
@@ -182,6 +183,7 @@ export default class StudentView extends React.Component{
                     name={task["task-name"]}
                     key = {`cstask${index}`}
                     onClick={(event) => this.handleClosedSubmissionItemClick(event,task)}
+                    active={task === this.state.currentTask}
                 >
                     <span>
                         <Icon name ="tag" />
@@ -202,6 +204,7 @@ export default class StudentView extends React.Component{
                     name={task["peer-review-for"]}
                     key = {`ortask${index}`}
                     onClick={(event) => this.handleOpenReviewItemClick(event,task)}
+                    active={task === this.state.currentTask}
                 >
                     <span>
                         <Icon name ="tag" />
@@ -222,6 +225,7 @@ export default class StudentView extends React.Component{
                     name={task["peer-review-for"]}
                     key = {`crtask${index}`}
                     onClick={(event) => this.handleClosedReviewItemClick(event,task)}
+                    active={task === this.state.currentTask}
                 >
                     <span>
                         <Icon name ="tag" />
@@ -270,7 +274,7 @@ export default class StudentView extends React.Component{
             </Menu.Item>
 
             <Menu.Item>
-                <Icon name ="tasks"></Icon><Menu.Header>my Reviewed tasks</Menu.Header>
+                <Icon name ="tasks"></Icon><Menu.Header>View reviews for my assignments</Menu.Header>
 
                 <Menu.Menu>
                     {closedReviewTaskItems}

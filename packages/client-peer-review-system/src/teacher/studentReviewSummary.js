@@ -589,7 +589,10 @@ export default class StudentReviewSummary extends React.Component{
                                        disabled={this.state.specificReviews.length >0}
                                        onChange={(e)=> this.setState({"peer-review-for":e.target.value})}/>
                                        :
-                                this.state["peer-review-for"]
+
+                                <Input label={"peer-review-for"}
+                                       value={this.state["peer-review-for"]}
+                                readOnly/>
                             }
 
                         </Header>
