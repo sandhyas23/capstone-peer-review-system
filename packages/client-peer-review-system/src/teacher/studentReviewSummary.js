@@ -18,13 +18,13 @@ import DatePicker from "react-datepicker";
 export default class StudentReviewSummary extends React.Component{
     constructor(props){
         super(props);
-        this.state = {specificReviews:props.specificReviews, currentRTask:props.currentRTask ,content:"bbb",
+        this.state = {specificReviews:props.specificReviews, currentRTask:props.currentRTask ,content:"",
                       specSubmissions:props.specSubmissions, reviewDetails:[],reviewRubric:[],
             "peer-review-for":props.currentRTask["peer-review-for"],
             due:new Date(props.currentRTask["due"]), specAssignments:props.specAssignments,
             teacherRubrics:props.currentRTask["rubric"],
         open:false, reviewTasks:props.reviewTasks,isDeleted:false,isEdited:false,isTaskEdited:false,isSaved:false,
-        instructions:props.currentRTask["instructions"]}
+        instructions:props.currentRTask["instructions"], viewReviews:false}
 
     }
 
@@ -33,17 +33,49 @@ export default class StudentReviewSummary extends React.Component{
             return null;
         }
         else{
-            return {currentRTask:props.currentRTask ,specificReviews:props.specificReviews,
-                specSubmissions:props.specSubmissions
-                }
+            return {specificReviews:props.specificReviews, currentRTask:props.currentRTask ,
+                specSubmissions:props.specSubmissions,
+                "peer-review-for":props.currentRTask["peer-review-for"],
+                due:new Date(props.currentRTask["due"]), specAssignments:props.specAssignments,
+                teacherRubrics:props.currentRTask["rubric"],
+                open:false, reviewTasks:props.reviewTasks,isDeleted:false,isEdited:false,isTaskEdited:false,isSaved:false,
+                instructions:props.currentRTask["instructions"]}
         }
 
     }
-    componentDidUpdate() {
-       console.log("updated component");
+    componentDidUpdate(prevProps, prevState) {
+        console.log('Component did update!',);
+        // console.log("prevprops",prevProps);
+        // console.log("prevState",prevState);
+
+        if(prevState["peer-review-for"] !== this.state["peer-review-for"]){
+
+            let rubricsDisplay = this.state.currentRTask["rubric"].map((element, index, array) => {
+                //console.log("displayed for loop", index + 1, "times");
+
+                this.setState({
+                    [`point${index}`]: element["points"],
+                    [`rubric${index}`]: element["rubric-name"],
+                    [`criteria${index}`]: element["criteria"],
+                });
+            });
+
+            let reviewsDisplay = this.state.specificReviews.map((element,index,array)=>{
+                element["review"]["rubric"].map((item,ind,arr)=>{
+                    console.log("elementin update",element);
+                    this.setState({
+                        [`inputPoint${item["rubric-name"]}${element["submitter-id"]}${element["reviewer-id"]}`]: item["points-given"],
+                        [`inputComment${item["rubric-name"]}${element["submitter-id"]}${element["reviewer-id"]}`]: item["comments"]
+
+                    });
+                });
+            });
+        }
+
         Prism.highlightAll();
 
     }
+
     componentDidMount() {
         let rubricsDisplay = this.state.currentRTask["rubric"].map((element, index, array) => {
             //console.log("displayed for loop", index + 1, "times");
@@ -64,7 +96,7 @@ export default class StudentReviewSummary extends React.Component{
 
                 });
             });
-        })
+        });
 
         Prism.highlightAll();
     }
@@ -86,7 +118,7 @@ export default class StudentReviewSummary extends React.Component{
 
 
     handleItemClick(event,item){
-        //console.log("specific",this.state.specSubmissions);
+        console.log("clicked review item");
         let content = this.state.specSubmissions.find((element,index,array)=>{
             //console.log(element["assignment-name"]);
             return element["netId"] === item;
@@ -114,8 +146,7 @@ export default class StudentReviewSummary extends React.Component{
     }
 
     handleReviewClick(event,review){
-
-
+        console.log("clicked",review, review["review"]["rubric"]);
         this.setState({"reviewRubric": review["review"]["rubric"], "reviewer-id":review["reviewer-id"],
                      viewReviews:true
         });
@@ -407,13 +438,7 @@ export default class StudentReviewSummary extends React.Component{
                             {criteriaHighlighted}
                         </Segment>
 
-                    <Button basic icon size={"mini"} circular
-                            onClick={(e) => this.addRubrics(e)}
-                            disabled={!this.state[`point${index}`] ||
-                            !this.state[`rubric${index}`] ||
-                            !this.state[`criteria${index}`]}>
-                        <Icon name='add'/>
-                    </Button>
+
                     {/*<Button basic icon size={"mini"} circular*/}
                     {/*        onClick={(e) => this.deleteRubrics(e,element,index)}*/}
                     {/*        disabled={this.state.rubrics.length === 1}>*/}
@@ -507,6 +532,7 @@ export default class StudentReviewSummary extends React.Component{
 
 
              let something = this.state.reviewDetails.map((review,index,array)=> {
+                 console.log("getting printd");
 
                      return <Menu.Item
                          name={`ReviewDisplay${index}`}
@@ -584,9 +610,9 @@ export default class StudentReviewSummary extends React.Component{
                     <Segment style={{boxShadow:"none"}}>
                         <span><Header  textAlign={"center"} as={"h4"}>
                             {this.state.isTaskEdited ?
-                                <Input label={"peer-review-for"} size='small' icon={"pencil"} name={"peer-review-for"}
+                                <Input label={"peer-review-for"} size='small' icon={"tag"} name={"peer-review-for"}
                                        value={this.state["peer-review-for"]}
-                                       disabled={this.state.specificReviews.length >0}
+                                       readOnly
                                        onChange={(e)=> this.setState({"peer-review-for":e.target.value})}/>
                                        :
 
@@ -717,7 +743,6 @@ export default class StudentReviewSummary extends React.Component{
                     </Grid>
                 </Grid.Row>
             </Grid.Column>
-
         </Grid>
         </div>
 

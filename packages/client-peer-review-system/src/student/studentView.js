@@ -17,7 +17,7 @@ export default class StudentView extends React.Component{
     constructor(props){
         super(props);
         this.state = {submissionTasks:[] ,reviewTasks:[], mode:"", submissions:[], studentAssignment:[],
-        reviews:[]}
+        reviews:[], firstName:props.firstName , lastName:props.lastName}
 
     }
 
@@ -149,6 +149,8 @@ export default class StudentView extends React.Component{
                                submissions={this.state.submissions} reviews={this.state.reviews}/>
         }
     }
+
+
 
     render(){
 
@@ -294,11 +296,12 @@ export default class StudentView extends React.Component{
                 <Menu.Item
                     as='a'
                     position={"right"}
-                >{`Welcome, ${this.props.netId}`}</Menu.Item>
+                >{`Welcome, ${this.props.netId} ${this.props.firstName}${this.props.lastName}`}</Menu.Item>
                 <Menu.Item
                     as='a'
                     position={"right"}
                     margin-right={"150px"}
+                    onClick ={this.props.onlogoutClick}
                 >Logout</Menu.Item>
             </Container>
         </Menu>

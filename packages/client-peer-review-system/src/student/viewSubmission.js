@@ -15,13 +15,13 @@ export default class ViewSubmission extends React.Component{
     }
 
     static getDerivedStateFromProps(props,state){
-        if(props.currentTask == state.currentTask){
+        if(props.currentTask === state.currentTask){
             return null;
         }
         else{
             return {
                 currentTask: props.currentTask , submissions:props.submissions,
-                "assignment-name":props.currentTask["task-name"],
+                "assignment-name":props.currentTask["task-name"]
             }
         }
     }
@@ -37,7 +37,7 @@ export default class ViewSubmission extends React.Component{
     render(){
         let content="", fileName=""
         let mySubmission =  this.state.submissions.find((item,index,array)=>{
-            return item["netId"] == this.state.netId && item["assignment-name"]== this.state["assignment-name"]
+            return item["netId"] === this.state.netId && item["assignment-name"]=== this.state["assignment-name"]
         });
         if(typeof mySubmission !== "undefined"){
              content = mySubmission["content"];

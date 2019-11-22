@@ -1,5 +1,5 @@
 /*
-    ReviewTask related routes
+    StudentAssignment related routes
  */
 
 const express = require("express");
@@ -28,7 +28,7 @@ function validateTask(taskInfo) {
     return [error, message];
 }
 
-// Used to create new tasks
+// Used to create new student assignments for all tasks
 router.post("/",  function(req, res) {
     let reviewTaskInfo = req.body; // This should be a JS Object
     let [error, message] = validateTask(reviewTaskInfo);
@@ -66,7 +66,7 @@ router.post("/",  function(req, res) {
         });
 });
 
-// Get all the tasks
+// Get all the student assignments
 router.get("/", function(req, res) {
     studentAssignDb
         .find({})
@@ -79,7 +79,7 @@ router.get("/", function(req, res) {
         });
 });
 
-// Get a specific task
+// Get student assignment for a specific review task
 router.get("/:taskName", function(req, res) {
     studentAssignDb
         .findOne({ "peer-review-for": req.params.taskName })
@@ -96,6 +96,7 @@ router.get("/:taskName", function(req, res) {
         });
 });
 
+//Delete student assignment for specific review task
 router.delete("/:taskName", function(req, res) {
     let taskName = req.params.taskName;
     // console.log(taskName);
@@ -113,23 +114,12 @@ router.delete("/:taskName", function(req, res) {
         });
 });
 
-// Used to update a task
+
+// Used to update student assignments for specific task
 router.put("/:taskName/", function(req, res) {
     const taskName = req.params.taskName;
     let submissionInfo = req.body;
     submissionInfo["peer-review-for"] = taskName;
-    //submissionInfo.submittedOn = new Date().toJSON();
-
-    // let [error, message] = validateTask(submissionInfo);
-    // if (error) {
-    //     res.status(400).json({ error: message });
-    //     return;
-    // }
-    // if (taskName !== submissionInfo["peer-review-for"]) {
-    //     res.status(400).json({ error: "peer-review-for and path don't match" });
-    //     return;
-    // }
-        // Uses an "upsert", i.e., allows both update and insert.
         studentAssignDb
             .update(
                 { "peer-review-for": taskName},

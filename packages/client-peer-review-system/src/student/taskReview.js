@@ -12,18 +12,35 @@ import ReactCommonmark from "react-commonmark";
 export default class TaskReview extends React.Component{
     constructor(props){
         super(props);
-        this.state ={currentTask: this.props.currentTask , studentsReview:props.reviews, netId: this.props.netId,
+        this.state ={currentTask: this.props.currentTask , studentsReview:this.props.reviews, netId: this.props.netId,
             "assignment-name":this.props.currentTask["peer-review-for"],content:"Click a review link to view the submission",
             totalQuestions:[],
-            theInputKey: "", fileName:"",
-            reviewTasks:props.reviewTasks,
-            studentAssignment:props.studentAssignment,
-            submissions:props.submissions,
+            reviewTasks:this.props.reviewTasks,
+            studentAssignment:this.props.studentAssignment,
+            submissions:this.props.submissions,
             totalRubricsToReview:[],
             rubric:[],
             rubricName:""}
             //console.log(this.state);
     }
+
+    static getDerivedStateFromProps(props,state){
+        if(props === state){
+            return null;
+        }
+        else {
+                return {
+                    currentTask: props.currentTask, "assignment-name": props.currentTask["peer-review-for"],
+                    content:"Click a review link to view the submission",
+                    reviewTasks:props.reviewTasks,
+                    studentAssignment:props.studentAssignment,
+                    submissions:props.submissions,
+                }
+            }
+
+    }
+
+
     componentDidMount() {
 
         let _this = this;
@@ -59,37 +76,50 @@ export default class TaskReview extends React.Component{
         });
     }
 
+    componentDidUpdate(prevProps,prevState) {
+
+        if (prevState["assignment-name"] !== this.state["assignment-name"]) {
+
+            let _this = this;
+            fetch('/reviews/' + this.state["assignment-name"] + '/reviewer/' + this.state.netId, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }).then(response => response.json()).then(function (data) {
+
+                console.log("this is what we got in task submit" + data.reviews);
+                //_this.state.submissions.push(data.submission);
+                const reviewerReviews = data.reviews;
+                console.log("reviewerReviews", reviewerReviews);
+
+                let foundElements = reviewerReviews.map((element, index, array) => {
+                    _this.setState({rubric: element["review"]["rubric"]});
+                    return [element["review"]["rubric"].map((rubric, ind, arr) => {
+                        return _this.setState({
+                            [`pointGiven${element["reviewer-id"]}${element["submitter-id"]}${rubric["rubric-name"]}`]:
+                                rubric["points-given"],
+                            [`comment${element["reviewer-id"]}${element["submitter-id"]}${rubric["rubric-name"]}`]:
+                                rubric["comments"],
+
+                        })
+                    }), _this.setState({[`submittedOn${element["submitter-id"]}${element["reviewer-id"]}`]: element["submittedOn"]})]
+
+                    // _this.setState({"submissions":data.reviews});
+
+                });
+                Prism.highlightAll();
+            });
+
+        }
+    }
 
 
-    // static getDerivedStateFromProps(props,state){
-    //     if(props === state){
-    //         return null;
-    //     }
-    //     else {
-    //         let task = state.studentsReview.find((task ,index,array) =>{
-    //
-    //             return (task["task"] === props.currentTask["peer-review-for"] && task["netId"] === props.netId)
-    //         })
-    //         if(typeof task === "undefined"){
-    //             console.log("inside undefined");
-    //             //console.log("props",props ,"state",state);
-    //             return {
-    //                 currentTask: props.currentTask, "assignment-name": props.currentTask["peer-review-for"],
-    //                 content:"Click a review link to view the submission",totalQuestions:[],
-    //                 fileName:""
-    //             }
-    //         }
-    //         else{
-    //
-    //             console.log("inside found result");
-    //             return {
-    //                 currentTask: props.currentTask, "assignment-name": props.currentTask["peer-review-for"],
-    //
-    //             }
-    //         }
-    //     }
-    //
-    // }
+
+
+
+
     handleItemClick(event, review){
 
         let submission = this.state.submissions.find((element,index,array)=>{
@@ -238,10 +268,6 @@ export default class TaskReview extends React.Component{
 
        }
 
-    componentDidUpdate() {
-        Prism.highlightAll();
-
-    }
 
     viewContent(){
         const markdownInstruction = this.state.content;

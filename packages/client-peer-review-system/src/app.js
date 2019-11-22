@@ -28,28 +28,50 @@ export default class App extends React.Component {
     }
 
     login() {
-        //console.log(this.state.netId, this.state.password);
-        const userId = this.state.netId;
-        const userPwd = this.state.password;
+      const _this =this;
+        const loginDetails ={netId:this.state.netId,password:this.state.password}
+        fetch('/login',{
+            method:'POST',
+            headers:{
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body:JSON.stringify(loginDetails)
+        }).then(response => response.json())
+            .then(function(data) {
+                console.log (data);
 
-        const user = this.state.students.find((student, index, array) => {
-            return (student["netId"] === userId && student.password === userPwd)
-        });
-        //console.log(user.role);
-        if(typeof user ==="undefined"){
-            this.setState({netId: "" , password: "" ,message:"Invalid credentials"})
-        }
-        else{
-            if(user.role === "instructor"){
-                this.setState({role:"instructor"});
+                if(!data.netId || data.netId !== _this.state.netId ){
+                    _this.setState({netId: "" , password: "" ,message:data.message})
+                }
+                else {
+                    if(data.role === "instructor"){
+                        _this.setState({role:data.role,firstName:data.firstName,lastName:data.lastName});
+                    }
+                    else if(data.role === "student"){
+                        _this.setState({role:data.role,firstName:data.firstName,lastName:data.lastName});
+                    }
+                    else{
+                        _this.setState({ role:"none"});
+                    }
+                }
+
+            });
+    }
+
+    logout(){
+        console.log("clicked logout in app");
+        const _this = this;
+        fetch('/logout', {
+            method:"GET" ,
+            headers:{
+                'Content-Type': "application/json",
+                'Accept': 'application/json'
             }
-            else if(user.role === "student"){
-                this.setState({role:"student"});
-            }
-            else{
-                this.setState({ role:"none"});
-            }
-        }
+        }).then(function(response) {
+            console.log("logged out");
+            _this.setState({netId:"", password:"", role:"", message:""});
+        })
     }
 
 
@@ -97,12 +119,15 @@ export default class App extends React.Component {
 
         else if(this.state.role === "instructor"){
             return <TeacherView netId={this.state.netId} role={this.state.role}
-                                submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks}/>
+                                submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks}
+                                onlogoutClick={()=>this.logout()}/>
         }
 
         else if(this.state.role === "student"){
             return <StudentView netId={this.state.netId} role={this.state.role}
-                                submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks}/>
+                                submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks}
+                                onlogoutClick={()=>this.logout()} firstName={this.state.firstName} lastName={this.state.lastName}
+            />
         }
 
         else if(this.state.role === "none"){

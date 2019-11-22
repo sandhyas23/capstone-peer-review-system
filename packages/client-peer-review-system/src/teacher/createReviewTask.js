@@ -111,26 +111,36 @@ export default class CreateReviewTask extends React.Component {
                 "peer-review-for":this.state.selectedReview, studentsAssignment:this.state.newAssignments
             }
             if (this.state.selectedType === "submission") {
-
-                fetch('/submissionTask',{
-                    method: 'POST',
-                    headers:{
-                        "Content-type": "application/json"
-                    },
-                    body: JSON.stringify((submissionTask))
-                })
-                    .then(function(response){
-                        _this.state.submissionTasks.push(submissionTask);
-                        _this.setState({
-                            selectedType: "submission", instructions: "",
-                            selectedReview: "", dueDate: new Date(),
-                            submissionTasks:_this.state.submissionTasks,currentTask:submissionTask
-                        });
-                        _this.props.update();
-                        alert("submission task created successfully");
-                        console.log("submitted",_this.state.submissionTasks);
-                        //e.preventDefault();
+                let createdSubmissionTask = this.state.submissionTasks.find((element,index,array)=>{
+                    return element["task-name"] === this.state.selectedReview
+                });
+                if(typeof createdSubmissionTask === "undefined"){
+                    console.log("inside if");
+                    fetch('/submissionTask',{
+                        method: 'POST',
+                        headers:{
+                            "Content-type": "application/json"
+                        },
+                        body: JSON.stringify((submissionTask))
                     })
+                        .then(function(response){
+                            _this.state.submissionTasks.push(submissionTask);
+                            _this.setState({
+                                selectedType: "submission", instructions: "",
+                                selectedReview: "", dueDate: new Date(),
+                                submissionTasks:_this.state.submissionTasks,currentTask:submissionTask
+                            });
+                            _this.props.update();
+                            alert("submission task created successfully");
+                            console.log("submitted",_this.state.submissionTasks);
+                            //e.preventDefault();
+                        })
+                }
+                else{
+                    alert("Submission task already exists");
+                    this.setState({selectedReview:""});
+                }
+
             } else {
                 fetch('/reviewTask',{
                     method: 'POST',

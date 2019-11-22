@@ -10,6 +10,8 @@ const submissionsRouter =  require('./routes/submissions');
 const reviewTaskRouter = require('./routes/reviewtaskRoute');
 const reviewsRouter = require('./routes/reviewsRoute');
 const studentAssignRouter = require('./routes/studentAssignRoute');
+const loginRouter = require('./routes/login');
+const logoutRouter = require('./routes/logout');
 const app = express();
 
 app.use(logger('dev'));
@@ -25,5 +27,7 @@ app.use('/reviews',reviewsRouter);
 app.use('/studentAssignment',studentAssignRouter);
 app.use('/users', usersRouter);
 app.use('/',indexRouter);
+app.use('/login',loginRouter);
+app.use('/logout',logoutRouter);
 
 module.exports = app;

@@ -22,18 +22,17 @@ export default class TaskSubmit extends React.Component{
         if(props.currentTask === state.currentTask){
             return null;
         }
-
         else {
 
-            let cc = state.submissions.find((element,index,array)=>{
+            let studentSubmission = state.submissions.find((element,index,array)=>{
                 return element["assignment-name"] === props.currentTask["task-name"];
             });
-            console.log("cc",cc);
+            console.log("cc",studentSubmission);
 
-                if (typeof cc !== "undefined") {
+                if (typeof studentSubmission !== "undefined") {
 
-                    let content = cc.content;
-                    let fileName = cc.fileName;
+                    let content = studentSubmission.content;
+                    let fileName = studentSubmission.fileName;
                     //_this.setState({"submissions": _this.state.submissions, "content": content});
                     return {
                         currentTask: props.currentTask, "assignment-name": props.currentTask["task-name"],
@@ -41,12 +40,10 @@ export default class TaskSubmit extends React.Component{
                         fileName: fileName
                     }
                 } else {
-                    console.log("iiiiiiii");
-
                     return {
                         currentTask: props.currentTask, "assignment-name": props.currentTask["task-name"],
                         content: "Upload a markdown file to view the submission",
-                        fileName: ""
+                        fileName: "",theInputKey: ""
                     }
                 }
             }

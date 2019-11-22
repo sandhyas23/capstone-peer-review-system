@@ -1,5 +1,5 @@
 /*
-    Task related routes
+    Submission Task related routes
  */
 
 const express = require("express");
@@ -90,6 +90,7 @@ router.get("/:taskName", function(req, res) {
         });
 });
 
+//Delete a specific task
 router.delete("/:taskName", function(req, res) {
     let taskName = req.params.taskName;
     // console.log(taskName);

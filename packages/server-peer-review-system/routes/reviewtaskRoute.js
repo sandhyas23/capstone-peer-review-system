@@ -90,6 +90,7 @@ router.get("/:taskName", function(req, res) {
         });
 });
 
+//Delete a specific task
 router.delete("/:taskName", function(req, res) {
     let taskName = req.params.taskName;
     // console.log(taskName);
@@ -111,15 +112,6 @@ router.delete("/:taskName", function(req, res) {
 router.put("/:taskName", function(req, res) {
     let taskName = req.params.taskName;
     let reviewTaskInfo = req.body;
-    // let [error, message] = validateTask(reviewTaskInfo);
-    // if (error) {
-    //     res.status(400).json({ error: message });
-    //     return;
-    // }
-    // if (taskName !== reviewTaskInfo["peer-review-for"]) {
-    //     res.status(400).json({ error: "peer-review-for and path don't match" });
-    //     return;
-    // }
     reviewTaskDb
         .update({ "peer-review-for": taskName }, reviewTaskInfo, { returnUpdatedDocs: true })
         .then(function(doc) {

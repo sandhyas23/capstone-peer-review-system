@@ -1,5 +1,5 @@
 /*
-    Submission related routes
+    Reviews related routes
  */
 
 const express = require("express");
@@ -21,15 +21,7 @@ function validateSubmission(subInfo) {
     return reviewTaskDb
         .findOne({ "peer-review-for": subInfo["assignment-name"] })
         .then(function(task) {
-            if (task) {
-                // is the task open
-                // if (task.status !== "open") {
-                //     error = true;
-                //     message += `Task ${task["peer-review-for"]} is not open. \n`;
-                // }
-                // More synchronous checks on submission here if desired
-                return [error, message];
-            } else {
+         if(!task){
                 error = true;
                 message += `Task ${subInfo["peer-review-for"]} Not Found; \n`;
                 return [error, message];
@@ -87,6 +79,7 @@ router.get("/:taskName", function(req, res) {
         });
 });
 
+//Teacher interface to get all reviews
 router.get("/", function(req, res) {
     const taskName = req.params.taskName;
     reviewsDb
@@ -101,8 +94,7 @@ router.get("/", function(req, res) {
         });
 });
 
-// Student interface get all reviews for a particular student
-// Access control: a student can only see their own work
+// Student interface get all reviews reviewed by a particular student
 router.get("/reviewer/:reviewerId", function(req, res) {
     const reviewerId = req.params.reviewerId;
     reviewsDb
@@ -116,8 +108,8 @@ router.get("/reviewer/:reviewerId", function(req, res) {
         });
 });
 
-// Get reviews posted by a student
-// Access control: a student can only see their own work
+// Get reviews reviewed by a student for a specific task
+
 router.get("/:taskName/reviewer/:reviewerId", function(req, res) {
     const taskName = req.params.taskName;
     const reviewerId = req.params.reviewerId;
@@ -136,8 +128,8 @@ router.get("/:taskName/reviewer/:reviewerId", function(req, res) {
         });
 });
 
-// Get reviews that a particular student has received
-// Access control: a student can only see their own work
+// Get reviews for a task for a specific student
+
 router.get("/:taskName/submitter/:submitterId", function(req, res) {
     const taskName = req.params.taskName;
     const submitterId = req.params.submitterId;
@@ -178,6 +170,8 @@ router.delete("/:taskName/reviewer/:reviewerId/submitter/:submitterId", function
         });
 });
 
+// Delete all reviews for a task
+//Teacher interface
 router.delete("/:taskName", function(req, res) {
     const taskName = req.params.taskName;
     // console.log(taskName);
@@ -195,10 +189,9 @@ router.delete("/:taskName", function(req, res) {
         });
 });
 
-// Put a specific task submission for a particular student
+// Put a specific task review for a particular student
 // Access control: 1. student's ID must match their logon student ID.
-//                 2. can only update an "open" assignment.
-//
+
 router.put("/:taskName/reviewer/:reviewerId/submitter/:submitterId", function(req, res) {
     const taskName = req.params.taskName;
     const reviewerId = req.params.reviewerId;

@@ -10,7 +10,7 @@ export default class ViewReviewed extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentTask: this.props.currentTask, reviews: props.reviews, netId: this.props.netId,
+            currentTask: this.props.currentTask, reviews: this.props.reviews, netId: this.props.netId,
             "assignment-name": this.props.currentTask["peer-review-for"], content: "",
             theInputKey: "", fileName: "", rubric:[],
             submissions:props.submissions
@@ -19,14 +19,15 @@ export default class ViewReviewed extends React.Component {
     }
 
     static getDerivedStateFromProps(props,state){
-        if(props.currentTask == state.currentTask){
+        if(props.currentTask === state.currentTask){
             return null;
         }
         else{
             return {
                 currentTask: props.currentTask , reviews:props.reviews,
                 "assignment-name":props.currentTask["peer-review-for"],rubric:[],
-                submissions:props.submissions
+                submissions:props.submissions,
+                content: ""
             }
         }
     }
@@ -34,13 +35,10 @@ export default class ViewReviewed extends React.Component {
     componentDidUpdate() {
         Prism.highlightAll();
 
-
-
     }
 
     componentDidMount() {
         Prism.highlightAll();
-
 
 
     }
@@ -52,10 +50,13 @@ export default class ViewReviewed extends React.Component {
 
     render() {
         let mySubmission =  this.state.submissions.find((item,index,array)=>{
-            return item["netId"] == this.state.netId && item["assignment-name"]== this.state["assignment-name"]
+            return item["netId"] === this.state.netId && item["assignment-name"]=== this.state["assignment-name"]
         });
+        let content =""
 
-        const content = mySubmission["content"];
+        if(typeof mySubmission !== "undefined") {
+            const content = mySubmission["content"];
+        }
 
         let reviewsToPost;
         console.log("content in state", this.state);

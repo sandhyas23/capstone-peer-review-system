@@ -200,6 +200,7 @@ export default class TeacherView extends React.Component{
                         as='a'
                         position={"right"}
                         margin-right={"150px"}
+                        onClick ={this.props.onlogoutClick}
                     >Logout</Menu.Item>
 
             </Menu>
@@ -216,14 +217,12 @@ export default class TeacherView extends React.Component{
                         <Menu fluid stackable>
 
                             <Dropdown item text='Submission tasks'>
-                                <Dropdown.Menu
-                                active={this.state.mode=== "viewSubmissionSummary"}>
+                                <Dropdown.Menu>
                                     {createdTasks}
                                 </Dropdown.Menu>
                             </Dropdown>
                             <Dropdown item text='Review tasks'>
-                                <Dropdown.Menu
-                                    active={this.state.mode=== "viewReviewSummary"}>
+                                <Dropdown.Menu>
                                     {createdReview}
                                 </Dropdown.Menu>
                             </Dropdown>

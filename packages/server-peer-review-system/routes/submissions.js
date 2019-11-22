@@ -141,6 +141,7 @@ router.delete("/:taskName/student/:netId", function(req, res) {
         });
 });
 
+//Delete submissions for a taskname
 router.delete("/:taskName/", function(req, res) {
     const taskName = req.params.taskName;
     // console.log(taskName);
@@ -159,9 +160,7 @@ router.delete("/:taskName/", function(req, res) {
 });
 
 // Put a specific task submission for a particular student
-// Access control: 1. student's ID must match their logon student ID.
-//                 2. can only update an "open" assignment.
-//
+
 router.put("/:taskName/student/:netId", function(req, res) {
     const taskName = req.params.taskName;
     const netId = req.params.netId;
@@ -169,17 +168,6 @@ router.put("/:taskName/student/:netId", function(req, res) {
     submissionInfo["assignment-name"] = taskName;
     submissionInfo["netId"] = netId;
     //submissionInfo.submittedOn = new Date().toJSON();
-
-    // validateSubmission(submissionInfo).then(function(errMessage) {
-    //     let [error, message] = errMessage;
-    //     if (error) {
-    //         res.status(400).json({ error: message });
-    //         return;
-    //     }
-    //     if (taskName !== submissionInfo["assignment-name"]) {
-    //         res.status(400).json({ error: "task-name and path don't match" });
-    //         return;
-    //     }
         // Uses an "upsert", i.e., allows both update and insert.
         submissionsHwDb
             .update(
@@ -196,6 +184,6 @@ router.put("/:taskName/student/:netId", function(req, res) {
                 }
             });
     });
-// });
+
 
 module.exports = router;
