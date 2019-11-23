@@ -1,7 +1,10 @@
+/*This component is rendered when a student clicks a task to
+upload a submission for an assigment*/
+
 import React from 'react';
 import Prism from 'prismjs';
 import ReactCommonmark from 'react-commonmark';
-import submissions from '../data/submissionsHw';
+//import submissions from '../data/submissionsHw';
 import 'prismjs/themes/prism-coy.css';
 import {Grid,Segment,Header,Label,Icon,Form,Input,TextArea,Button} from "semantic-ui-react";
 
@@ -17,17 +20,19 @@ export default class TaskSubmit extends React.Component{
         //console.log(this.state.newTask);
     }
 
+    // called when a prop changed to return a new state
     static getDerivedStateFromProps(props, state){
         //console.log(props,state);
         if(props.currentTask === state.currentTask){
             return null;
         }
         else {
-
+           // find if the student has already submitted an assignment.
+            // Get the content and set the state
             let studentSubmission = state.submissions.find((element,index,array)=>{
                 return element["assignment-name"] === props.currentTask["task-name"];
             });
-            console.log("cc",studentSubmission);
+            //console.log("cc",studentSubmission);
 
                 if (typeof studentSubmission !== "undefined") {
 
@@ -54,6 +59,8 @@ export default class TaskSubmit extends React.Component{
         Prism.highlightAll();
 
     }
+
+    // Get the submissions of a particular student and set in state to display initially
     componentDidMount() {
         let _this = this;
         fetch('/submissions/student/'+this.state.netId,{
@@ -64,14 +71,15 @@ export default class TaskSubmit extends React.Component{
             }
         }).then(response => response.json()).then(function(data) {
 
-            let aa = data.submissions.find((element,index,array)=>{
+            let studentSubmission = data.submissions.find((element,index,array)=>{
                 return element["assignment-name"] === _this.state.currentTask["task-name"];
             })
 
-            console.log("this is what we got in task submit" +data.submissions);
+            //console.log("this is what we got in task submit" +data.submissions);
             //_this.state.submissions.push(data.submission);
-            if(typeof aa !== "undefined"){
-                _this.setState({"submissions": data.submissions,"content":aa["content"],"fileName":aa["fileName"]});
+            if(typeof studentSubmission !== "undefined"){
+                _this.setState({"submissions": data.submissions,"content":studentSubmission["content"],
+                    "fileName":studentSubmission["fileName"]});
 
             }
             else{
@@ -85,11 +93,13 @@ export default class TaskSubmit extends React.Component{
     }
 
 
+    // function to handle submit button when clicked
     handleSubmit(){
        const _this = this;
         const addTask = {"assignment-name":this.state["assignment-name"] , netId:this.state.netId,
             content:this.state.content, fileName:this.state.fileName, submittedOn:new Date().toISOString()};
 
+        // if already submitted, replace the submission
         let index = this.state.submissions.findIndex((task) => {
             return (task["assignment-name"] === this.state["assignment-name"] && task["netId"] === this.state.netId);
         });
@@ -112,6 +122,7 @@ export default class TaskSubmit extends React.Component{
             });
 
         }
+        // if not submiited, add a new submission
         else{
             fetch('/submissions/'+this.state["assignment-name"]+'/student/'+this.state.netId, {
                 method: 'PUT',
@@ -130,6 +141,7 @@ export default class TaskSubmit extends React.Component{
                 //event.preventDefault();
             });
         }
+        // reset the filename to null
         let randomString = Math.random().toString(36);
 
         this.setState({
@@ -138,7 +150,7 @@ export default class TaskSubmit extends React.Component{
        //console.log(this.state.submissions);
     }
 
-
+// handle the upload button when clicked. Read the markdown file and save it in the state
     handleFile = async(e) => {
 
         let reader = new FileReader();
@@ -159,17 +171,12 @@ export default class TaskSubmit extends React.Component{
         }
     }
 
-    // handleFile(e) {
-    //     let reader = new FileReader();
-    //     reader.onload = function(e) {
-    //         this.setState({content:reader.result})
-    //     }
-    //     reader.readAsDataURL(e.target.files[0]);
-    // }
 
 
         render(){
-        console.log("state", this.state);
+        //console.log("state", this.state);
+
+        // Get the submission time
         let submissionStatus ="";
         let submittedDate ="";
         let taskSubmitted = this.state.submissions.find((task,index,array) => {
@@ -183,6 +190,7 @@ export default class TaskSubmit extends React.Component{
              submittedDate = new Date(taskSubmitted["submittedOn"]).toLocaleString();
         }
 
+        // Convert the markdown submission to highlighted syntax to display preview
         const markdownInstruction = this.state.content;
         const rawHtml = <div id="rawHtml" className="language-html">
             <ReactCommonmark source={markdownInstruction} />
@@ -190,6 +198,7 @@ export default class TaskSubmit extends React.Component{
 
 
         //console.log("rawhtml",rawHtml);
+            // Display details in page grid view
         return<Grid.Row>
            <Grid.Column computer={14}>
             <Grid.Row>
@@ -235,7 +244,7 @@ export default class TaskSubmit extends React.Component{
                                     <TextArea readOnly style={{ minHeight: 300, minWidth:200, }}
                                               name={"content"}
                                               value={this.state.content}
-                                              onChange={(event)=> this.handleChange(event)}
+                                              // onChange={(event)=> this.handleChange(event)}
                                     />
                                     </Segment>
                                 </Form.Field>

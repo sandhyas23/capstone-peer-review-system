@@ -1,7 +1,11 @@
+/*This component is rendered when a student clicks on a review task that has been closed.
+Students can view feedback for their assignment.
+* Students can view reviews given by their peers for previous assignments */
+
 import React from 'react';
 import Prism from 'prismjs';
 import ReactCommonmark from 'react-commonmark';
-import submissions from '../data/submissionsHw';
+//import submissions from '../data/submissionsHw';
 import 'prismjs/themes/prism-coy.css';
 import {Grid, Segment, Header, Label, Icon, Form, Input, TextArea, Button, Modal, Menu, Table} from "semantic-ui-react";
 
@@ -18,6 +22,7 @@ export default class ViewReviewed extends React.Component {
         //console.log(this.state.newTask);
     }
 
+    // called when a prop changed to return a new state
     static getDerivedStateFromProps(props,state){
         if(props.currentTask === state.currentTask){
             return null;
@@ -34,21 +39,20 @@ export default class ViewReviewed extends React.Component {
 
     componentDidUpdate() {
         Prism.highlightAll();
-
     }
 
     componentDidMount() {
         Prism.highlightAll();
-
-
     }
 
+    //function to set the review details and reviewer id in state when a reviewer-id is clicked
     handleItemClick(event,review){
         this.setState({rubric:review["review"]["rubric"], "reviewer-id":review});
     }
 
 
     render() {
+        //get my submission
         let mySubmission =  this.state.submissions.find((item,index,array)=>{
             return item["netId"] === this.state.netId && item["assignment-name"]=== this.state["assignment-name"]
         });
@@ -58,6 +62,8 @@ export default class ViewReviewed extends React.Component {
             const content = mySubmission["content"];
         }
 
+
+        // get the number of reviewers for a particular submitter
         let reviewsToPost;
         console.log("content in state", this.state);
 
@@ -65,9 +71,9 @@ export default class ViewReviewed extends React.Component {
             return review["assignment-name"] === this.state["assignment-name"] &&
                 review["submitter-id"] === this.state.netId;
         });
-        console.log("aaaa",currentReview);
+        //console.log("aaaa",currentReview);
 
-
+            // display all the reviewers in a menu without displaying the reviewer id or name
             reviewsToPost = currentReview.map((review, index, array) => {
 
                 //console.log("printed this",count+1,"times");
@@ -82,12 +88,14 @@ export default class ViewReviewed extends React.Component {
                 </Menu.Item>
             });
 
-
+        // display the submission content with syntax highlighting
         const markdownInstruction = content;
         const rawHtml = <div id="rawHtml" className="language-html">
             <ReactCommonmark source={markdownInstruction} />
         </div>
 
+
+        // Display the review details in a table for each review
         let data = this.state.rubric.map((item,index,array)=>{
             const comment = item["comments"];
             const rawHtml1 = <div id="rawHtml" className="language-html">
@@ -109,11 +117,13 @@ export default class ViewReviewed extends React.Component {
             </Table.Row>
         });
 
+        // Display the ngeneral instruction in rubrics to follow
         const generalInstructionmarkdown = this.state.currentTask["instructions"];
         const generalInstruction = <div id="rawHtml" className="language-html">
             <ReactCommonmark source={generalInstructionmarkdown} />
         </div>
 
+        //Display all other rubrics to follow details in table
         let tableBody = this.state.currentTask["rubric"].map((item,index,array)=>{
             const markdownInstruction = item["criteria"];
             const rawHtml = <div id="rawHtml" className="language-html">
@@ -128,19 +138,15 @@ export default class ViewReviewed extends React.Component {
 
 
         return  <Grid  stackable>
-
             <Grid.Column>
                 {/*Row for task name*/}
                 <Grid.Row>
-
                     <Segment style={{boxShadow:"none"}}>
-
                             <span><Header  textAlign={"center"} as={"h4"}>
                                 <Icon name='tag'/>
                                 {this.state.currentTask["peer-review-for"]}
                             </Header>
                             </span>
-
                     </Segment>
 
                 </Grid.Row>
@@ -156,7 +162,6 @@ export default class ViewReviewed extends React.Component {
                                 </Form.Field>
                                 <Form.Field inline>
                                     <Label icon='lock open' content="Status"/>
-
                                     <Input readOnly style={{color:"red"}}>Closed</Input>
                                 </Form.Field>
                             </Form.Group>
@@ -169,11 +174,11 @@ export default class ViewReviewed extends React.Component {
                     <Icon name='code'/>
                     View Reviews for my assignments
                 </Header>
-                <span> <Modal className={"modal1"} trigger={<Button>View Rubrics</Button>}>
 
+                {/*Display all rubrics to follow in modal*/}
+                <span> <Modal className={"modal1"} trigger={<Button>View Rubrics</Button>}>
                     <Modal.Header>Rubrics</Modal.Header>
                     <Modal.Content  scrolling>
-
                         <Modal.Description>
                             <Header>Rubrics for {this.state.currentTask["peer-review-for"]}</Header>
                             <div>
@@ -191,10 +196,8 @@ export default class ViewReviewed extends React.Component {
                                     {tableBody}
                                 </Table.Body>
                             </Table>
-
                         </Modal.Description>
                     </Modal.Content>
-
                 </Modal>
                     </span>
 
@@ -204,10 +207,9 @@ export default class ViewReviewed extends React.Component {
                     <Grid celled>
                         {/*View sample code*/}
                         <Grid.Column width={8}>
-
+                            {/*Display the reviewers that have posted reviews for the submitter*/}
                             <Menu pointing secondary>
                                 {reviewsToPost}
-
                             </Menu>
                             <hr/>
                             <Table>
@@ -220,28 +222,23 @@ export default class ViewReviewed extends React.Component {
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
+                                    {/*Display the review details(points and comments) in a table*/}
                                     {data}
                                 </Table.Body>
                             </Table>
-
-
-
 
                         </Grid.Column>
                         {/*enter review*/}
                         <Grid.Column width={8}>
 
-
-
+                            {/*Display the submission content of the submitter*/}
                             <Segment style={{overflow: 'auto',minHeight:330,maxHeight:330,maxWidth:500,minWidth:200 }}
                                      textAlign="left">
-
                                 {rawHtml}
                             </Segment>
                         </Grid.Column>
                     </Grid>
                 </Grid.Row>
-
 
             </Grid.Column>
         </Grid>

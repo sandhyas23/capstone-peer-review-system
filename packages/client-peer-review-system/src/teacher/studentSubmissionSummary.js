@@ -1,3 +1,6 @@
+/*This view is rendered when teacher clicks on a task under submission tasks.
+* Teacher can view all submissions posted by each student for a task and can delete any inappropriate submissions.
+* Teacher can also task details like due date*/
 import React from 'react';
 import {
     Icon,
@@ -14,7 +17,6 @@ import 'prismjs/themes/prism-coy.css';
 import Prism from "prismjs";
 import ReactCommonmark from "react-commonmark";
 import DatePicker from "react-datepicker";
-import TeacherView from "./teacherView";
 
 
 
@@ -30,6 +32,7 @@ export default class StudentSubmissionSummary extends React.Component{
 
     }
 
+    //When a props is changed, a new state is returned
     static getDerivedStateFromProps(props,state){
         if(props.currentSTask === state.currentSTask){
             return null;
@@ -47,14 +50,16 @@ export default class StudentSubmissionSummary extends React.Component{
 
     }
     componentDidMount() {
-
         Prism.highlightAll();
     }
 
+    // function to set the state with the submission of each student when a student id is clicked
     handleClick(event,item){
         //console.log(item["content"]);
         this.setState({content:item["content"], "student-id":item["netId"]});
     }
+
+    // function to display the content of submission of each student with syntax highlighting
     viewContent(){
         const markdownInstruction = this.state.content;
         const rawHtml = <div id="rawHtml" className="language-html">
@@ -68,6 +73,7 @@ export default class StudentSubmissionSummary extends React.Component{
         </Segment>
     }
 
+    // function to handle delete submission button when clicked by instructor
     handleDeleteSubmission(e)
     {
         // let nextStudent="";
@@ -91,6 +97,7 @@ export default class StudentSubmissionSummary extends React.Component{
         })
     }
 
+    // function to handle the edit task button
     handleEditTask(e){
         const _this= this;
         let submissionTask = {
@@ -109,21 +116,23 @@ export default class StudentSubmissionSummary extends React.Component{
         })
     }
 
-    // show = async () => this.setState({ open: true })
 
+    // function to handle the delete task. Displays a confirm dialog box with cancel and yes buttons
     handleDeleteTask(){
         this.setState({ open: true })
     }
-
+   // function to handle cancel button in the delete confirm dialog box
     handleCancel =() =>{
         this.setState({open:false})
     }
 
+    // function to handle yes button in the delete conform dialog box
     handleConfirm = ()=>{
         let taskIndex = this.state.submissionTasks.findIndex((item,index,arry)=>{
             return item["task-name"] === this.state["task-name"];
         });
         const _this= this;
+        // Deleted the submission task
         fetch('/submissionTask/'+this.state.currentSTask["task-name"], {
             method: 'DELETE',
             headers: {
@@ -134,6 +143,7 @@ export default class StudentSubmissionSummary extends React.Component{
             _this.props.update();
 
         }).then(()=>{
+            // Deleted the submissions from the deleted submission task
             fetch('/submissions/'+this.state.currentSTask["task-name"], {
                 method: 'DELETE',
                 headers: {
@@ -150,8 +160,10 @@ export default class StudentSubmissionSummary extends React.Component{
     }
 
 
-
+// function to render all details
     render(){
+
+        // function to display all student ids that have submitted the assignment
        let students = this.state.specificSubmissions.map((item,index,array)=>{
            return <Table.Row key={`row${item["netId"]}`}><Table.Cell key={`submission${item["netId"]}`}
            onClick={(event)=>this.handleClick(event,item)} active={this.state["student-id"] === item["netId"]}>
@@ -196,6 +208,7 @@ export default class StudentSubmissionSummary extends React.Component{
                                     </Form.Field>
                                     <Button onClick={(e)=>this.handleEditTask(e)}>Save task details!</Button>
                                     <Button onClick={(e)=>this.handleDeleteTask(e)}> Delete task</Button>
+                                    {/*Display the confirm dialog box for delete button*/}
                                     <Confirm
                                         open={this.state.open}
                                         onCancel={this.handleCancel}
@@ -212,6 +225,7 @@ export default class StudentSubmissionSummary extends React.Component{
                     <Grid>
                         <Grid.Row>
                     <Grid.Column width={4}>
+                        {/*Table that displays all submitter ids of an assignment*/}
                         <Table>
                             <Table.Header>
                                 <Table.Row>
@@ -219,13 +233,14 @@ export default class StudentSubmissionSummary extends React.Component{
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
+                                {/*Display all the students that have submitted the assignment*/}
                                 {students}
                             </Table.Body>
                         </Table>
                     </Grid.Column>
                     <Grid.Column width={12}>
+                        {/*Display the content submitted by each student*/}
                         {this.viewContent()}
-
                     </Grid.Column>
                         </Grid.Row>
                     </Grid>

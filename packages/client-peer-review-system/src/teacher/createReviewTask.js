@@ -1,3 +1,6 @@
+/* This view is rendered when teacher clicks on the create task button
+* */
+
 import React from 'react';
 import {
     Input,
@@ -18,8 +21,8 @@ import Prism from "prismjs";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
-import submissions from '../data/submissionsHw';
-import studentAssignment from '../data/studentAssignment';
+//import submissions from '../data/submissionsHw';
+//import studentAssignment from '../data/studentAssignment';
 import ViewTask from './viewTask';
 
 //import TaskReview from "./taskReview"
@@ -58,14 +61,15 @@ export default class CreateReviewTask extends React.Component {
     }
 
 
-
+   // function to handle dropdown values
     handleChange(e, data) {
         this.setState({
             [data.name]: data.value
         });
         //console.log("onchanges", data.name);
     }
-
+    
+    // function to handle input change
     handleChanges = async(e) => {
         const target = e.target;
         const value = target.value;
@@ -76,14 +80,17 @@ export default class CreateReviewTask extends React.Component {
         //console.log("onchanges", value);
     }
 
+    // function to handle when only  rubric input
     handleRubricChange(e,element,index){
+        // handle the input of rubric fields
         this.handleChanges(e).then(()=> {
-
+            // create object for each rubric
             let rubric_task = {
                 "rubric-name":this.state[`rubric${element}`],
                 "points":this.state[`point${element}`],
                 "criteria":this.state[`criteria${element}`],
             }
+            // Add each rubric into an array and set in state
             this.state.rubric.splice(index, 1, rubric_task);
             this.setState({
                 rubric: this.state.rubric,
@@ -93,8 +100,10 @@ export default class CreateReviewTask extends React.Component {
 
     }
 
+    //function to handle submit button 
     handleSubmit(e,num) {
         const _this = this;
+        // Assignment of students for review task before submit
         this.assignTask(e,num).then(()=>{
             let submissionTask = {
                 type: this.state.selectedType, "task-name": this.state.selectedReview,
@@ -110,6 +119,7 @@ export default class CreateReviewTask extends React.Component {
             let studentAssignments ={
                 "peer-review-for":this.state.selectedReview, studentsAssignment:this.state.newAssignments
             }
+            // When task type is submission
             if (this.state.selectedType === "submission") {
                 let createdSubmissionTask = this.state.submissionTasks.find((element,index,array)=>{
                     return element["task-name"] === this.state.selectedReview
@@ -131,7 +141,7 @@ export default class CreateReviewTask extends React.Component {
                                 submissionTasks:_this.state.submissionTasks,currentTask:submissionTask
                             });
                             _this.props.update();
-                            alert("submission task created successfully");
+                            alert("submission task created susubmitterIdessfully");
                             console.log("submitted",_this.state.submissionTasks);
                             //e.preventDefault();
                         })
@@ -140,8 +150,10 @@ export default class CreateReviewTask extends React.Component {
                     alert("Submission task already exists");
                     this.setState({selectedReview:""});
                 }
-
-            } else {
+            
+            } 
+            // if type of task is review, handle submit
+            else {
                 fetch('/reviewTask',{
                     method: 'POST',
                     headers:{
@@ -160,7 +172,7 @@ export default class CreateReviewTask extends React.Component {
                             // selectedReview: "",isSubmitted:true,
                         });
                         _this.props.update();
-                        alert("review task created successfully");
+                        alert("review task created susubmitterIdessfully");
                         console.log("review task",_this.state.reviewTasks);
                         //e.preventDefault();
                     });
@@ -169,12 +181,14 @@ export default class CreateReviewTask extends React.Component {
         });
 
     }
-
+    
+    // function to handle addition of new rubric
     addRubrics(e) {
         let lastElement = this.state.rubricIds[this.state.rubricIds.length-1];
         this.setState({rubricCount: this.state.rubricIds.push(lastElement + 1)});
     }
 
+    // function to handle deletion of a rubric
     deleteRubrics(e,element,index){
 
         console.log(element);
@@ -188,7 +202,8 @@ export default class CreateReviewTask extends React.Component {
         //console.log("deleted", this.state.rubricIds);
 
     }
-
+    
+    // function to handle the view of rubrics. Based on the number of rubrics in array, all rubrics are displayed
     displayRubrics() {
         let rubricsDisplay = this.state.rubricIds.map((element, index, array) => {
             console.log("displayed for loop", index + 1, "times");
@@ -229,15 +244,16 @@ export default class CreateReviewTask extends React.Component {
         return rubricsDisplay;
     }
 
-    assignTask = async(e,num) => {
+    // function to handle assignment of students 
+     assignTask = async(e,num) => {
         console.log("called first");
         /* Algorithm 4 for peer review assignment problem.
 
-Dr. Greg M. Bernstein
-October 30th, 2019
+        Dr. Greg M. Bernstein
+        October 30th, 2019
 
-Fixed assignment, with array shuffle
-*/
+        Fixed assignment, with array shuffle
+        */
         let currentSubmissions = this.state.submissions.filter((item,index,array)=>{
            return item["assignment-name"] === this.state.selectedReview;
         });
@@ -246,7 +262,7 @@ Fixed assignment, with array shuffle
         const numReviews = num;
         const length = currentSubmissions.length;
 
-// produce shuffled array
+        // produce shuffled array
         let ordering = [];
         for (let i=0; i < length; i++) {
             ordering[i] = i;
@@ -255,7 +271,7 @@ Fixed assignment, with array shuffle
         shuffle(ordering);
 
         //console.log(ordering);
-// Keep track of who is reviewing each students assignment
+        // Keep track of who is reviewing each students assignment
         let assignments = [];
         for (let i = 0; i < length; i++) {
             let submitterId = currentSubmissions[ordering[i]].netId;
@@ -263,7 +279,7 @@ Fixed assignment, with array shuffle
             assignments.push(assignInfo);
         }
 
-// Keep track of the assignments each student is reviewing
+        // Keep track of the assignments each student is reviewing
         let reviews = [];
         for (let i = 0; i < length; i++) {
             let reviewerID = currentSubmissions[ordering[i]].netId;
@@ -273,8 +289,8 @@ Fixed assignment, with array shuffle
 
         console.log("Starting Algorithm");
 
-// Fixed mapping of reviewers to assignments based on
-// a circular pass the papers around notion.
+        // Fixed mapping of reviewers to assignments based on
+        // a circular pass the papers around notion.
         for (let i = 0; i < length; i++) {
             let assignment = assignments[i];
             let increment = 1;
@@ -300,7 +316,7 @@ Fixed assignment, with array shuffle
         assignments.sort(sortFunc);
         reviews.sort(sortFunc);
 
-// Look at the results
+        // Look at the results
         let newAssignments =[];
         for (let i = 0; i < length; i++) {
             console.log(assignments[i]);
@@ -358,7 +374,7 @@ Fixed assignment, with array shuffle
     }
 
 
-
+    // Display how the students are assigned for peer-review
     display(){
         if(this.state.newAssignments.length > 0){
             //console.log(this.state.assignments);
@@ -368,18 +384,19 @@ Fixed assignment, with array shuffle
 
     displayAssignments(){
               //console.log("function called");
-                function bb(element){
-                    let cq = element["reviewers"].map((item,index,array)=>{
+        //function to display the reviewers for each student
+                function viewStudents(element){
+                    let reviewers = element["reviewers"].map((item,index,array)=>{
                         return <Table.Cell key={`cell2${index}`}>
                             {item}
                         </Table.Cell>
                     });
-                    return cq;
+                    return reviewers;
                 }
 
 
-
-            let cc = this.state.newAssignments.map((element,index,array)=>{
+             // Display all submitters for each task
+            let submitterId = this.state.newAssignments.map((element,index,array)=>{
                 return <Table.Row key={`row${index}`}>
                     <Table.Cell key={`cell${index}`}>
                         <Input transparent
@@ -388,12 +405,12 @@ Fixed assignment, with array shuffle
                         >{element["student"]}
                         </Input>
                     </Table.Cell>
-                    {bb(element)}
+                    {viewStudents(element)}
                 </Table.Row>
             });
 
 
-
+       // return all the details in a modal
         return  <Modal trigger={<Button >View assignments</Button>}>
             <Modal.Header>Rubrics</Modal.Header>
             <Modal.Content  scrolling>
@@ -411,7 +428,7 @@ Fixed assignment, with array shuffle
                         </Table.Header>
 
                         <Table.Body>
-                            {cc}
+                            {submitterId}
                         </Table.Body>
                     </Table>
 
@@ -424,6 +441,7 @@ Fixed assignment, with array shuffle
     render(){
         //console.log("STATE",this.state);
         let options=[];
+        // Get all closed submission tasks to display in a dropdown in create review task screen
         const reviewTasksDisplayed = this.state.submissionTasks.filter((element)=>{
             let taskDue = new Date(element["due"]).getTime();
             let now = new Date().getTime();
@@ -433,7 +451,8 @@ Fixed assignment, with array shuffle
                 return element;
             }
         });
-        //console.log(reviewTasksDisplayed);
+
+        // Check if  a review task has been created for the above filtered tasks, then remove them from the dropdown
         if(reviewTasksDisplayed.length >0){
             let len = reviewTasksDisplayed.length;
             for(let i=0;i< this.state.reviewTasks.length;i++){
@@ -448,20 +467,15 @@ Fixed assignment, with array shuffle
                    }
                 }
             }
-          let cc = reviewTasksDisplayed.map((element,index,array)=>{
-              options.push({key:`hw${index}${element["task-name"]}`,
-                  text:element["task-name"],
-                  value:element["task-name"] });
-          });
+          // let submitterId = reviewTasksDisplayed.map((element,index,array)=>{
+          //     options.push({key:`hw${index}${element["task-name"]}`,
+          //         text:element["task-name"],
+          //         value:element["task-name"] });
+          // });
         }
 
         //console.log("review tasks",options)
         const taskType = this.state.selectedType;
-
-        // const markdownInstruction = this.state.instructions;
-        // const rawHtml = <div id="rawHtml" className="language-html">
-        //     <ReactCommonmark source={markdownInstruction} />
-        // </div>
 
          if(this.state.isSubmitted === true){
              return <ViewTask createdTask={this.state.currentTask} type={this.state.selectedType}
@@ -469,8 +483,6 @@ Fixed assignment, with array shuffle
          }
          else{
              return<div>
-
-
                  <div style={{marginLeft:10,marginRight:10,  minWidth: 550, marginTop:50}}>
                      <Grid  stackable>
                          <Grid.Column>
@@ -498,7 +510,7 @@ Fixed assignment, with array shuffle
                                                  { key: 'review', text: 'Review', value: 'review' },
                                              ]} onChange={(e,data)=>this.handleChange(e,data)}/>
                                          </Form.Field>
-                                         {
+                                         {  /*Change display for screen if review or submission*/
                                              taskType === "review" ?
                                                  <div>
                                                      <Form.Field inline>
@@ -551,6 +563,7 @@ Fixed assignment, with array shuffle
                                         !this.state.instructions || !this.state.rubric }>Submit</Button>
                                 </span>
                                                  </div>
+                                                 /*Display for create submission task screen*/
                                                  :
                                                  <div>
                                                      <Form.Field inline>
@@ -575,12 +588,9 @@ Fixed assignment, with array shuffle
                                 <Button type='submit' onClick={(e)=> this.handleSubmit(e)}
                                 disabled={!this.state.selectedReview}>Submit</Button>
                                 </span>
-
                                                  </div>
 
                                          }
-
-
                                      </Form>
                                  </Segment>
 

@@ -1,3 +1,6 @@
+/* Basic view for students
+* This content is rendered when user is logged in as student*/
+
 import React from 'react';
 import TaskSubmit from "./taskSubmit";
 import {
@@ -21,6 +24,7 @@ export default class StudentView extends React.Component{
 
     }
 
+    // Get all tasks and submission details from database to display initially
     componentDidMount() {
         let _this = this;
         fetch('/submissionTask',{
@@ -97,30 +101,35 @@ export default class StudentView extends React.Component{
         Prism.highlightAll();
     }
 
+    // function to set state of current open submission task that is clicked
     handleOpenSubmissionItemClick(event, task){
        // console.log("taskclicked" +task["task-name"]);
         this.setState({mode:"submit", currentTask:task})
         //console.log("ccc",this.state.currentTask);
     }
 
+    // function to set state of current closed submission task that is clicked
     handleClosedSubmissionItemClick(event, task){
         // console.log("taskclicked" +task["task-name"]);
         this.setState({mode:"submitted", currentTask:task})
         //console.log("ccc",this.state.currentTask);
     }
 
+    // function to set state of current open review task that is clicked
     handleOpenReviewItemClick(event, task){
         //console.log("taskclicked" +task["task-name"]);
         this.setState({mode:"review", currentTask:task})
         //console.log("ddd",this.state.currentTask);
     }
 
+    // function to set state of current closed review task that is clicked
     handleClosedReviewItemClick(event, task){
         //console.log("taskclicked" +task["task-name"]);
         this.setState({mode:"reviewed", currentTask:task})
         //console.log("ddd",this.state.currentTask);
     }
 
+    // toggle between different views for student based on the task type clicked
     handleViewComponent(){
         const viewMode = this.state.mode;
         if(viewMode === "submit"){
@@ -153,7 +162,7 @@ export default class StudentView extends React.Component{
 
 
     render(){
-
+        // get all open submission tasks to display in the menu
         let openSubmissionTaskItems = this.state.submissionTasks.map((task , index , array) => {
             let taskDue = new Date(task["due"]).getTime();
             let now = new Date().getTime();
@@ -173,9 +182,9 @@ export default class StudentView extends React.Component{
                 </Menu.Item>
 
             }
-
-
         });
+
+        // get all closed submission tasks to display in the menu
         let closedSubmissionTaskItems = this.state.submissionTasks.map((task , index , array) => {
             let taskDue = new Date(task["due"]).getTime();
             let now = new Date().getTime();
@@ -196,6 +205,7 @@ export default class StudentView extends React.Component{
             }
         });
 
+        // get all open review tasks to display in the menu
         let openReviewTaskItems = this.state.reviewTasks.map((task , index , array) => {
             let taskDue = new Date(task["due"]).getTime();
             let now = new Date().getTime();
@@ -217,6 +227,7 @@ export default class StudentView extends React.Component{
             }
         });
 
+        // get all closed review tasks to display in the menu
         let closedReviewTaskItems = this.state.reviewTasks.map((task , index , array) => {
             let taskDue = new Date(task["due"]).getTime();
             let now = new Date().getTime();
@@ -237,6 +248,7 @@ export default class StudentView extends React.Component{
 
             }
         });
+
     return<div>
         <div>
         <Sidebar
@@ -251,6 +263,8 @@ export default class StudentView extends React.Component{
 
 
         >
+            {/*Sidebar with all task names*/}
+
             <Menu.Item>
                 <Icon name ="tasks"></Icon><Menu.Header>Tasks to submit</Menu.Header>
                 <Menu.Menu>
@@ -285,6 +299,8 @@ export default class StudentView extends React.Component{
             </Menu.Item>
 
         </Sidebar>
+
+            {/*Top fixed menu with user details and Logout button*/}
         </div>
         <Menu fixed='top' stackable inverted>
             <Container>
@@ -311,7 +327,7 @@ export default class StudentView extends React.Component{
         <Grid padded  stackable>
 
             <Grid.Column >
-
+           {/*toggle different between views for student based on task click*/}
             {this.handleViewComponent()}
 
                </Grid.Column>

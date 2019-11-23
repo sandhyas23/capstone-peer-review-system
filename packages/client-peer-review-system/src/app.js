@@ -1,3 +1,5 @@
+/*Main app  that renders the student or teacher view based on login*/
+
 import React from 'react';
 import {Button, Form,Grid,Header,Segment,Message} from 'semantic-ui-react'
 import students from './data/students.json';
@@ -5,7 +7,7 @@ import StudentView from './student/studentView';
 import TeacherView from './teacher/teacherView';
 import submissionTasks from './data/createdSubmissionTasks';
 import reviewTasks from './data/createdReviewTasks'
-import Prism from "prismjs";
+//import Prism from "prismjs";
 
 
 
@@ -17,6 +19,7 @@ export default class App extends React.Component {
         reviewTasks:reviewTasks};
     }
 
+    // function to handle change in input
     handleChange(event) {
         const target = event.target;
         const value = target.value;
@@ -26,7 +29,7 @@ export default class App extends React.Component {
         });
 
     }
-
+    // function to handle login button
     login() {
       const _this =this;
         const loginDetails ={netId:this.state.netId,password:this.state.password}
@@ -40,7 +43,7 @@ export default class App extends React.Component {
         }).then(response => response.json())
             .then(function(data) {
                 console.log (data);
-
+                // change role in state based on the user details
                 if(!data.netId || data.netId !== _this.state.netId ){
                     _this.setState({netId: "" , password: "" ,message:data.message})
                 }
@@ -58,7 +61,7 @@ export default class App extends React.Component {
 
             });
     }
-
+    // function to handle logout button
     logout(){
         console.log("clicked logout in app");
         const _this = this;
@@ -74,7 +77,7 @@ export default class App extends React.Component {
         })
     }
 
-
+    // Render the elements
     render() {
         if(this.state.role === "") {
             return <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
@@ -116,7 +119,7 @@ export default class App extends React.Component {
                 </Grid.Column>
             </Grid>
         }
-
+        // Display different components based on the role of user
         else if(this.state.role === "instructor"){
             return <TeacherView netId={this.state.netId} role={this.state.role}
                                 submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks}

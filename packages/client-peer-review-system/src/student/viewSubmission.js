@@ -1,7 +1,10 @@
+/*This component is rendered when a student clicks on a submission task that has been closed.
+* Students can view their submissions for previous assignments */
+
 import React from 'react';
 import Prism from 'prismjs';
 import ReactCommonmark from 'react-commonmark';
-import submissions from '../data/submissionsHw';
+//import submissions from '../data/submissionsHw';
 import 'prismjs/themes/prism-coy.css';
 import {Grid,Segment,Header,Label,Icon,Form,Input,TextArea,Button} from "semantic-ui-react";
 
@@ -14,6 +17,8 @@ export default class ViewSubmission extends React.Component{
         //console.log(this.state.newTask);
     }
 
+
+    // called when a prop changed to return a new state
     static getDerivedStateFromProps(props,state){
         if(props.currentTask === state.currentTask){
             return null;
@@ -25,16 +30,18 @@ export default class ViewSubmission extends React.Component{
             }
         }
     }
+
     componentDidUpdate() {
         Prism.highlightAll();
-
     }
+
     componentDidMount() {
         Prism.highlightAll();
     }
 
 
     render(){
+        // get all the submissions of the student for clciked task
         let content="", fileName=""
         let mySubmission =  this.state.submissions.find((item,index,array)=>{
             return item["netId"] === this.state.netId && item["assignment-name"]=== this.state["assignment-name"]
@@ -44,7 +51,7 @@ export default class ViewSubmission extends React.Component{
              fileName = mySubmission["fileName"];
         }
 
-
+        // get the submission status and time details
          let submissionStatus ="";
         let submittedDate ="";
         let taskSubmitted = this.state.submissions.find((task,index,array) => {
@@ -58,6 +65,7 @@ export default class ViewSubmission extends React.Component{
             submittedDate = new Date(taskSubmitted["submittedOn"]).toLocaleString();
         }
 
+        // Display the submission content as highlighted syntax
         const markdownInstruction = content;
         const rawHtml = <div id="rawHtml" className="language-html">
             <ReactCommonmark source={markdownInstruction} />
@@ -68,22 +76,17 @@ export default class ViewSubmission extends React.Component{
         return<Grid.Row>
             <Grid.Column computer={14}>
                 <Grid.Row>
-
                     <Segment style={{boxShadow:"none"}}>
-
                         <Label ribbon icon='star' content={`${submissionStatus} : ${submittedDate}`} color="blue"/>
                         <span><Header  textAlign={"center"} as={"h4"}>
                             <Icon name='tag'/>
                             {this.state.currentTask["task-name"]}
                         </Header>
                         </span>
-
                     </Segment>
-
                 </Grid.Row>
 
                 <Grid.Row >
-
                     <Grid.Column>
                         <Form centered={"true"}>
                             <Segment textAlign={"center"}>
@@ -105,28 +108,29 @@ export default class ViewSubmission extends React.Component{
                                             <Icon name={'file'}/>
                                             Filename : {fileName}
                                         </Label>
-                                        <Segment style={{overflow: 'auto',minHeight:330,maxHeight:330,maxWidth:600,minWidth:200 }} >
 
+                                        {/*Display the submission content in markdown format*/}
+                                        <Segment style={{overflow: 'auto',minHeight:330,maxHeight:330,maxWidth:600,minWidth:200 }} >
                                             <TextArea readOnly style={{ minHeight: 300, minWidth:200, }}
                                                       name={"content"}
                                                       value={content}
-                                                      onChange={(event)=> this.handleChange(event)}
+                                                      // onChange={(event)=> this.handleChange(event)}
                                             />
                                         </Segment>
                                     </Form.Field>
                                     <Form.Field>
+                                        {/*Display the highlighted submission content*/}
                                         <Label icon='code' content="Code Preview"/>
-                                        <Segment style={{overflow: 'auto',minHeight:330,maxHeight:330,maxWidth:600,minWidth:200 }} textAlign="left">
+                                        <Segment
+                                            style={{overflow: 'auto',minHeight:330,maxHeight:330,maxWidth:600,minWidth:200 }}
+                                            textAlign="left">
                                             {rawHtml}
                                         </Segment>
-
                                     </Form.Field>
                                 </Form.Group>
-
                             </Segment>
 
                         </Form>
-
                     </Grid.Column>
 
                 </Grid.Row>

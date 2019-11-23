@@ -1,3 +1,7 @@
+/*Basic view for teacher or instructor
+* This is rendered when a user is logged in as a teacher
+* */
+
 import React from 'react';
 import {
     Menu,
@@ -5,13 +9,13 @@ import {
     Dropdown,
 
 } from 'semantic-ui-react';
-import createdSubmissionTasks from '../data/createdSubmissionTasks';
-import createdReviewTasks from '../data/createdReviewTasks'
+//import createdSubmissionTasks from '../data/createdSubmissionTasks';
+//import createdReviewTasks from '../data/createdReviewTasks'
 import Prism from "prismjs";
 import CreateReviewTask from "./createReviewTask";
 import StudentSubmissionSummary from "./studentSubmissionSummary";
-import submissionsHW from '../data/submissionsHw';
-import reviews from '../data/reviewTasksStudents';
+//import submissionsHW from '../data/submissionsHw';
+//import reviews from '../data/reviewTasksStudents';
 import StudentReviewSummary from './studentReviewSummary';
 
 
@@ -28,6 +32,8 @@ export default class TeacherView extends React.Component{
         Prism.highlightAll();
 
     }
+
+    // Get all submission tasks, submissions, reviews and review tasks when component is mounted
     componentDidMount() {
         let _this = this;
         fetch('/submissionTask',{
@@ -106,7 +112,7 @@ export default class TeacherView extends React.Component{
     }
 
 
-
+    // Display different view components for teacher based on user click
     handleViewComponent(){
         if(this.state.mode === "createTask"){
             return <CreateReviewTask submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks}
@@ -133,7 +139,7 @@ export default class TeacherView extends React.Component{
         }
 
     }
-
+    // function to get submissions of submission task clicked and set in state
     handleSubmissionTaskClick(e,element){
         let specificSubmissions = this.state.submissions.filter((item,index,array)=>{
             return item["assignment-name"] === element["task-name"];
@@ -142,9 +148,12 @@ export default class TeacherView extends React.Component{
         this.setState({mode:"viewSubmissionSummary", currentSubmissionTask:element,specificSubmissions:specificSubmissions});
     }
 
+    // Change mode to createTask when create task button is clicked
     handleCreateTaskClick(event){
         this.setState({mode:"createTask"});
     }
+
+    // function to get reviews of review task clicked and set in state
     handleReviewTaskClick(e,element){
         let specificReviews = this.state.reviews.filter((item,index,array)=>{
             return item["assignment-name"] === element["peer-review-for"]
@@ -161,7 +170,7 @@ export default class TeacherView extends React.Component{
                             specSubmissions:specSubmissions, specAssignments:specAssignments});
     }
 
-
+    // Render all elements
     render(){
         let createdTasks = this.state.submissionTasks.map((element,index,array)=>{
             return <Dropdown.Item
@@ -181,7 +190,7 @@ export default class TeacherView extends React.Component{
             </Dropdown.Item>
         });
 
-
+       // Actual rendering of JSX elements
         return<div>
 <div>
 
@@ -235,21 +244,9 @@ export default class TeacherView extends React.Component{
 
                             Create task</Menu.Item>
                         </Menu>
-                       {/* <Menu fluid stackable >
-                                <Menu.Item header>Tasks created</Menu.Item>
-                                <Menu.Menu>
-                                    {createdTasks}
-                                </Menu.Menu>
-                                <Menu.Item
-                                    as='a'
-                                    position={"right"}
-                                    onClick = {(event)=> this.handleCreateTaskClick(event)}
-
-                                >Create task</Menu.Item>
-
-                        </Menu>*/}
                     </Grid.Row>
                     <Grid.Row>
+                        {/*Call function to change the view for teacher */}
                         {this.handleViewComponent()}
                     </Grid.Row>
                     </Grid.Column>

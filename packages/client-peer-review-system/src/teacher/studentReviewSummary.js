@@ -1,3 +1,6 @@
+/*This view is rendered when teacher clicks on a task under review tasks.
+* Teacher can view all reviews given for each student for a task and can edit any of the reviews given by their peers.
+* Teacher can also task details like due date, rubrics*/
 import React from 'react';
 import {
     Menu,
@@ -28,6 +31,7 @@ export default class StudentReviewSummary extends React.Component{
 
     }
 
+    //When a props is changed, a new state is returned
     static getDerivedStateFromProps(props,state){
         if(props === state){
             return null;
@@ -43,13 +47,15 @@ export default class StudentReviewSummary extends React.Component{
         }
 
     }
+    
     componentDidUpdate(prevProps, prevState) {
-        console.log('Component did update!',);
+        //console.log('Component did update!',);
         // console.log("prevprops",prevProps);
         // console.log("prevState",prevState);
 
+        // When another task is selected,  change the rubric details and review details in the state
         if(prevState["peer-review-for"] !== this.state["peer-review-for"]){
-
+            // set rubric details
             let rubricsDisplay = this.state.currentRTask["rubric"].map((element, index, array) => {
                 //console.log("displayed for loop", index + 1, "times");
 
@@ -59,7 +65,7 @@ export default class StudentReviewSummary extends React.Component{
                     [`criteria${index}`]: element["criteria"],
                 });
             });
-
+            // set review details of students
             let reviewsDisplay = this.state.specificReviews.map((element,index,array)=>{
                 element["review"]["rubric"].map((item,ind,arr)=>{
                     console.log("elementin update",element);
@@ -77,6 +83,7 @@ export default class StudentReviewSummary extends React.Component{
     }
 
     componentDidMount() {
+        // set the rubric details and review details in the state when the component is initially mounted
         let rubricsDisplay = this.state.currentRTask["rubric"].map((element, index, array) => {
             //console.log("displayed for loop", index + 1, "times");
 
@@ -100,23 +107,24 @@ export default class StudentReviewSummary extends React.Component{
 
         Prism.highlightAll();
     }
-
+    
+    // function to display the total points totalPoints for a student
     viewPoints(item){
 
-            let cc = this.state.specificReviews.filter((element ,index,array)=>{
+            let submitters = this.state.specificReviews.filter((element ,index,array)=>{
                 return element["submitter-id"] === item
             });
-            let ca = cc.map((element,index,array)=>{
+            let totalPoints = submitters.map((element,index,array)=>{
                 //console.log(element["total-points"]);
                 return <Table.Cell key={`review${element["reviewer-id"]}`}>
                     {element["review"]["total-points"]}
                 </Table.Cell>
             });
-            return ca;
+            return totalPoints;
         }
 
 
-
+    // function to get all reviewer details and submission content for each submitter and set in state
     handleItemClick(event,item){
         console.log("clicked review item");
         let content = this.state.specSubmissions.find((element,index,array)=>{
@@ -134,7 +142,8 @@ export default class StudentReviewSummary extends React.Component{
         this.setState({content:content["content"] , reviewDetails:reviewDetails,"student-id":item,
             viewReviews:false, "reviewer-id":""});
     }
-
+    
+    // function to display the submission content of each submitter
     viewContents(){
         const markdownInstruction = this.state.content;
         const rawHtml = <div id="rawHtml" className="language-html">
@@ -145,6 +154,7 @@ export default class StudentReviewSummary extends React.Component{
         </Segment>
     }
 
+    // function to set the state with the review points and comments for each submitter when a reviewer is clicked
     handleReviewClick(event,review){
         console.log("clicked",review, review["review"]["rubric"]);
         this.setState({"reviewRubric": review["review"]["rubric"], "reviewer-id":review["reviewer-id"],
@@ -153,6 +163,7 @@ export default class StudentReviewSummary extends React.Component{
 
     }
 
+    //  function to add a rubric for a review task
     addRubrics(e) {
         this.state.teacherRubrics.push({"points": "", "rubric-name": "",
             "criteria": ""});
@@ -160,9 +171,12 @@ export default class StudentReviewSummary extends React.Component{
         this.setState({teacherRubrics: this.state.teacherRubrics});
     }
 
+    // toggle the view when edit review button is clicked
     handleEditReviews(e){
         this.setState({isEdited:true});
     }
+    
+    // toggle the view when edit task button is clicked
     handleEditTaskDetails(e){
         this.setState({isTaskEdited:true});
     }
@@ -191,14 +205,17 @@ export default class StudentReviewSummary extends React.Component{
 
     //}
 
+    // function to handle when only  rubric input
     handleRubricChange(e,element,index) {
+        // handle the input of rubric fields
         this.handleEachChange(e).then(() => {
-
+            // create object for each rubric
             let rubric_task = {
                 "rubric-name": this.state[`rubric${index}`],
                 "points": this.state[`point${index}`],
                 "criteria": this.state[`criteria${index}`],
             }
+            // Add each rubric into an array and set in state
             this.state.teacherRubrics.splice(index, 1, rubric_task);
             this.setState({
                 teacherRubrics: this.state.teacherRubrics,
@@ -206,6 +223,7 @@ export default class StudentReviewSummary extends React.Component{
         });
     }
 
+    // function to edit the review task details
     handleEditTask(e){
         let taskIndex = this.state.reviewTasks.findIndex((item,index,arry)=>{
             return item["peer-review-for"] === this.state["peer-review-for"];
@@ -217,6 +235,7 @@ export default class StudentReviewSummary extends React.Component{
             instructions:this.state.instructions
         };
         let studentAssign =  this.state.specAssignments;
+        // Update the review task details
         fetch('/reviewTask/'+this.state.currentRTask["peer-review-for"], {
             method: 'PUT',
             headers: {
@@ -224,6 +243,7 @@ export default class StudentReviewSummary extends React.Component{
             },
             body: JSON.stringify(reviewTask)
         }).then(()=>{
+            // change task details in studentAssignment as well
             fetch('/studentAssignment/'+this.state.currentRTask["task-name"], {
                 method: 'PUT',
                 headers: {
@@ -232,26 +252,19 @@ export default class StudentReviewSummary extends React.Component{
                 body: JSON.stringify(studentAssign)
             }).then(function (response) {
                 console.log("inside this");
-                 //_this.state.reviewTasks.splice(taskIndex,1,reviewTask);
-                 //_this.setState({reviewTasks:_this.state.reviewTasks,isEdited:false});
                 _this.props.update();
             })
         }).then(function (response) {
-            //_this.state.submissions.push(addTask);
             _this.state.reviewTasks.splice(taskIndex,1,reviewTask);
             _this.setState({isTaskEdited:false,reviewTasks:_this.state.reviewTasks,});
-            // event.preventDefault();
         });
     }
 
+    // function to handle the input change
     handleEachChange = async(e,rubrics,index) =>{
-
         const target = e.target;
         const value = target.value;
         const name = target.name;
-        // console.log("event:",e, "target",target);
-
-
         this.setState({
             [name]:value
         });
@@ -259,9 +272,9 @@ export default class StudentReviewSummary extends React.Component{
 
     }
 
+    // function to edit a review posted by a student
     handleEditOneReview(e,item,index){
-
-
+        // function to handle input changes for review points and comment posted by a student
         this.handleEachChange(e).then(()=> {
 
             let rubric_task = {
@@ -278,23 +291,27 @@ export default class StudentReviewSummary extends React.Component{
 
     }
 
+    // function to handle save button when clicked
     handleSaveReviews(e){
         let totalPoints =0;
         this.state.reviewRubric.map((item,index,array)=>{
             return totalPoints +=  parseInt(item["points-given"]);
         });
 
+        // get index of the review that is edited
         let reviewIndex = this.state.specificReviews.findIndex((element)=>{
             return element["reviewer-id"] === this.state["reviewer-id"] && element["submitter-id"] === this.state["student-id"];
         })
 
         const _this= this;
+        
         let editedReviews = {
             "assignment-name": this.state["peer-review-for"], "reviewer-id": this.state["reviewer-id"],
             "submitter-id":this.state["student-id"],
             review:{"total-points":totalPoints, "general-comments":"", rubric:this.state.reviewRubric}
         };
-
+        
+        // Update the review details in the database
         fetch('/reviews/'+this.state["peer-review-for"]+'/reviewer/'+this.state["reviewer-id"]+'/submitter/'+this.state["student-id"]
             , {
                 method: 'PUT',
@@ -312,25 +329,24 @@ export default class StudentReviewSummary extends React.Component{
 
     }
 
-
-
-
+    // function to handle the delete task. Displays a confirm dialog box with cancel and yes buttons
     handleDeleteTask(){
-
         this.setState({ open: true })
 
     }
 
-
+// function to handle cancel button in the delete confirm dialog box
     handleCancel =() =>{
         this.setState({open:false})
     }
 
+    // function to handle yes button in the delete conform dialog box
     handleConfirm = ()=> {
         let taskIndex = this.state.reviewTasks.findIndex((item,index,arry)=>{
             return item["peer-review-for"] === this.state["peer-review-for"];
         });
         const _this= this;
+        //Delete task from database
         fetch('/ReviewTask/'+this.state.currentRTask["peer-review-for"], {
             method: 'DELETE',
             headers: {
@@ -342,12 +358,14 @@ export default class StudentReviewSummary extends React.Component{
             _this.props.update();
 
         }).then(()=> {
+            // Delete reviews after deleting the review task
             fetch('/reviews/' + this.state.currentRTask["task-name"], {
                 method: 'DELETE',
                 headers: {
                     "Content-type": "application/json"
                 }
             }).then(() => {
+                //Delete the student assignments for a review task after deleting the task
                 fetch('/studentAssignment/' + this.state.currentRTask["task-name"], {
                     method: 'DELETE',
                     headers: {
@@ -365,7 +383,7 @@ export default class StudentReviewSummary extends React.Component{
     }
 
 
-
+    // function to handle the view of rubrics. Based on the number of rubrics in array, all rubrics are displayed
     displayRubrics() {
         let rubricsDisplay = this.state.teacherRubrics.map((element, index, array) => {
             //console.log("displayed for loop", index + 1, "times");
@@ -377,6 +395,7 @@ export default class StudentReviewSummary extends React.Component{
 
             //return <div key={`index${element}`}>aaa</div>
             return <div key={`divvv${index}`}>
+                {/*toggle between edit task screen and task view screen*/}
                 {this.state.isTaskEdited ?
                   <Form.Group key={`group${index}`}>
                     <Label content={"Rubric"}/>
@@ -416,6 +435,7 @@ export default class StudentReviewSummary extends React.Component{
                     {/*    <Icon name='delete'/>*/}
                     {/*</Button>*/}
                 </Form.Group>
+                    /*display normal task view screen*/
             :
                  <Form.Group key={`group${index}`}>
                     <Label content={"Rubric"}/>
@@ -451,33 +471,34 @@ export default class StudentReviewSummary extends React.Component{
         return rubricsDisplay;
     }
 
-
+    // Display how the students are assigned for peer-review
     displayAssignments(){
         //console.log("function called");
-        function bb(element){
-            let cq = element["reviewers"].map((item,index,array)=>{
+        //function to display the reviewers for each student
+        function viewStudents(element){
+            let reviewers = element["reviewers"].map((item,index,array)=>{
                 return <Table.Cell key={`cell2${index}`}>
                     {item}
 
                 </Table.Cell>
 
             });
-            return cq;
+            return reviewers;
         }
 
 
-
-        let cc = this.state.specAssignments["studentsAssignment"].map((element,index,array)=>{
+        // Display all submitters for each task
+        let submitterId = this.state.specAssignments["studentsAssignment"].map((element,index,array)=>{
             return <Table.Row key={`row${index}`}>
                 <Table.Cell key={`cell${index}`}>
                   {element["student"]}
                 </Table.Cell>
-                {bb(element)}
+                {viewStudents(element)}
             </Table.Row>
         });
 
 
-
+        // return all the details in a modal
         return  <Modal trigger={<Button >View assignments</Button>}>
             <Modal.Header>Rubrics</Modal.Header>
             <Modal.Content  scrolling>
@@ -495,7 +516,7 @@ export default class StudentReviewSummary extends React.Component{
                         </Table.Header>
 
                         <Table.Body>
-                            {cc}
+                            {submitterId}
                         </Table.Body>
                     </Table>
 
@@ -518,7 +539,6 @@ export default class StudentReviewSummary extends React.Component{
 
         let newArray = Array.from(submittersSet);
         //console.log("newarray",newArray);
-
         let studentsSubmissions = newArray.map((item,index,array)=>{
             return <Table.Row key={`row${item}`}>
                 <Table.Cell key={`submission${item}`}
@@ -531,7 +551,7 @@ export default class StudentReviewSummary extends React.Component{
         });
 
 
-             let something = this.state.reviewDetails.map((review,index,array)=> {
+             let reviewerIds = this.state.reviewDetails.map((review,index,array)=> {
                  console.log("getting printd");
 
                      return <Menu.Item
@@ -546,15 +566,14 @@ export default class StudentReviewSummary extends React.Component{
 
 
              });
-
+             // convert markdown instructions to highlighted syntax
         const markdownInstruction = this.state.instructions;
         const highlightedInstruction = <div id="rawHtml" className="language-html">
             <ReactCommonmark source={markdownInstruction} />
         </div>
 
 
-
-
+        // Dsiplay all points and comments(review details ) of each review
          let data = this.state.reviewRubric.map((item,index,array)=>{
             const comment = item["comments"];
             const rawHtml1 = <div id="rawHtml" className="language-html">
@@ -569,6 +588,7 @@ export default class StudentReviewSummary extends React.Component{
                         {item["possible-points"]}
                     </Table.Cell>
                     <Table.Cell key={`pointsGiven${index}${item["rubric-name"]}`}>
+                        {/*toggle between edit view and normal view of reviews*/}
                         {this.state.isEdited ?
                             <input type="number"
                                    style={{width: "4em"}}
@@ -679,6 +699,7 @@ export default class StudentReviewSummary extends React.Component{
                                         disabled={!this.state.isTaskEdited}>Save task details!</Button>
                                 <Button onClick={(e)=>this.handleDeleteTask(e)}> Delete task</Button>
                                     {this.displayAssignments()}
+                                    {/*Display confirm dialog box when edit button is clicked*/}
                                 <Confirm
                                     open={this.state.open}
                                     onCancel={this.handleCancel}
@@ -702,6 +723,7 @@ export default class StudentReviewSummary extends React.Component{
                                         </Table.Row>
                                     </Table.Header>
                                     <Table.Body>
+                                        {/*Display all submitter ids for an assignment*/}
                                         {studentsSubmissions}
                                     </Table.Body>
                                 </Table>
@@ -710,10 +732,12 @@ export default class StudentReviewSummary extends React.Component{
                                 {this.viewContents()}
                             </Grid.Column>
                             <Grid.Column width={4}>
+                                {/*Display all reviewer ids for each submitter*/}
                                 <Segment style={{overflow: 'auto',minHeight:300,maxHeight:400,maxWidth:2000,minWidth:300 }}>
                                 <Menu pointing secondary>
-                                    {something}
+                                    {reviewerIds}
                                 </Menu>
+                                    {/*Display all review details for each review*/}
                                 {this.state.viewReviews === true ?
                                   <Table>
                                     <Table.Header>
@@ -725,6 +749,7 @@ export default class StudentReviewSummary extends React.Component{
                                     </Table.Row>
                                     </Table.Header>
                                     <Table.Body>
+                                        {/*Display all details of reviews*/}
                                     {data}
                                         <Button onClick={(e)=>this.handleEditReviews(e)}
                                         disabled={this.state.isEdited}>Edit this review</Button>
@@ -732,6 +757,7 @@ export default class StudentReviewSummary extends React.Component{
                                         disabled={!this.state.isEdited}>Save this review</Button>
                                     </Table.Body>
                                     </Table>
+                                    /*tif a reviewer id is not clicked, display this*/
                                     :
                                     <div>Click on a Reviewer id</div>
 
