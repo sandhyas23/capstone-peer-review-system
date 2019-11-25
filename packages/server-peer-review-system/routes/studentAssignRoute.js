@@ -100,7 +100,7 @@ router.get("/:taskName", function(req, res) {
 router.delete("/:taskName", function(req, res) {
     let taskName = req.params.taskName;
     // console.log(taskName);
-    reviewTaskDb
+    studentAssignDb
         .remove({ "peer-review-for": taskName })
         .then(function(num) {
             if (num > 0) {

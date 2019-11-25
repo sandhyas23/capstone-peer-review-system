@@ -203,16 +203,16 @@ router.put("/:taskName/reviewer/:reviewerId/submitter/:submitterId", function(re
     reviewInfo.submittedOn = new Date().toJSON();
     //submissionInfo.submittedOn = new Date().toJSON();
 
-    validateSubmission(reviewInfo).then(function(errMessage) {
-        let [error, message] = errMessage;
-        if (error) {
-            res.status(400).json({ error: message });
-            return;
-        }
-        if (taskName !== reviewInfo["assignment-name"]) {
-            res.status(400).json({ error: "task-name and path don't match" });
-            return;
-        }
+    // validateSubmission(reviewInfo).then(function(errMessage) {
+    //     let [error, message] = errMessage;
+    //     if (error) {
+    //         res.status(400).json({ error: message });
+    //         return;
+    //     }
+    //     if (taskName !== reviewInfo["assignment-name"]) {
+    //         res.status(400).json({ error: "task-name and path don't match" });
+    //         return;
+    //     }
         // Uses an "upsert", i.e., allows both update and insert.
         reviewsDb
             .update(
@@ -228,7 +228,7 @@ router.put("/:taskName/reviewer/:reviewerId/submitter/:submitterId", function(re
                     res.status(404).json({ error: "Task not found" });
                 }
             });
-    });
+   // });
 });
 
 module.exports = router;

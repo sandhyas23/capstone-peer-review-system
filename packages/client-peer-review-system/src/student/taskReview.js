@@ -127,9 +127,13 @@ export default class TaskReview extends React.Component{
     handleItemClick(event, review){
 
         // Get the submission content of a submitter to be reviewed
+        let content = "";
         let submission = this.state.submissions.find((element,index,array)=>{
             return element["assignment-name"] === this.state["assignment-name"] && element["netId"] === review;
         });
+        if(typeof submission !== "undefined"){
+            content = submission["content"];
+        }
         // get all rubrics to review for the clicked task
         let totalRubricsToReview = this.state.currentTask["rubric"];
        // console.log("content when clicked",submission["content"]);
@@ -158,7 +162,7 @@ export default class TaskReview extends React.Component{
 
         // update the rubrics , submitter id and the submission content to state
             this.setState({rubric:this.state.rubric,reviewNo:review,totalRubricsToReview:totalRubricsToReview,
-                content: submission["content"]
+                content: content
             });
         //console.log("state after ",this.state.content,this.state.rubric);
     }

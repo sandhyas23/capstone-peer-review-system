@@ -37,14 +37,14 @@ router.post('/', (req, res, next) => {
             // if cookie already exists, cookie not set, else set a cookie
             if(typeof req.cookies.user === "undefined"){
                 res.cookie("user", JSON.stringify(userJson));
-                res.json(userJson);
+                res.status(201).json(userJson);
             }
             else if(req.cookies.user === JSON.stringify(userJson)){
-                res.json(userJson);
+                res.status(201).json(userJson);
 
             }
             else{
-                res.json({message: `Another session for netId ${JSON.parse(req.cookies.user).netId} already loggedin. Logout first!`})
+                res.status(201).json({message: `Another session for netId ${JSON.parse(req.cookies.user).netId} already loggedin. Logout first!`})
             }
 
         }
