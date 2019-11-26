@@ -63,7 +63,7 @@ export default class TaskSubmit extends React.Component{
     // Get the submissions of a particular student and set in state to display initially
     componentDidMount() {
         let _this = this;
-        fetch('/submissions/student/'+this.state.netId,{
+        fetch('http://54.191.195.63:3000/submissions/student/'+this.state.netId,{
             method: "GET",
             headers : {
                 'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ export default class TaskSubmit extends React.Component{
         });
 
         if (index >= 0 ){
-            fetch('/submissions/'+this.state["assignment-name"]+'/student/'+this.state.netId, {
+            fetch('http://54.191.195.63:3000/submissions/'+this.state["assignment-name"]+'/student/'+this.state.netId, {
                 method: 'PUT',
                 headers: {
                     "Content-type": "application/json"
@@ -124,7 +124,7 @@ export default class TaskSubmit extends React.Component{
         }
         // if not submiited, add a new submission
         else{
-            fetch('/submissions/'+this.state["assignment-name"]+'/student/'+this.state.netId, {
+            fetch('http://54.191.195.63:3000/submissions/'+this.state["assignment-name"]+'/student/'+this.state.netId, {
                 method: 'PUT',
                 headers: {
                     "Content-type": "application/json"

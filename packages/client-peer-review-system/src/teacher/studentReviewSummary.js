@@ -240,7 +240,7 @@ export default class StudentReviewSummary extends React.Component{
         };
         let studentAssign =  this.state.specAssignments;
         // Update the review task details
-        fetch('/reviewTask/'+this.state.currentRTask["peer-review-for"], {
+        fetch('http://54.191.195.63:3000/reviewTask/'+this.state.currentRTask["peer-review-for"], {
             method: 'PUT',
             headers: {
                 "Content-type": "application/json"
@@ -248,7 +248,7 @@ export default class StudentReviewSummary extends React.Component{
             body: JSON.stringify(reviewTask)
         }).then(()=>{
             // change task details in studentAssignment as well
-            fetch('/studentAssignment/'+this.state.currentRTask["task-name"], {
+            fetch('http://54.191.195.63:3000/studentAssignment/'+this.state.currentRTask["task-name"], {
                 method: 'PUT',
                 headers: {
                     "Content-type": "application/json"
@@ -316,7 +316,7 @@ export default class StudentReviewSummary extends React.Component{
         };
         
         // Update the review details in the database
-        fetch('/reviews/'+this.state["peer-review-for"]+'/reviewer/'+this.state["reviewer-id"]+'/submitter/'+this.state["student-id"]
+        fetch('http://54.191.195.63:3000/reviews/'+this.state["peer-review-for"]+'/reviewer/'+this.state["reviewer-id"]+'/submitter/'+this.state["student-id"]
             , {
                 method: 'PUT',
                 headers: {
@@ -351,7 +351,7 @@ export default class StudentReviewSummary extends React.Component{
         });
         const _this= this;
         //Delete task from database
-        fetch('/ReviewTask/'+this.state.currentRTask["peer-review-for"], {
+        fetch('http://54.191.195.63:3000/ReviewTask/'+this.state.currentRTask["peer-review-for"], {
             method: 'DELETE',
             headers: {
                 "Content-type": "application/json"
@@ -363,14 +363,14 @@ export default class StudentReviewSummary extends React.Component{
 
         }).then(()=> {
             // Delete reviews after deleting the review task
-            fetch('/reviews/' + this.state.currentRTask["peer-review-for"], {
+            fetch('http://54.191.195.63:3000/reviews/' + this.state.currentRTask["peer-review-for"], {
                 method: 'DELETE',
                 headers: {
                     "Content-type": "application/json"
                 }
             }).then(() => {
                 //Delete the student assignments for a review task after deleting the task
-                fetch('/studentAssignment/' + this.state.currentRTask["peer-review-for"], {
+                fetch('http://54.191.195.63:3000/studentAssignment/' + this.state.currentRTask["peer-review-for"], {
                     method: 'DELETE',
                     headers: {
                         "Content-type": "application/json"
