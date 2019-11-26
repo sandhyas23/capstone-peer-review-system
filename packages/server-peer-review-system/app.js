@@ -20,6 +20,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 app.use('/submissionTask', submissionTaskRouter);
 app.use('/submissions',submissionsRouter);
 app.use('/reviewTask',reviewTaskRouter);
@@ -29,5 +35,8 @@ app.use('/users', usersRouter);
 app.use('/',indexRouter);
 app.use('/login',loginRouter);
 app.use('/logout',logoutRouter);
+
+
+
 
 module.exports = app;

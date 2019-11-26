@@ -18,7 +18,13 @@ router.use(function(req, res, next) {
     // }
     // console.log("cooke: " + cookieName);
     next();
-})
+});
+
+router.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 // Validate login for teacher and students
 router.post('/', (req, res, next) => {

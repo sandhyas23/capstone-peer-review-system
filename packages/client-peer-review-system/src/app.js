@@ -33,7 +33,7 @@ export default class App extends React.Component {
     login() {
       const _this =this;
         const loginDetails ={netId:this.state.netId,password:this.state.password}
-        fetch('/login',{
+        fetch('http://54.191.195.63:3000/login',{
             method:'POST',
             headers:{
                 'Content-Type': 'application/json',
