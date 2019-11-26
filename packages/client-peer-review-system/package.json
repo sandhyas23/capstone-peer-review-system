@@ -21,6 +21,7 @@
   "scripts": {
     "start": "PORT=8080 react-scripts start",
     "build": "react-scripts build",
+    "deploy": "aws s3 sync build/ s3://peer-review-system",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -39,5 +40,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://127.0.0.1:3000"
+  "proxy": "http://54.191.195.63:3000/"
 }
