@@ -214,10 +214,12 @@ export default class CreateReviewTask extends React.Component {
                         type='number' label='Points' placeholder='Points' width={6}
                         onChange={(e) => this.handleRubricChange(e,element,index)}
                         key={`point${element}`}
+                        required
                         min="1"
                         value={this.state[`point${element}`] || ""}/>
             <Form.Input name={`rubric${element}`}
                         label='rubric-name' placeholder='rubric-name'
+                        required
                         width={8}
                         key={`rubric${element}`}
                         onChange={(e) => this.handleRubricChange(e,element,index)}
@@ -225,6 +227,7 @@ export default class CreateReviewTask extends React.Component {
             <Form.TextArea name={`criteria${element}`}
                            label='criteria' placeholder='criteria'
                            width={12}
+                           required
                            key={`criteria${element}`}
                            onChange={(e) => this.handleRubricChange(e,element,index)}
                            value={this.state[`criteria${element}`] ||"" }/>
@@ -501,7 +504,7 @@ export default class CreateReviewTask extends React.Component {
                              <Grid.Row  textAlign={"center"}>
                                  <Segment align="center" >
                                      <Form align="center">
-                                         <Form.Field inline>
+                                         <Form.Field inline required>
                                              <label>Task Type</label>
                                              <Select placeholder='task type'
                                                      value={this.state.selectedType}
@@ -513,14 +516,14 @@ export default class CreateReviewTask extends React.Component {
                                          {  /*Change display for screen if review or submission*/
                                              taskType === "review" ?
                                                  <div>
-                                                     <Form.Field inline>
+                                                     <Form.Field inline required>
                                                          <label>Task name</label>
                                                          <Select placeholder='Select the task name'
                                                                  name={"selectedReview"}
                                                                  value={this.state.selectedReview} options={options}
                                                                  onChange={(e,data)=>this.handleChange(e,data)}/>
                                                      </Form.Field>
-                                                     <Form.Field inline>
+                                                     <Form.Field inline required>
                                                          <label>Due</label>
                                                          <DatePicker
                                                              selected={this.state.dueDate}
@@ -531,7 +534,7 @@ export default class CreateReviewTask extends React.Component {
                                                              dateFormat="Pp"
                                                          />
                                                      </Form.Field>
-                                                     <Form.Field inline>
+                                                     <Form.Field inline required>
                                                          <label>General Instructions</label>
                                                          <TextArea style={{ minHeight: 100, minWidth:200, maxHeight: 100, maxWidth:300,}}
                                                                    placeholder={"markdown instructions"}
@@ -545,7 +548,7 @@ export default class CreateReviewTask extends React.Component {
                                                          </Grid.Column>
                                                      </Grid>
 
-                                                     <Form.Field inline>
+                                                     <Form.Field inline required>
                                                          <label>Enter number of reviews</label>
                                                          <Input name={`num`}
                                                                 type='number' label='num' placeholder='num' width={4}
@@ -566,14 +569,14 @@ export default class CreateReviewTask extends React.Component {
                                                  /*Display for create submission task screen*/
                                                  :
                                                  <div>
-                                                     <Form.Field inline>
+                                                     <Form.Field inline required>
                                                          <label>Task name</label>
                                                          <Input placeholder='Eg: HW3'
                                                                 name={"selectedReview"}
                                                                 value={this.state.selectedReview}
                                                                 onChange={(e)=>this.handleChanges(e)}/>
                                                      </Form.Field>
-                                                     <Form.Field inline>
+                                                     <Form.Field inline required>
                                                          <label>Due</label>
                                                          <DatePicker
                                                              selected={this.state.dueDate}

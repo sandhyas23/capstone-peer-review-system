@@ -27,7 +27,7 @@ export default class StudentReviewSummary extends React.Component{
             due:new Date(props.currentRTask["due"]), specAssignments:props.specAssignments,
             teacherRubrics:props.currentRTask["rubric"],
         open:false, reviewTasks:props.reviewTasks,isDeleted:false,isEdited:false,isTaskEdited:false,isSaved:false,
-        instructions:props.currentRTask["instructions"], viewReviews:false}
+        instructions:props.currentRTask["instructions"]}
 
     }
 
@@ -42,7 +42,7 @@ export default class StudentReviewSummary extends React.Component{
                 "peer-review-for":props.currentRTask["peer-review-for"],
                 due:new Date(props.currentRTask["due"]), specAssignments:props.specAssignments,
                 teacherRubrics:props.currentRTask["rubric"],
-                open:false, reviewTasks:props.reviewTasks,isDeleted:false,isEdited:false,isTaskEdited:false,isSaved:false,
+                reviewTasks:props.reviewTasks,
                 instructions:props.currentRTask["instructions"]}
         }
 
@@ -127,10 +127,14 @@ export default class StudentReviewSummary extends React.Component{
     // function to get all reviewer details and submission content for each submitter and set in state
     handleItemClick(event,item){
         console.log("clicked review item");
-        let content = this.state.specSubmissions.find((element,index,array)=>{
+        let content="";
+        let submission = this.state.specSubmissions.find((element,index,array)=>{
             //console.log(element["assignment-name"]);
             return element["netId"] === item;
         });
+        if(typeof submission !="undefined"){
+            content=submission["content"];
+        }
 
         let reviewDetails = this.state.specificReviews.filter((element,index,array)=>{
             return element["submitter-id"] === item;
@@ -139,7 +143,7 @@ export default class StudentReviewSummary extends React.Component{
         console.log("reviewDetails",reviewDetails);
 
         //console.log("content",content)
-        this.setState({content:content["content"] , reviewDetails:reviewDetails,"student-id":item,
+        this.setState({content:content, reviewDetails:reviewDetails,"student-id":item,
             viewReviews:false, "reviewer-id":""});
     }
     
@@ -353,30 +357,34 @@ export default class StudentReviewSummary extends React.Component{
                 "Content-type": "application/json"
             }
         }).then(function (response) {
-
+            //alert("Task has been deleted");
             _this.setState({open:false});
             _this.props.update();
 
         }).then(()=> {
             // Delete reviews after deleting the review task
-            fetch('/reviews/' + this.state.currentRTask["task-name"], {
+            fetch('/reviews/' + this.state.currentRTask["peer-review-for"], {
                 method: 'DELETE',
                 headers: {
                     "Content-type": "application/json"
                 }
             }).then(() => {
                 //Delete the student assignments for a review task after deleting the task
-                fetch('/studentAssignment/' + this.state.currentRTask["task-name"], {
+                fetch('/studentAssignment/' + this.state.currentRTask["peer-review-for"], {
                     method: 'DELETE',
                     headers: {
                         "Content-type": "application/json"
                     }
                 }).then(function (response) {
-                    console.log("inside this");
+                    console.log("specass",_this.state.specAssignments);
+                    alert("Task has been deleted");
+                    //Remove task from array and change student assignments object to empty
                     _this.state.reviewTasks.splice(taskIndex, 1);
-                    _this.state.specAssignments.pop()
+                    _this.state.specAssignments={};
                     _this.setState({isDeleted: true, reviewTasks: _this.state.reviewTasks,
                         specAssignments:_this.state.specAssignments});
+                    //Display homepage after deletion
+                    _this.props.viewHome();
                 });
             });
         });
@@ -404,6 +412,7 @@ export default class StudentReviewSummary extends React.Component{
                                   width={8}
                                   disabled={this.state.specificReviews.length > 0}
                                   key={`rubric${index}`}
+                                  required
                                   onChange={(e) => this.handleRubricChange(e, element, index)}
                                   value={this.state[`rubric${index}`]}/>
                         <Form.Input name={`point${index}`}
@@ -412,6 +421,7 @@ export default class StudentReviewSummary extends React.Component{
                                     disabled={this.state.specificReviews.length > 0 ||
                                     this.state[`rubric${index}`]=== ""}
                                     key={`point${index}`}
+                                    required
                                     value={this.state[`point${index}`]}/>
 
                         <Form.TextArea name={`criteria${index}`}
@@ -419,6 +429,7 @@ export default class StudentReviewSummary extends React.Component{
                                        width={12}
                                        disabled={this.state.specificReviews.length > 0 ||
                                        this.state[`rubric${index}`]=== ""}
+                                       required
                                        key={`criteria${index}`}
                                        onChange={(e) => this.handleRubricChange(e, element, index)}
                                        value={this.state[`criteria${index}`]}/>
@@ -593,6 +604,7 @@ export default class StudentReviewSummary extends React.Component{
                             <input type="number"
                                    style={{width: "4em"}}
                                    name={`inputPoint${item["rubric-name"]}${this.state["student-id"]}${this.state["reviewer-id"]}`}
+                                   required
                                    onChange={(e)=>this.handleEditOneReview(e,item,index)}
                                    key={`inputPoint${item["rubric-name"]}${this.state["student-id"]}${this.state["reviewer-id"]}`}
                                    value={item["points-given"] ||
@@ -608,6 +620,7 @@ export default class StudentReviewSummary extends React.Component{
                                 key={`inputComment${item["rubric-name"]}${this.state["student-id"]}${this.state["reviewer-id"]}`}
                                 name={`inputComment${item["rubric-name"]}${this.state["student-id"]}${this.state["reviewer-id"]}`}
                                 onChange={(e) => this.handleEditOneReview(e, item, index)}
+                                required
                                 value={comment ||
                                 this.state[`inputComment${item["rubric-name"]}${this.state["student-id"]}${this.state["reviewer-id"]}`]}/>
                             :
@@ -616,11 +629,6 @@ export default class StudentReviewSummary extends React.Component{
                     </Table.Cell>
                 </Table.Row>
         });
-
-
-        if(this.state.isDeleted){
-            return <div>Home page</div>
-        }
 
 
         return <div style={{marginLeft:10,marginRight:10,  minWidth: 550, marginTop:50}}>
@@ -638,6 +646,7 @@ export default class StudentReviewSummary extends React.Component{
 
                                 <Input label={"peer-review-for"}
                                        value={this.state["peer-review-for"]}
+                                       icon={"tag"}
                                 readOnly/>
                             }
 
@@ -649,7 +658,7 @@ export default class StudentReviewSummary extends React.Component{
                 <Grid.Row textAlign={"center"}>
                             <Segment textAlign={"center"}>
                                 <Form centered={"true"}>
-                                    <Form.Field inline>
+                                    <Form.Field inline required>
                                         <Label icon='calendar alternate' content="Due"/>
                                         {this.state.isTaskEdited ?
                                             <DatePicker
@@ -664,12 +673,13 @@ export default class StudentReviewSummary extends React.Component{
                                             new Date(this.state.due).toLocaleString()
                                         }
                                     </Form.Field>
-                                    <Form.Field inline>
+                                    <Form.Field inline required>
                                         <Label>General Instructions</Label>
                                         {this.state.isTaskEdited ?
                                             <TextArea
                                                 style={{minHeight: 100, minWidth: 200, maxHeight: 100, maxWidth: 300,}}
                                                 name={"instructions"}
+                                                required
                                                 value={this.state.instructions}
                                                 onChange={(e) => {
                                                     this.handleEachChange(e)

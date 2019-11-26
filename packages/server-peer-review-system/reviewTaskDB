@@ -1,4 +1,3 @@
-{"peer-review-for":"HW2","due":"2019-11-27T16:41:11.118Z","rubric":[{"rubric-name":"test","points":"2","criteria":"updated"},{"rubric-name":"ques2","points":"2","criteria":"hhhlll"},{"rubric-name":"ques3","points":"3","criteria":"trfrfrflll"}],"instructions":"updated new","_id":"gkTeqO5coGHbJrvG"}
-{"peer-review-for":"HW3","due":"2019-11-21T16:40:28.610Z","rubric":[{"rubric-name":"test","points":"1","criteria":"trst"},{"rubric-name":"ques2","points":"2","criteria":"hhh"},{"rubric-name":"ques3","points":"3","criteria":"trfrfrf"}],"instructions":"deede","_id":"juErsil4O7Ach19W"}
-{"peer-review-for":"HW5","due":"2019-11-21T16:41:11.118Z","rubric":[{"rubric-name":"test","points":"2","criteria":"trstpp"},{"rubric-name":"ques2","points":"2","criteria":"hhhlll"},{"rubric-name":"ques3","points":"3","criteria":"trfrfrflll"}],"instructions":"kjj","_id":"tQEvWOrKy8e6SYC3"}
+{"peer-review-for":"HW2","due":"2019-11-27T16:41:11.118Z","rubric":[{"rubric-name":"test","points":"2","criteria":"updated"},{"rubric-name":"ques2","points":"2","criteria":"hhhlll"},{"rubric-name":"ques3","points":"3","criteria":"trfrfrflll"}],"instructions":"updated new","_id":"HgLDKAyN37FlR2FU"}
 {"$$indexCreated":{"fieldName":"peer-review-for","unique":true,"sparse":false}}
+{"$$deleted":true,"_id":"HgLDKAyN37FlR2FU"}

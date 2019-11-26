@@ -8,7 +8,10 @@ import {
     Icon,
     Menu,
     Sidebar,
-    Container
+    Container,
+    Segment,
+    Header,
+    Button
 } from 'semantic-ui-react';
 import TaskReview from "./taskReview";
 import ViewSubmission from "./viewSubmission";
@@ -156,6 +159,75 @@ export default class StudentView extends React.Component{
             return <ViewReviewed currentTask = {this.state.currentTask} netId={this.props.netId}
                                reviewTask = {this.state.reviewTasks} studentAssignment={this.state.studentAssignment}
                                submissions={this.state.submissions} reviews={this.state.reviews}/>
+        }
+
+        else{
+            // in homepage, display the tasks to complete both, submission and review
+            let openSubmissionTaskItems = this.state.submissionTasks.map((task , index , array) => {
+                let taskDue = new Date(task["due"]).getTime();
+                let now = new Date().getTime();
+                const timeDifference = now-taskDue;
+                //console.log("time of",task["task-name"],timeDifference);
+                if(timeDifference < 0){
+                    return <Menu.Item
+                        name={task["task-name"]}
+                        key = {`osstask${index}`}
+                        onClick={(event) => this.handleOpenSubmissionItemClick(event,task)}
+                        active={task === this.state.currentTask}
+                    >
+                    <span>
+                        <Icon name ="tag" />
+                        {task["task-name"]}
+                    </span>
+                    </Menu.Item>
+
+                }
+            });
+
+
+            // get all open review tasks to display in the menu
+            let openReviewTaskItems = this.state.reviewTasks.map((task , index , array) => {
+                let taskDue = new Date(task["due"]).getTime();
+                let now = new Date().getTime();
+                const timeDifference = now-taskDue;
+                //console.log("time of",task["task-name"],timeDifference);
+                if(timeDifference < 0){
+                    return <Menu.Item
+                        name={task["peer-review-for"]}
+                        key = {`ortask${index}`}
+                        onClick={(event) => this.handleOpenReviewItemClick(event,task)}
+                        active={task === this.state.currentTask}
+                    >
+                    <span>
+                        <Icon name ="tag" />
+                        {task["peer-review-for"]}
+                    </span>
+                    </Menu.Item>
+
+                }
+            });
+
+
+            return <div><Segment placeholder style={{overflow: 'auto',minHeight:230,maxHeight:330,maxWidth:1000,minWidth:200 }}>
+                <Header icon>
+                    <Icon name='tag' />
+                   You have the following assignments to submit
+                </Header>
+                <Menu>
+                    {openSubmissionTaskItems}
+                </Menu>
+            </Segment>
+                <Segment placeholder style={{overflow: 'auto',minHeight:230,maxHeight:330,maxWidth:1000,minWidth:200 }}>
+                    <Header icon>
+                        <Icon name='tag' />
+                        You have the following reviews to submit
+                    </Header>
+                    <Menu>
+                        {openReviewTaskItems}
+                    </Menu>
+                </Segment>
+
+            </div>
         }
     }
 
@@ -306,7 +378,8 @@ export default class StudentView extends React.Component{
             <Container>
                 <Menu.Item as='h4'
                            header
-                           position={"right"} >
+                           position={"right"}
+                            onClick={()=> this.setState({mode:"",currentTask:""})}>
                     Peer Review System
                 </Menu.Item>
                 <Menu.Item

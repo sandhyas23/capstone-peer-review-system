@@ -6,7 +6,7 @@ import React from 'react';
 import {
     Menu,
     Grid,
-    Dropdown,
+    Dropdown, Icon, Segment, Header,
 
 } from 'semantic-ui-react';
 //import createdSubmissionTasks from '../data/createdSubmissionTasks';
@@ -98,7 +98,7 @@ export default class TeacherView extends React.Component{
             }
         }).then(response => response.json()).then(function(data) {
 
-            console.log("this is what we got in task submit" +data.studentAssignment);
+            console.log("this is what we got in stu ass" +data.studentAssignment);
             //_this.state.submissions.push(data.submission);
             _this.setState({"studentAssignment": data.studentAssignment});
 
@@ -117,13 +117,15 @@ export default class TeacherView extends React.Component{
         if(this.state.mode === "createTask"){
             return <CreateReviewTask submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks}
                                      update={this.updateArray.bind(this)} submissions={this.state.submissions}
-                                     mode={this.state.mode}/>
+                                     mode={this.state.mode}
+                                     />
         }
         else if(this.state.mode === "viewSubmissionSummary"){
              return <StudentSubmissionSummary specificSubmissions={this.state.specificSubmissions}
                                     currentSTask={this.state.currentSubmissionTask} update={this.updateArray.bind(this)}
                                               mode={this.state.mode}
-                                              submissionTasks={this.state.submissionTasks}/>
+                                              submissionTasks={this.state.submissionTasks}
+                                              viewHome={()=>this.handleHomeClick()}/>
          }
         else if(this.state.mode === "viewReviewSummary"){
             return <StudentReviewSummary specificReviews={this.state.specificReviews}
@@ -132,10 +134,49 @@ export default class TeacherView extends React.Component{
                                          specAssignments = {this.state.specAssignments}
                                          update={this.updateArray.bind(this)}
                                          mode={this.state.mode}
-                                         reviewTasks={this.state.reviewTasks}/>
+                                         reviewTasks={this.state.reviewTasks}
+                                         viewHome={()=>this.handleHomeClick()}/>
         }
         else{
-            return <div>Home page</div>
+            // in homepage, display the tasks to complete both, submission and review
+            let createdTasks = this.state.submissionTasks.map((element,index,array)=>{
+                return <Menu.Item
+                    onClick={(e)=>this.handleSubmissionTaskClick(e,element)}
+                    key={`sstasks${index}`}
+                    active={element=== this.state.currentSubmissionTask }>
+                    {element["task-name"]}
+                </Menu.Item>
+            });
+
+            let createdReview = this.state.reviewTasks.map((element,index,array)=>{
+                return <Menu.Item
+                    onClick={(e)=>this.handleReviewTaskClick(e,element)}
+                    key={`rrtasks${index}`}
+                    active={element=== this.state.currentReviewTask }>
+                    {element["peer-review-for"]}
+                </Menu.Item>
+            });
+
+            return <div><Segment placeholder style={{overflow: 'auto',minHeight:230,maxHeight:330,maxWidth:1000,minWidth:200 }}>
+                <Header icon>
+                    <Icon name='tag' />
+                    You have the created the following assignments to submit. Click on each to view progress.
+                </Header>
+                <Menu>
+                    {createdTasks}
+                </Menu>
+            </Segment>
+                <Segment placeholder style={{overflow: 'auto',minHeight:230,maxHeight:330,maxWidth:1000,minWidth:200 }}>
+                    <Header icon>
+                        <Icon name='task' />
+                        You have created the following review tasks to submit. Click on each to view progress.
+                    </Header>
+                    <Menu>
+                        {createdReview}
+                    </Menu>
+                </Segment>
+
+            </div>
         }
 
     }
@@ -170,6 +211,11 @@ export default class TeacherView extends React.Component{
                             specSubmissions:specSubmissions, specAssignments:specAssignments});
     }
 
+    handleHomeClick() {
+
+        this.setState({mode: "", currentSubmissionTask: "", createdReviewTask: ""});
+    }
+
     // Render all elements
     render(){
         let createdTasks = this.state.submissionTasks.map((element,index,array)=>{
@@ -198,7 +244,8 @@ export default class TeacherView extends React.Component{
 
                     <Menu.Item as='h4'
                                header
-                               position={"right"} >
+                               position={"right"}
+                    onClick={()=>this.handleHomeClick()}>
                         Peer Review System
                     </Menu.Item>
                     <Menu.Item

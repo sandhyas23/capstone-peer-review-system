@@ -7,6 +7,7 @@ const router = express.Router();
 router.use(express.json());
 
 const reviewTaskDb = require("../models/reviewTaskModel");
+const studentAssignmentDb = require("../models/studentAssignModel");
 
 // You can add more task validations in this function.
 function validateTask(taskInfo) {
@@ -30,26 +31,37 @@ router.post("/",  function(req, res) {
         res.status(400).json({ error: message });
         return;
     }
-    reviewTaskDb
-        .find({ "peer-review-for": reviewTaskInfo["peer-review-for"] }) // task name already used?
-        .then(function(docs) {
-            // console.log(`docs: ${docs}`);
-            if (docs.length > 0) {
-                // console.log(`Task: ${taskInfo["peer-review-for"]} already in DB`);
-                res.status(400); // Bad request
-                return { error: "peer-review-for already used" };
-            } else {
-                // Not in DB so insert it
-                return reviewTaskDb.insert(reviewTaskInfo).then(function(newDoc) {
-                    //console.log(`new doc: ${JSON.stringify(newDoc)}`);
-                    res.status(201); // Created
-                    return { ...newDoc };
-                });
+    studentAssignmentDb
+        .findOne({"peer-review-for":reviewTaskInfo["peer-review-for"]})
+        .then(function (doc) {
+            if(doc){
+                reviewTaskDb
+                    .find({ "peer-review-for": reviewTaskInfo["peer-review-for"] }) // task name already used?
+                    .then(function(docs) {
+                        // console.log(`docs: ${docs}`);
+                        if (docs.length > 0) {
+                            // console.log(`Task: ${taskInfo["peer-review-for"]} already in DB`);
+                            res.status(400); // Bad request
+                            return { error: "peer-review-for already used" };
+                        } else {
+                            // Not in DB so insert it
+                            return reviewTaskDb.insert(reviewTaskInfo).then(function(newDoc) {
+                                //console.log(`new doc: ${JSON.stringify(newDoc)}`);
+                                res.status(201); // Created
+                                return { ...newDoc };
+                            });
+                        }
+                    })
+                    .then(function(msg) {
+                        res.json(msg);
+                    })
             }
+            else {
+                res.status(404).json({ error: "Assign students first using studentAssignment route;" });
+            }
+
         })
-        .then(function(msg) {
-            res.json(msg);
-        })
+
         .catch(function(err) {
             // Really important for debugging too!
             console.log(`Something bad happened: ${err}`);

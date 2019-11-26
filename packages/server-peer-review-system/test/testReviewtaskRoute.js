@@ -26,14 +26,14 @@ describe("reviewTaskRoute", function() {
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(function(res) {
-                    assert(res.body.reviewTasks, 4, "There should be 4 tasks");
+                    assert(res.body.reviewTasks, 1, "There should be 1 tasks");
                 })
                 .expect(200, done);
         });
 
-        it("Getting a single task: HW3", function(done) {
+        it("Getting a single task: HW1", function(done) {
             request(app)
-                .get("/reviewTask/HW3")
+                .get("/reviewTask/HW1")
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(200, done);
@@ -49,8 +49,8 @@ describe("reviewTaskRoute", function() {
     });
 
     describe("Post /reviewTask", function() {
-        it("Post a task that exists: HW5", function(done) {
-            const atask = {"peer-review-for":"HW5",
+        it("Post a task that exists: HW1", function(done) {
+            const atask = {"peer-review-for":"HW1",
                 "due":"2019-11-21T16:41:11.118Z",
                 "rubric":[
                     {"rubric-name":"test","points":"2","criteria":"trstpp"},
@@ -68,8 +68,31 @@ describe("reviewTaskRoute", function() {
                 })
                 .expect(400, done);
         });
+        describe("Post /reviewTask", function() {
+            it("Post a task new task HW5 without student assignments", function (done) {
+                const atask = {
+                    "peer-review-for": "HW2",
+                    "due": "2019-11-21T16:41:11.118Z",
+                    "rubric": [
+                        {"rubric-name": "test", "points": "2", "criteria": "trstpp"},
+                        {"rubric-name": "ques2", "points": "2", "criteria": "hhhlll"},
+                        {"rubric-name": "ques3", "points": "3", "criteria": "trfrfrflll"}],
+                    "instructions": "kjj"
+                };
+                request(app)
+                    .post("/reviewTask")
+                    .set("Accept", "application/json")
+                    .send(atask)
+                    .expect("Content-Type", /json/)
+                    .expect(function (res) {
+                        assert.exists(res.body.error);
+                    })
+                    .expect(400, done);
+            });
+        });
 
-        it("Post a new task: HW2", function(done) {
+
+            it("Post a new task: HW2", function(done) {
             const atask = {"peer-review-for":"HW2",
                 "due":"2019-11-28T16:41:11.118Z",
                 "rubric": [

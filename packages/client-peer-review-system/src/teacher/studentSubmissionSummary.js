@@ -27,7 +27,7 @@ export default class StudentSubmissionSummary extends React.Component{
             content:"Click on a student ID to view their submission",
         "task-name":props.currentSTask["task-name"],open:false,isDeleted:false,
         due:new Date(props.currentSTask["due"]),
-        mode:props.mode,
+        mode:props.mode, isEdited:false,
         submissionTasks:props.submissionTasks}
 
     }
@@ -111,7 +111,8 @@ export default class StudentSubmissionSummary extends React.Component{
             },
             body: JSON.stringify(submissionTask)
         }).then(function (response) {
-            _this.setState({});
+            alert("Task has been edited");
+            _this.setState({isEdited:true});
             _this.props.update();
         })
     }
@@ -150,10 +151,12 @@ export default class StudentSubmissionSummary extends React.Component{
                     "Content-type": "application/json"
                 }
             }).then(function (response) {
-                console.log("inside this");
+                //console.log("inside this");
+                alert("Task has been deleted");
                 _this.state.submissionTasks.splice(taskIndex,1);
                 _this.setState({isDeleted:true,submissionTasks:_this.state.submissionTasks});
-                _this.props.update();
+                //Display homepage after deletion
+                _this.props.viewHome();
             })
         });
 
@@ -172,19 +175,15 @@ export default class StudentSubmissionSummary extends React.Component{
            </Table.Row>
        })
 
-        if(this.state.isDeleted){
-            return <div>Home page</div>
-        }
-
 
         return <Grid stackable>
             <Grid.Column>
                 <Grid.Row>
                     <Segment style={{boxShadow:"none"}}>
                         <span><Header  textAlign={"center"} as={"h4"}>
-                            <Input label={"Submission Task-name"} size='small' icon={"pencil"} name={"task-name"}
+                            <Input label={"Submission Task-name"} size='small' icon={"tag"} name={"task-name"}
                                    value={this.state["task-name"]}
-                                   disabled={this.state.specificSubmissions.length >0}
+                                   readOnly
                                    onChange={(e)=> this.setState({"task-name":e.target.value})}/>
                         </Header>
                         </span>
@@ -195,7 +194,7 @@ export default class StudentSubmissionSummary extends React.Component{
                         <Form centered={"true"}>
                             <Segment textAlign={"center"}>
                                 <Form.Group centered={"true"} widths='equal'>
-                                    <Form.Field inline>
+                                    <Form.Field inline required>
                                         <Label icon='calendar alternate' content="Due"/>
                                         <DatePicker
                                             selected={this.state.due}

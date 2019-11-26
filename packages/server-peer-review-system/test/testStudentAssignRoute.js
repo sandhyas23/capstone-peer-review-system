@@ -49,9 +49,9 @@ describe("studentAssignRoute", function() {
     });
 
     describe("Delete /studentAssignment", function() {
-        it("Delete a task that exists: HW1", function(done) {
+        it("Delete a task that exists: test1", function(done) {
             request(app)
-                .delete("/studentAssignment/HW1")
+                .delete("/studentAssignment/test1")
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(function(res) {

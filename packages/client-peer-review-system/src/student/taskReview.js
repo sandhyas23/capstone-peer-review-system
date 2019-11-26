@@ -358,9 +358,11 @@ export default class TaskReview extends React.Component{
                 <Label content={rubric["points"]} />
                 <Form.Input name={`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`} type= 'number' label='Points'
                             placeholder='Points' width={4} min="0" max={rubric["points"]}
+                            required
                             onChange={(e)=>this.afterHandleChange(e,rubric,index)} key={`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`}
                             value ={this.state[`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`] || ""}/>
-                <Form.Input name={`comment${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`} label='Comments' placeholder='comments' width={10}
+                <Form.Input name={`comment${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`}
+                            required label='Comments' placeholder='comments' width={10}
                             onChange={(e)=>this.afterHandleChange(e,rubric,index)} key={`comment${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`}
                             value = {this.state[`comment${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`] || ""} />
 
@@ -396,7 +398,7 @@ export default class TaskReview extends React.Component{
                                    <Label icon='calendar alternate' content="Due"/>
                                    <Input readOnly>{new Date(this.state.currentTask["due"]).toLocaleString()}</Input>
                                </Form.Field>
-                               <Form.Field inline>
+                               <Form.Field inline >
                                    <Label icon='lock open' content="Status"/>
 
                                    <Input readOnly style={{color:"green"}}>Open</Input>
