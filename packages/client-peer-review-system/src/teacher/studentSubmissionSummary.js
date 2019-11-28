@@ -145,6 +145,7 @@ export default class StudentSubmissionSummary extends React.Component{
 
         }).then(()=>{
             // Deleted the submissions from the deleted submission task
+            console.log("deleteeeeee",this.state.currentSTask["task-name"]);
             fetch('http://54.191.195.63:3000/submissions/'+this.state.currentSTask["task-name"], {
                 method: 'DELETE',
                 headers: {
@@ -154,7 +155,9 @@ export default class StudentSubmissionSummary extends React.Component{
                 //console.log("inside this");
                 alert("Task has been deleted");
                 _this.state.submissionTasks.splice(taskIndex,1);
-                _this.setState({isDeleted:true,submissionTasks:_this.state.submissionTasks});
+                _this.state.specificSubmissions=[];
+                _this.setState({isDeleted:true,submissionTasks:_this.state.submissionTasks,
+                    specificSubmissions:_this.state.specificSubmissions});
                 //Display homepage after deletion
                 _this.props.viewHome();
             })

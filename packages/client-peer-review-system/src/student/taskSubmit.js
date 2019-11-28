@@ -35,6 +35,7 @@ export default class TaskSubmit extends React.Component{
             //console.log("cc",studentSubmission);
 
                 if (typeof studentSubmission !== "undefined") {
+                    let randomString = Math.random().toString(36);
 
                     let content = studentSubmission.content;
                     let fileName = studentSubmission.fileName;
@@ -42,13 +43,18 @@ export default class TaskSubmit extends React.Component{
                     return {
                         currentTask: props.currentTask, "assignment-name": props.currentTask["task-name"],
                         content: content,
-                        fileName: fileName
+                        fileName: fileName,
+                        theInputKey: randomString
                     }
                 } else {
+                    let randomString = Math.random().toString(36);
+
                     return {
+
                         currentTask: props.currentTask, "assignment-name": props.currentTask["task-name"],
                         content: "Upload a markdown file to view the submission",
-                        fileName: "",theInputKey: ""
+                        fileName: "",
+                        theInputKey: randomString
                     }
                 }
             }
@@ -132,8 +138,12 @@ export default class TaskSubmit extends React.Component{
                 body: JSON.stringify(addTask)
             }).then(function (response) {
                 _this.state.submissions.push(addTask);
+                let randomString = Math.random().toString(36);
+                // reset the filename to null
                 _this.setState({
-                   submissions:_this.state.submissions
+                   submissions:_this.state.submissions,
+                    theInputKey: randomString
+
                 });
                 //console.log("submitted",this.state.submissions);
                 //console.log(this.state.submissions);
@@ -141,12 +151,6 @@ export default class TaskSubmit extends React.Component{
                 //event.preventDefault();
             });
         }
-        // reset the filename to null
-        let randomString = Math.random().toString(36);
-
-        this.setState({
-            theInputKey: randomString
-        });
        //console.log(this.state.submissions);
     }
 
@@ -174,7 +178,7 @@ export default class TaskSubmit extends React.Component{
 
 
         render(){
-        //console.log("state", this.state);
+        console.log("state", this.state);
 
         // Get the submission time
         let submissionStatus ="";
@@ -258,7 +262,7 @@ export default class TaskSubmit extends React.Component{
                                 </Form.Field>
                             </Form.Group>
                             <input type="file" accept=".md" onChange={ (e) => this.handleFile(e) }
-                                   key={this.state.theInputKey || '' }
+                                   key={this.state.theInputKey}
                             />
 
                             <Button icon='file' content='Submit' type={"button"} color={"green"}

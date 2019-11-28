@@ -28,7 +28,25 @@ export default class TeacherView extends React.Component{
     }
 
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps, prevState) {
+        if(prevState["specificSubmissions"] !== this.state["specificSubmissions"]) {
+            const _this = this;
+            fetch('http://54.191.195.63:3000/submissions/', {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }).then(response => response.json()).then(function (data) {
+
+                console.log("this is what we got in task submit" + data.submissions);
+                //_this.state.submissions.push(data.submission);
+                _this.setState({"submissions": data.submissions});
+
+
+            });
+        }
+
         Prism.highlightAll();
 
     }
@@ -122,7 +140,8 @@ export default class TeacherView extends React.Component{
         }
         else if(this.state.mode === "viewSubmissionSummary"){
              return <StudentSubmissionSummary specificSubmissions={this.state.specificSubmissions}
-                                    currentSTask={this.state.currentSubmissionTask} update={this.updateArray.bind(this)}
+                                              currentSTask={this.state.currentSubmissionTask}
+                                              update={this.updateArray.bind(this)}
                                               mode={this.state.mode}
                                               submissionTasks={this.state.submissionTasks}
                                               viewHome={()=>this.handleHomeClick()}/>
@@ -168,7 +187,7 @@ export default class TeacherView extends React.Component{
             </Segment>
                 <Segment placeholder style={{overflow: 'auto',minHeight:230,maxHeight:330,maxWidth:1000,minWidth:200 }}>
                     <Header icon>
-                        <Icon name='task' />
+                        <Icon name='tag' />
                         You have created the following review tasks to submit. Click on each to view progress.
                     </Header>
                     <Menu>
@@ -213,7 +232,9 @@ export default class TeacherView extends React.Component{
 
     handleHomeClick() {
 
-        this.setState({mode: "", currentSubmissionTask: "", createdReviewTask: ""});
+        this.setState({mode: "", currentSubmissionTask: "", createdReviewTask: "", specificSubmissions:[],
+            specificReview:[], specSubmissions:[]
+        });
     }
 
     // Render all elements

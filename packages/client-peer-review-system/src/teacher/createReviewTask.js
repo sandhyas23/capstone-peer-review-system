@@ -103,24 +103,13 @@ export default class CreateReviewTask extends React.Component {
     //function to handle submit button 
     handleSubmit(e,num) {
         const _this = this;
-        // Assignment of students for review task before submit
-        this.assignTask(e,num).then(()=>{
-            let submissionTask = {
-                type: this.state.selectedType, "task-name": this.state.selectedReview,
-                due: this.state.dueDate.toISOString()
-            };
-            //console.log("submission task", submissionTask);
-            let reviewTask = {
-                "peer-review-for": this.state.selectedReview,
-                due: this.state.dueDate.toISOString(), rubric: this.state.rubric,
-                instructions:this.state.instructions
-            };
-            console.log(this.state.newAssignments);
-            let studentAssignments ={
-                "peer-review-for":this.state.selectedReview, studentsAssignment:this.state.newAssignments
-            }
+
             // When task type is submission
             if (this.state.selectedType === "submission") {
+                let submissionTask = {
+                    type: this.state.selectedType, "task-name": this.state.selectedReview,
+                    due: this.state.dueDate.toISOString()
+                };
                 let createdSubmissionTask = this.state.submissionTasks.find((element,index,array)=>{
                     return element["task-name"] === this.state.selectedReview
                 });
@@ -141,7 +130,7 @@ export default class CreateReviewTask extends React.Component {
                                 submissionTasks:_this.state.submissionTasks,currentTask:submissionTask
                             });
                             _this.props.update();
-                            alert("submission task created susubmitterIdessfully");
+                            alert("submission task created successfully");
                             console.log("submitted",_this.state.submissionTasks);
                             //e.preventDefault();
                         })
@@ -154,31 +143,44 @@ export default class CreateReviewTask extends React.Component {
             } 
             // if type of task is review, handle submit
             else {
-                fetch('http://54.191.195.63:3000/reviewTask',{
-                    method: 'POST',
-                    headers:{
-                        "Content-type": "application/json"
-                    },
-                    body: JSON.stringify((reviewTask))
-                })
-                    .then(function(response){
-                        _this.state.reviewTasks.push(reviewTask);
-                        _this.state.studentAssignment.push(studentAssignments);
-                        _this.setState({
-                            selectedType: "review", instructions: "",
-                            dueDate: new Date(),num:0,
-                            reviewTasks:_this.state.reviewTasks,studentAssignment:_this.state.studentAssignment,
-                            currentTask:reviewTask,
-                            // selectedReview: "",isSubmitted:true,
+                // Assignment of students for review task before submit
+                this.assignTask(e,num).then(()=> {
+                    //console.log("submission task", submissionTask);
+                    let reviewTask = {
+                        "peer-review-for": this.state.selectedReview,
+                        due: this.state.dueDate.toISOString(), rubric: this.state.rubric,
+                        instructions: this.state.instructions
+                    };
+                    console.log(this.state.newAssignments);
+                    let studentAssignments = {
+                        "peer-review-for": this.state.selectedReview, studentsAssignment: this.state.newAssignments
+                    }
+                    fetch('http://54.191.195.63:3000/reviewTask', {
+                        method: 'POST',
+                        headers: {
+                            "Content-type": "application/json"
+                        },
+                        body: JSON.stringify((reviewTask))
+                    })
+                        .then(function (response) {
+                            _this.state.reviewTasks.push(reviewTask);
+                            _this.state.studentAssignment.push(studentAssignments);
+                            _this.setState({
+                                selectedType: "review", instructions: "",
+                                dueDate: new Date(), num: 0,
+                                reviewTasks: _this.state.reviewTasks, studentAssignment: _this.state.studentAssignment,
+                                currentTask: reviewTask,
+                                // selectedReview: "",isSubmitted:true,
+                            });
+                            _this.props.update();
+                            alert("review task created successfully");
+                            console.log("review task", _this.state.reviewTasks);
+                            //e.preventDefault();
                         });
-                        _this.props.update();
-                        alert("review task created susubmitterIdessfully");
-                        console.log("review task",_this.state.reviewTasks);
-                        //e.preventDefault();
-                    });
+                });
             }
 
-        });
+
 
     }
     
