@@ -381,8 +381,9 @@ export default class StudentReviewSummary extends React.Component{
                     //Remove task from array and change student assignments object to empty
                     _this.state.reviewTasks.splice(taskIndex, 1);
                     _this.state.specAssignments={};
+                    _this.state.specificReviews=[];
                     _this.setState({isDeleted: true, reviewTasks: _this.state.reviewTasks,
-                        specAssignments:_this.state.specAssignments});
+                        specAssignments:_this.state.specAssignments,specificReviews:_this.state.specificReviews});
                     //Display homepage after deletion
                     _this.props.viewHome();
                 });

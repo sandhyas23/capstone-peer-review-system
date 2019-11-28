@@ -349,7 +349,7 @@ export default class CreateReviewTask extends React.Component {
                 body: JSON.stringify(assignmentsOfStudents)
             }).then(function (response) {
                 _this.setState({newAssignments:newAssignments,reviews:reviews,
-                    submissionsLength:currentSubmissions.length});
+                    });
             });
 
 
@@ -480,6 +480,12 @@ export default class CreateReviewTask extends React.Component {
           });
         }
 
+        // get submissions for an assignment
+        let currentSubmissions = this.state.submissions.filter((item,index,array)=>{
+            return item["assignment-name"] === this.state.selectedReview;
+        });
+
+
         //console.log("review tasks",options)
         const taskType = this.state.selectedType;
 
@@ -556,7 +562,7 @@ export default class CreateReviewTask extends React.Component {
                                                          <Input name={`num`}
                                                                 type='number' label='num' placeholder='num' width={4}
                                                                 onChange={(e) => this.handleChanges(e)}
-                                                                min={1} max={this.state.submissionsLength}
+                                                                min={1} max={currentSubmissions.length}
                                                                 value={this.state.num}/>
                                                      </Form.Field>
                                                      {this.display()}

@@ -23,7 +23,7 @@ export default class TeacherView extends React.Component{
     constructor(props){
         super(props);
         this.state = {submissionTasks:[] ,reviewTasks:[], mode:"",
-        submissions:[],reviews:[], specificSubmissions:[], currentSubmissionTask:"",specificReview:[],
+        submissions:[],reviews:[], specificSubmissions:[], currentSubmissionTask:"",specificReviews:[],
         currentReviewTask:"", studentAssignment:[],specAssignments:[]}
     }
 
@@ -39,12 +39,31 @@ export default class TeacherView extends React.Component{
                 }
             }).then(response => response.json()).then(function (data) {
 
-                console.log("this is what we got in task submit" + data.submissions);
+                console.log("this is what we got in submissions" + data.submissions);
                 //_this.state.submissions.push(data.submission);
                 _this.setState({"submissions": data.submissions});
 
 
             });
+        }
+
+            else if(prevState["specificReviews"] !== this.state["specificReviews"]) {
+                const _this = this;
+                fetch('http://54.191.195.63:3000/reviews/', {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                }).then(response => response.json()).then(function (data) {
+
+                    console.log("this is what we got in reviews" + data.reviews);
+                    //_this.state.submissions.push(data.submission);
+                    _this.setState({"reviews": data.reviews});
+
+
+                });
+
         }
 
         Prism.highlightAll();
@@ -233,7 +252,7 @@ export default class TeacherView extends React.Component{
     handleHomeClick() {
 
         this.setState({mode: "", currentSubmissionTask: "", createdReviewTask: "", specificSubmissions:[],
-            specificReview:[], specSubmissions:[]
+            specificReviews:[]
         });
     }
 
