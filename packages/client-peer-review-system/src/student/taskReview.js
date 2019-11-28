@@ -211,7 +211,7 @@ export default class TaskReview extends React.Component{
         // get total points for each review
         let totalPoints =0;
         for (let i=0;i<this.state.rubric.length;i++){
-            totalPoints += parseInt(this.state.rubric[i]["points-given"]);
+            totalPoints += this.state.rubric[i]["points-given"];
         }
 
        // find if a review has been posted already for the submitter

@@ -27,7 +27,7 @@ export default class StudentSubmissionSummary extends React.Component{
             content:"Click on a student ID to view their submission",
         "task-name":props.currentSTask["task-name"],open:false,isDeleted:false,
         due:new Date(props.currentSTask["due"]),
-        mode:props.mode, isEdited:false,
+        mode:props.mode, isEdited:false,submittedOn:"",
         submissionTasks:props.submissionTasks}
 
     }
@@ -56,7 +56,7 @@ export default class StudentSubmissionSummary extends React.Component{
     // function to set the state with the submission of each student when a student id is clicked
     handleClick(event,item){
         //console.log(item["content"]);
-        this.setState({content:item["content"], "student-id":item["netId"]});
+        this.setState({content:item["content"], "student-id":item["netId"],submittedOn:item["submittedOn"]});
     }
 
     // function to display the content of submission of each student with syntax highlighting
@@ -69,6 +69,7 @@ export default class StudentSubmissionSummary extends React.Component{
             <Button onClick={(e)=>this.handleDeleteSubmission(e)}
                 disabled={this.state.content==="Click on a student ID to view their submission"}>
                 Delete submission</Button>
+            <Label>Submitted on:{this.state.submittedOn}</Label>
             {rawHtml}
         </Segment>
     }
