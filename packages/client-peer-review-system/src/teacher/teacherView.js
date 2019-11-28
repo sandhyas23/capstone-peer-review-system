@@ -47,7 +47,7 @@ export default class TeacherView extends React.Component{
             });
         }
 
-            else if(prevState["specificReviews"] !== this.state["specificReviews"]) {
+        else if(prevState["specificReviews"] !== this.state["specificReviews"]) {
                 const _this = this;
                 fetch('http://54.191.195.63:3000/reviews/', {
                     method: "GET",
@@ -64,6 +64,39 @@ export default class TeacherView extends React.Component{
 
                 });
 
+        }
+
+        else if(prevState["submissionTasks"] !== this.state["submissionTasks"]) {
+            const _this = this;
+            fetch('http://54.191.195.63:3000/submissionTask',{
+                method: "GET",
+                headers : {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }).then(response => response.json()).then(function(data) {
+
+                console.log("this is what we got" +data);
+                _this.setState({submissionTasks: data.submissionTasks});
+
+            });
+
+        }
+
+        else if(prevState["reviewTasks"] !== this.state["reviewTasks"]) {
+            const _this = this;
+            fetch('http://54.191.195.63:3000/reviewTask', {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }).then(response => response.json()).then(function (data) {
+
+                console.log("this is what we got" + data);
+                _this.setState({reviewTasks: data.reviewTasks});
+
+            });
         }
 
         Prism.highlightAll();

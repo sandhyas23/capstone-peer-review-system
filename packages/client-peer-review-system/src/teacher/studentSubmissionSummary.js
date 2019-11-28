@@ -100,6 +100,9 @@ export default class StudentSubmissionSummary extends React.Component{
 
     // function to handle the edit task button
     handleEditTask(e){
+        let taskIndex = this.state.submissionTasks.findIndex((item,index,arry)=>{
+            return item["task-name"] === this.state["task-name"];
+        });
         const _this= this;
         let submissionTask = {
             type: "submission", "task-name": this.state["task-name"],
@@ -113,7 +116,8 @@ export default class StudentSubmissionSummary extends React.Component{
             body: JSON.stringify(submissionTask)
         }).then(function (response) {
             alert("Task has been edited");
-            _this.setState({isEdited:true});
+            _this.state.submissionTasks.splice(taskIndex,1,submissionTask);
+            _this.setState({isEdited:true, submissionTasks:_this.state.submissionTasks});
             _this.props.update();
         })
     }
