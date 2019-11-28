@@ -472,11 +472,11 @@ export default class CreateReviewTask extends React.Component {
                    }
                 }
             }
-          // let submitterId = reviewTasksDisplayed.map((element,index,array)=>{
-          //     options.push({key:`hw${index}${element["task-name"]}`,
-          //         text:element["task-name"],
-          //         value:element["task-name"] });
-          // });
+          let submitterId = reviewTasksDisplayed.map((element,index,array)=>{
+              options.push({key:`hw${index}${element["task-name"]}`,
+                  text:element["task-name"],
+                  value:element["task-name"] });
+          });
         }
 
         //console.log("review tasks",options)
