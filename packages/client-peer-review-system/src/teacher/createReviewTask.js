@@ -348,7 +348,8 @@ export default class CreateReviewTask extends React.Component {
                 },
                 body: JSON.stringify(assignmentsOfStudents)
             }).then(function (response) {
-                _this.setState({newAssignments:newAssignments,reviews:reviews});
+                _this.setState({newAssignments:newAssignments,reviews:reviews,
+                    submissionsLength:currentSubmissions.length});
             });
 
 
@@ -555,7 +556,7 @@ export default class CreateReviewTask extends React.Component {
                                                          <Input name={`num`}
                                                                 type='number' label='num' placeholder='num' width={4}
                                                                 onChange={(e) => this.handleChanges(e)}
-                                                                min={1} max={10}
+                                                                min={1} max={this.state.submissionsLength}
                                                                 value={this.state.num}/>
                                                      </Form.Field>
                                                      {this.display()}
