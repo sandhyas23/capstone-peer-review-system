@@ -59,7 +59,7 @@ export default class ViewReviewed extends React.Component {
         let content =""
 
         if(typeof mySubmission !== "undefined") {
-            const content = mySubmission["content"];
+             content = mySubmission["content"];
         }
 
 

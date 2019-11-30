@@ -562,7 +562,7 @@ export default class CreateReviewTask extends React.Component {
                                                          <Input name={`num`}
                                                                 type='number' label='num' placeholder='num' width={4}
                                                                 onChange={(e) => this.handleChanges(e)}
-                                                                min={1} max={currentSubmissions.length}
+                                                                min={0} max={currentSubmissions.length}
                                                                 value={this.state.num}/>
                                                      </Form.Field>
                                                      {this.display()}
@@ -571,7 +571,7 @@ export default class CreateReviewTask extends React.Component {
                                                      {/*</Button>*/}
                                                      <span>
                                 <Button type='submit' onClick={(e)=> this.handleSubmit(e,this.state.num)}
-                                        disabled={!this.state.selectedReview || !this.state.num ||
+                                        disabled={!this.state.selectedReview ||
                                         !this.state.instructions || !this.state.rubric }>Submit</Button>
                                 </span>
                                                  </div>

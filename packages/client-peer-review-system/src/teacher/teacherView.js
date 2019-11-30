@@ -29,6 +29,10 @@ export default class TeacherView extends React.Component{
 
 
     componentDidUpdate(prevProps, prevState) {
+
+        console.log("teacher view updated");
+        console.log("prevState", prevState["submissionTasks"] === this.state["submissionTasks"]);
+        //console.log("nowstate", this.state["submissionTasks"]);
         if(prevState["specificSubmissions"] !== this.state["specificSubmissions"]) {
             const _this = this;
             fetch('http://54.191.195.63:3000/submissions/', {
@@ -39,7 +43,7 @@ export default class TeacherView extends React.Component{
                 }
             }).then(response => response.json()).then(function (data) {
 
-                console.log("this is what we got in submissions" + data.submissions);
+                //console.log("this is what we got in submissions" + data.submissions);
                 //_this.state.submissions.push(data.submission);
                 _this.setState({"submissions": data.submissions});
 
@@ -57,7 +61,7 @@ export default class TeacherView extends React.Component{
                     }
                 }).then(response => response.json()).then(function (data) {
 
-                    console.log("this is what we got in reviews" + data.reviews);
+                    //console.log("this is what we got in reviews" + data.reviews);
                     //_this.state.submissions.push(data.submission);
                     _this.setState({"reviews": data.reviews});
 
@@ -66,7 +70,7 @@ export default class TeacherView extends React.Component{
 
         }
 
-        else if(prevState["submissionTasks"] !== this.state["submissionTasks"]) {
+        else if(prevState["currentSubmissionTask"] !== this.state["currentSubmissionTask"]) {
             const _this = this;
             fetch('http://54.191.195.63:3000/submissionTask',{
                 method: "GET",
@@ -76,27 +80,11 @@ export default class TeacherView extends React.Component{
                 }
             }).then(response => response.json()).then(function(data) {
 
-                console.log("this is what we got" +data);
+                //console.log("this is what we got in sub tasks" +data);
                 _this.setState({submissionTasks: data.submissionTasks});
 
             });
 
-        }
-
-        else if(prevState["reviewTasks"] !== this.state["reviewTasks"]) {
-            const _this = this;
-            fetch('http://54.191.195.63:3000/reviewTask', {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            }).then(response => response.json()).then(function (data) {
-
-                console.log("this is what we got" + data);
-                _this.setState({reviewTasks: data.reviewTasks});
-
-            });
         }
 
         Prism.highlightAll();
@@ -291,6 +279,7 @@ export default class TeacherView extends React.Component{
 
     // Render all elements
     render(){
+        //console.log("state teacher view", this.state);
         let createdTasks = this.state.submissionTasks.map((element,index,array)=>{
             return <Dropdown.Item
                 onClick={(e)=>this.handleSubmissionTaskClick(e,element)}

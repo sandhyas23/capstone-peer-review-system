@@ -69,7 +69,7 @@ export default class StudentSubmissionSummary extends React.Component{
             <Button onClick={(e)=>this.handleDeleteSubmission(e)}
                 disabled={this.state.content==="Click on a student ID to view their submission"}>
                 Delete submission</Button>
-            <Label>Submitted on:{this.state.submittedOn}</Label>
+            <Label>Submitted on:{new Date(this.state.submittedOn).toLocaleString()}</Label>
             {rawHtml}
         </Segment>
     }
@@ -173,7 +173,7 @@ export default class StudentSubmissionSummary extends React.Component{
 
 // function to render all details
     render(){
-
+     console.log(this.state);
         // function to display all student ids that have submitted the assignment
        let students = this.state.specificSubmissions.map((item,index,array)=>{
            return <Table.Row key={`row${item["netId"]}`}><Table.Cell key={`submission${item["netId"]}`}

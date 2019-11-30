@@ -12,6 +12,7 @@ import {
 } from 'semantic-ui-react';
 
 import 'prismjs/themes/prism-coy.css';
+import "react-datepicker/dist/react-datepicker.css";
 import Prism from "prismjs";
 import ReactCommonmark from "react-commonmark";
 import DatePicker from "react-datepicker";
@@ -33,7 +34,7 @@ export default class StudentReviewSummary extends React.Component{
 
     //When a props is changed, a new state is returned
     static getDerivedStateFromProps(props,state){
-        if(props === state){
+        if(props.currentRTask === state.currentRTask){
             return null;
         }
         else{
@@ -108,7 +109,7 @@ export default class StudentReviewSummary extends React.Component{
         Prism.highlightAll();
     }
     
-    // function to display the total points totalPoints for a student
+    // function to display the total points  for a student
     viewPoints(item){
 
             let submitters = this.state.specificReviews.filter((element ,index,array)=>{
@@ -116,9 +117,17 @@ export default class StudentReviewSummary extends React.Component{
             });
             let totalPoints = submitters.map((element,index,array)=>{
                 //console.log(element["total-points"]);
-                return <Table.Cell key={`review${element["reviewer-id"]}`}>
-                    {element["review"]["total-points"]}
-                </Table.Cell>
+                if(element["review"]["total-points"] < 10){
+                    return <Table.Cell negative key={`review${element["reviewer-id"]}`}>
+                        {element["review"]["total-points"]}
+                    </Table.Cell>
+                }
+                else{
+                    return <Table.Cell  key={`review${element["reviewer-id"]}`}>
+                        {element["review"]["total-points"]}
+                    </Table.Cell>
+                }
+
             });
             return totalPoints;
         }
@@ -297,10 +306,11 @@ export default class StudentReviewSummary extends React.Component{
 
     // function to handle save button when clicked
     handleSaveReviews(e){
+        //Get total points
         let totalPoints =0;
-        this.state.reviewRubric.map((item,index,array)=>{
-            return totalPoints +=  parseInt(item["points-given"]);
-        });
+        for(let i=0;i<this.state.reviewRubric.length;i++){
+            totalPoints +=parseInt(this.state.reviewRubric[i]["points-given"]);
+        }
 
         // get index of the review that is edited
         let reviewIndex = this.state.specificReviews.findIndex((element)=>{
@@ -455,12 +465,12 @@ export default class StudentReviewSummary extends React.Component{
                                  label='rubric-name'
                                  width={4}
                                  readOnly
-                                 value={this.state[`rubric${index}`]}/>
+                                 value={this.state[`rubric${index}`] || ""}/>
                         <Form.Input key={`point${index}`}
                                     label='Points'
                                     width={3}
                                     readOnly
-                                    value={this.state[`point${index}`]}/>
+                                    value={this.state[`point${index}`] || ""}/>
 
                         <Segment style={{
                             overflow: 'auto',
@@ -611,7 +621,7 @@ export default class StudentReviewSummary extends React.Component{
                                    value={item["points-given"] ||
                                    this.state[`inputPoint${item["rubric-name"]}${this.state["student-id"]}${this.state["reviewer-id"]}`]}/>
                                    :
-                            item["possible-points"]
+                            item["points-given"]
                         }
 
                     </Table.Cell>
@@ -637,9 +647,9 @@ export default class StudentReviewSummary extends React.Component{
             <Grid.Column>
                 <Grid.Row>
                     <Segment style={{boxShadow:"none"}}>
-                        <span><Header  textAlign={"center"} as={"h4"}>
+                        <span><Header  textAlign={"center"} as={"h5"}>
                             {this.state.isTaskEdited ?
-                                <Input label={"peer-review-for"} size='small' icon={"tag"} name={"peer-review-for"}
+                                <Input label={"peer-review-for"} icon={"tag"} name={"peer-review-for"}
                                        value={this.state["peer-review-for"]}
                                        readOnly
                                        onChange={(e)=> this.setState({"peer-review-for":e.target.value})}/>
@@ -664,7 +674,7 @@ export default class StudentReviewSummary extends React.Component{
                                         {this.state.isTaskEdited ?
                                             <DatePicker
                                                 selected={this.state.due}
-                                                onChange={date => this.setState({due: date})}
+                                                onChange={date => this.setState({due:date})}
                                                 showTimeSelect
                                                 timeFormat="p"
                                                 timeIntervals={15}
@@ -730,7 +740,7 @@ export default class StudentReviewSummary extends React.Component{
                                     <Table.Header>
                                         <Table.Row>
                                             <Table.HeaderCell>Student Ids submitted</Table.HeaderCell>
-                                            <Table.HeaderCell colSpan={3}>Reviews</Table.HeaderCell>
+                                            <Table.HeaderCell colSpan={3}>Review total points</Table.HeaderCell>
                                         </Table.Row>
                                     </Table.Header>
                                     <Table.Body>

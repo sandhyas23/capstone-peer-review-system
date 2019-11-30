@@ -2,11 +2,13 @@
 
 import React from 'react';
 import {Button, Form,Grid,Header,Segment,Message} from 'semantic-ui-react'
-import students from './data/students.json';
+//import students from './data/students.json';
 import StudentView from './student/studentView';
 import TeacherView from './teacher/teacherView';
-import submissionTasks from './data/createdSubmissionTasks';
-import reviewTasks from './data/createdReviewTasks'
+import Cookies from 'universal-cookie';
+//import Cookies from 'js-cookie';
+//import submissionTasks from './data/createdSubmissionTasks';
+//import reviewTasks from './data/createdReviewTasks'
 //import Prism from "prismjs";
 
 
@@ -15,8 +17,18 @@ import reviewTasks from './data/createdReviewTasks'
 export default class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { netId: "" , password:"" , students:students, role:"", message:"", submissionTasks:submissionTasks,
-        reviewTasks:reviewTasks};
+        const cookies = new Cookies();
+        const gotCookie =cookies.get('user');
+         console.log("cookies",cookies.get('user'));
+        // const gotCookie = JSON.parse(Cookies.get('user'));
+        if(typeof cookies.get('user') !== "undefined"){
+            //console.log("kkkk","cookies",JSON.parse(Cookies.get('user')).role);
+            this.state = { netId: gotCookie.netId , role:gotCookie.role,firstName:gotCookie.firstName,
+                lastName:gotCookie.lastName};
+        }
+        else {
+            this.state = {netId: "", password: "", role: "", message: ""};
+        }
     }
 
     // function to handle change in input
@@ -33,7 +45,7 @@ export default class App extends React.Component {
     login() {
       const _this =this;
         const loginDetails ={netId:this.state.netId,password:this.state.password}
-        fetch('http://54.191.195.63:3000/login',{
+        fetch('/login',{
             method:'POST',
             headers:{
                 'Content-Type': 'application/json',
@@ -45,7 +57,7 @@ export default class App extends React.Component {
                 console.log (data);
                 // change role in state based on the user details
                 if(!data.netId || data.netId !== _this.state.netId ){
-                    _this.setState({netId: "" , password: "" ,message:data.message})
+                    _this.setState({netId: "" , password: "" ,message:data.message, firstName:"",lastName:""})
                 }
                 else {
                     if(data.role === "instructor"){
@@ -79,6 +91,7 @@ export default class App extends React.Component {
 
     // Render the elements
     render() {
+        console.log("state,", this.state);
         if(this.state.role === "") {
             return <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
                 <Grid.Column style={{ maxWidth: 450 }}>
@@ -122,13 +135,11 @@ export default class App extends React.Component {
         // Display different components based on the role of user
         else if(this.state.role === "instructor"){
             return <TeacherView netId={this.state.netId} role={this.state.role}
-                                submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks}
                                 onlogoutClick={()=>this.logout()}/>
         }
 
         else if(this.state.role === "student"){
             return <StudentView netId={this.state.netId} role={this.state.role}
-                                submissionTasks={this.state.submissionTasks} reviewTasks={this.state.reviewTasks}
                                 onlogoutClick={()=>this.logout()} firstName={this.state.firstName} lastName={this.state.lastName}
             />
         }

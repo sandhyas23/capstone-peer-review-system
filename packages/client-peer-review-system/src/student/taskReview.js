@@ -29,7 +29,7 @@ export default class TaskReview extends React.Component{
 
     // called when a prop changed to return a new state
     static getDerivedStateFromProps(props,state){
-        if(props === state){
+        if(props.currentTask === state.currentTask){
             return null;
         }
         else {
@@ -76,8 +76,8 @@ export default class TaskReview extends React.Component{
                 // _this.setState({"submissions":data.reviews});
 
             });
-            Prism.highlightAll();
         });
+        Prism.highlightAll();
     }
 
 
@@ -116,10 +116,11 @@ export default class TaskReview extends React.Component{
                     // _this.setState({"submissions":data.reviews});
 
                 });
-                Prism.highlightAll();
+
             });
 
         }
+        Prism.highlightAll();
     }
 
 
@@ -211,7 +212,7 @@ export default class TaskReview extends React.Component{
         // get total points for each review
         let totalPoints =0;
         for (let i=0;i<this.state.rubric.length;i++){
-            totalPoints += this.state.rubric[i]["points-given"];
+            totalPoints += parseInt(this.state.rubric[i]["points-given"]);
         }
 
        // find if a review has been posted already for the submitter
@@ -309,22 +310,26 @@ export default class TaskReview extends React.Component{
 
          if(typeof currentReview !== "undefined") {
              let currentStudent = currentReview["studentsAssignment"].find((student, index, array) => {
+                 //console.log("student",student["student"] === this.state.netId);
                  return student["student"] === this.state.netId;
              });
+              if(typeof currentStudent !== "undefined"){
+                  //console.log("inside kkkk");
+                  reviewsToPost = currentStudent["reviewees"].map((review, index, array) => {
 
-              reviewsToPost = currentStudent["reviewees"].map((review, index, array) => {
+                      //Display all reviews to be submitted in a menu
+                      return <Menu.Item
+                          name={`Review${index}`}
+                          active={review === this.state.reviewNo}
+                          as='a'
+                          onClick={(event) => this.handleItemClick(event, review)}
+                          key={`Review${review}${index}`}
+                      >
+                          {`Review${index}`}
+                      </Menu.Item>
+                  });
+              }
 
-                 //Display all reviews to be submitted in a menu
-                 return <Menu.Item
-                     name={`Review${index}`}
-                     active={review === this.state.reviewNo}
-                     as='a'
-                     onClick={(event) => this.handleItemClick(event, review)}
-                     key={`Review${review}${index}`}
-                 >
-                     {`Review${index}`}
-                 </Menu.Item>
-             });
          }
          else{
              return "nothing to display"
