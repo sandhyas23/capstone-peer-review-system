@@ -47,7 +47,7 @@ export default class TaskReview extends React.Component{
     // Get the reviews of a particular student and set in state to display initially
     componentDidMount() {
         let _this = this;
-        fetch('http://54.191.195.63:3000/reviews/' + this.state["assignment-name"] + '/reviewer/' + this.state.netId, {
+        fetch('/reviews/' + this.state["assignment-name"] + '/reviewer/' + this.state.netId, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ export default class TaskReview extends React.Component{
         if (prevState["assignment-name"] !== this.state["assignment-name"]) {
 
             let _this = this;
-            fetch('http://54.191.195.63:3000/reviews/' + this.state["assignment-name"] + '/reviewer/' + this.state.netId, {
+            fetch('/reviews/' + this.state["assignment-name"] + '/reviewer/' + this.state.netId, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -230,7 +230,7 @@ export default class TaskReview extends React.Component{
                 "total-points":totalPoints}};
 
             const _this =this;
-           fetch('http://54.191.195.63:3000/reviews/'+this.state["assignment-name"]+'/reviewer/'+this.state.netId+'/submitter/'+this.state.reviewNo
+           fetch('/reviews/'+this.state["assignment-name"]+'/reviewer/'+this.state.netId+'/submitter/'+this.state.reviewNo
                , {
                method: 'PUT',
                headers: {
@@ -261,7 +261,7 @@ export default class TaskReview extends React.Component{
            };
 
            const _this = this;
-           fetch('http://54.191.195.63:3000/reviews/' + this.state["assignment-name"] + '/reviewer/' + this.state.netId + '/submitter/' + this.state.reviewNo
+           fetch('/reviews/' + this.state["assignment-name"] + '/reviewer/' + this.state.netId + '/submitter/' + this.state.reviewNo
                , {
                    method: 'PUT',
                    headers: {

@@ -115,7 +115,7 @@ export default class CreateReviewTask extends React.Component {
                 });
                 if(typeof createdSubmissionTask === "undefined"){
                     console.log("inside if");
-                    fetch('http://54.191.195.63:3000/submissionTask',{
+                    fetch('/submissionTask',{
                         method: 'POST',
                         headers:{
                             "Content-type": "application/json"
@@ -155,7 +155,7 @@ export default class CreateReviewTask extends React.Component {
                     let studentAssignments = {
                         "peer-review-for": this.state.selectedReview, studentsAssignment: this.state.newAssignments
                     }
-                    fetch('http://54.191.195.63:3000/reviewTask', {
+                    fetch('/reviewTask', {
                         method: 'POST',
                         headers: {
                             "Content-type": "application/json"
@@ -341,7 +341,7 @@ export default class CreateReviewTask extends React.Component {
 
             const _this = this;
 
-             fetch('http://54.191.195.63:3000/studentAssignment/'+this.state.selectedReview, {
+             fetch('/studentAssignment/'+this.state.selectedReview, {
                 method: 'PUT',
                 headers: {
                     "Content-type": "application/json"

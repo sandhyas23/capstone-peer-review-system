@@ -35,7 +35,7 @@ export default class TeacherView extends React.Component{
         //console.log("nowstate", this.state["submissionTasks"]);
         if(prevState["specificSubmissions"] !== this.state["specificSubmissions"]) {
             const _this = this;
-            fetch('http://54.191.195.63:3000/submissions/', {
+            fetch('/submissions/', {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export default class TeacherView extends React.Component{
 
         else if(prevState["specificReviews"] !== this.state["specificReviews"]) {
                 const _this = this;
-                fetch('http://54.191.195.63:3000/reviews/', {
+                fetch('/reviews/', {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ export default class TeacherView extends React.Component{
 
         else if(prevState["currentSubmissionTask"] !== this.state["currentSubmissionTask"]) {
             const _this = this;
-            fetch('http://54.191.195.63:3000/submissionTask',{
+            fetch('/submissionTask',{
                 method: "GET",
                 headers : {
                     'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ export default class TeacherView extends React.Component{
     // Get all submission tasks, submissions, reviews and review tasks when component is mounted
     componentDidMount() {
         let _this = this;
-        fetch('http://54.191.195.63:3000/submissionTask',{
+        fetch('/submissionTask',{
             method: "GET",
             headers : {
                 'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ export default class TeacherView extends React.Component{
 
         });
 
-        fetch('http://54.191.195.63:3000/submissions/',{
+        fetch('/submissions/',{
             method: "GET",
             headers : {
                 'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ export default class TeacherView extends React.Component{
 
 
         });
-        fetch('http://54.191.195.63:3000/reviewTask',{
+        fetch('/reviewTask',{
             method: "GET",
             headers : {
                 'Content-Type': 'application/json',
@@ -133,7 +133,7 @@ export default class TeacherView extends React.Component{
             _this.setState({reviewTasks: data.reviewTasks});
 
         });
-        fetch('http://54.191.195.63:3000/reviews/',{
+        fetch('/reviews/',{
             method: "GET",
             headers : {
                 'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ export default class TeacherView extends React.Component{
 
         });
 
-        fetch('http://54.191.195.63:3000/studentAssignment/',{
+        fetch('/studentAssignment/',{
             method: "GET",
             headers : {
                 'Content-Type': 'application/json',

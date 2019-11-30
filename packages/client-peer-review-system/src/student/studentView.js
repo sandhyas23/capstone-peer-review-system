@@ -30,7 +30,7 @@ export default class StudentView extends React.Component{
     // Get all tasks and submission details from database to display initially
     componentDidMount() {
         let _this = this;
-        fetch('http://54.191.195.63:3000/submissionTask',{
+        fetch('/submissionTask',{
             method: "GET",
             headers : {
                 'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export default class StudentView extends React.Component{
 
         });
 
-        fetch('http://54.191.195.63:3000/reviewTask',{
+        fetch('/reviewTask',{
             method: "GET",
             headers : {
                 'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ export default class StudentView extends React.Component{
         });
 
 
-        fetch('http://54.191.195.63:3000/submissions/',{
+        fetch('/submissions/',{
             method: "GET",
             headers : {
                 'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ export default class StudentView extends React.Component{
 
         });
 
-        fetch('http://54.191.195.63:3000/reviews/',{
+        fetch('/reviews/',{
             method: "GET",
             headers : {
                 'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ export default class StudentView extends React.Component{
 
         });
 
-        fetch('http://54.191.195.63:3000/studentAssignment/',{
+        fetch('/studentAssignment/',{
             method: "GET",
             headers : {
                 'Content-Type': 'application/json',

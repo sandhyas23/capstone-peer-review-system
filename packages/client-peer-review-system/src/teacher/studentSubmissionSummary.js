@@ -85,7 +85,7 @@ export default class StudentSubmissionSummary extends React.Component{
         //     nextStudent = this.state.specificSubmissions
         // }
         const _this=this;
-        fetch('http://54.191.195.63:3000/submissions/'+this.state.currentSTask["task-name"]+'/student/'+this.state["student-id"], {
+        fetch('/submissions/'+this.state.currentSTask["task-name"]+'/student/'+this.state["student-id"], {
             method: 'DELETE',
             headers: {
                 "Content-type": "application/json"
@@ -108,7 +108,7 @@ export default class StudentSubmissionSummary extends React.Component{
             type: "submission", "task-name": this.state["task-name"],
             due: this.state.due.toISOString()
         };
-        fetch('http://54.191.195.63:3000/submissionTask/'+this.state.currentSTask["task-name"], {
+        fetch('/submissionTask/'+this.state.currentSTask["task-name"], {
             method: 'PUT',
             headers: {
                 "Content-type": "application/json"
@@ -139,7 +139,7 @@ export default class StudentSubmissionSummary extends React.Component{
         });
         const _this= this;
         // Deleted the submission task
-        fetch('http://54.191.195.63:3000/submissionTask/'+this.state.currentSTask["task-name"], {
+        fetch('/submissionTask/'+this.state.currentSTask["task-name"], {
             method: 'DELETE',
             headers: {
                 "Content-type": "application/json"
@@ -151,7 +151,7 @@ export default class StudentSubmissionSummary extends React.Component{
         }).then(()=>{
             // Deleted the submissions from the deleted submission task
             console.log("deleteeeeee",this.state.currentSTask["task-name"]);
-            fetch('http://54.191.195.63:3000/submissions/'+this.state.currentSTask["task-name"], {
+            fetch('/submissions/'+this.state.currentSTask["task-name"], {
                 method: 'DELETE',
                 headers: {
                     "Content-type": "application/json"
