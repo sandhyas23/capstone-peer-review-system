@@ -30,18 +30,18 @@ app.set('port', port);
 
 //var server = http.createServer(app);
 
-var server = http.createServer(app);
-// var server =https.createServer({
-//   key: fs.readFileSync('./key.pem'),
-//   cert: fs.readFileSync('./cert.pem'),
-//   passphrase: 'capstone'
-// }, app)
+var httpServer = http.createServer(app);
+var server =https.createServer({
+  key: fs.readFileSync('./key.pem'),
+  cert: fs.readFileSync('./cert.pem'),
+  passphrase: 'capstone'
+}, app)
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-//httpServer.listen(3000);
+httpServer.listen(3000);
 
 server.listen(port);
 server.on('error', onError);

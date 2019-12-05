@@ -1,0 +1,2 @@
+{"peer-review-for":"kkk","due":"2019-12-04T15:00:00.093Z","rubric":[{"rubric-name":"ques1","points":"7","criteria":"test1"},{"rubric-name":"ques2","points":"9","criteria":"test2"},{"rubric-name":"qyes3","points":"10","criteria":"test3"}],"instructions":"yyyyy","_id":"p90YvBZgTuqgtRpG"}
+{"$$indexCreated":{"fieldName":"peer-review-for","unique":true,"sparse":false}}
