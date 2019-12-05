@@ -7,23 +7,41 @@
 var app = require('../app');
 var debug = require('debug')('server-peer-review-system:server');
 var http = require('http');
+var fs = require('fs')
+var https = require('https')
+var path = require('path');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '80');
 app.set('port', port);
+
+// var privateKey  = fs.readFileSync(path.resolve('server.key'));
+// var certificate = fs.readFileSync(path.resolve('server.crt'));
+
+
+//var credentials = {key: privateKey, cert: certificate};
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+//var server = http.createServer(app);
+
+var httpServer = http.createServer(app);
+var server =https.createServer({
+  key: fs.readFileSync('./key.pem'),
+  cert: fs.readFileSync('./cert.pem'),
+  passphrase: 'capstone'
+}, app)
 
 /**
  * Listen on provided port, on all network interfaces.
  */
+
+httpServer.listen(3000);
 
 server.listen(port);
 server.on('error', onError);
