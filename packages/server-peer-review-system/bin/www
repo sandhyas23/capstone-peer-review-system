@@ -15,7 +15,7 @@ var path = require('path');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '80');
+var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 // var privateKey  = fs.readFileSync(path.resolve('server.key'));
@@ -30,18 +30,18 @@ app.set('port', port);
 
 //var server = http.createServer(app);
 
-var httpServer = http.createServer(app);
-var server =https.createServer({
-  key: fs.readFileSync('./key.pem'),
-  cert: fs.readFileSync('./cert.pem'),
-  passphrase: 'capstone'
-}, app)
+var server = http.createServer(app);
+// var server =https.createServer({
+//   key: fs.readFileSync('./key.pem'),
+//   cert: fs.readFileSync('./cert.pem'),
+//   passphrase: 'capstone'
+// }, app)
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-httpServer.listen(3000);
+//httpServer.listen(3000);
 
 server.listen(port);
 server.on('error', onError);
