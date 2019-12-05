@@ -14,7 +14,7 @@ export default class ViewSubmission extends React.Component{
         super(props);
         this.state ={currentTask: this.props.currentTask , submissions:props.submissions, netId: this.props.netId,
             "assignment-name":this.props.currentTask["task-name"]}
-        //console.log(this.state.newTask);
+        //// console.log(this.state.newTask);
     }
 
 
@@ -72,7 +72,7 @@ export default class ViewSubmission extends React.Component{
         </div>
 
 
-        //console.log("rawhtml",rawHtml);
+        //// console.log("rawhtml",rawHtml);
         return<Grid.Row>
             <Grid.Column computer={14}>
                 <Grid.Row>

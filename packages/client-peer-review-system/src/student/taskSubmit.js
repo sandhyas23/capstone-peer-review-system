@@ -7,6 +7,7 @@ import ReactCommonmark from 'react-commonmark';
 //import submissions from '../data/submissionsHw';
 import 'prismjs/themes/prism-coy.css';
 import {Grid,Segment,Header,Label,Icon,Form,Input,TextArea,Button} from "semantic-ui-react";
+import Cookies from "universal-cookie";
 
 
 
@@ -17,12 +18,12 @@ export default class TaskSubmit extends React.Component{
         this.state ={currentTask: this.props.currentTask , submissions:[], netId: this.props.netId,
             "assignment-name":this.props.currentTask["task-name"], content:"Upload a markdown file to view the submission",
             theInputKey: "", fileName:""}
-        //console.log(this.state.newTask);
+        //// console.log(this.state.newTask);
     }
 
     // called when a prop changed to return a new state
     static getDerivedStateFromProps(props, state){
-        //console.log(props,state);
+        //// console.log(props,state);
         if(props.currentTask === state.currentTask){
             return null;
         }
@@ -32,7 +33,7 @@ export default class TaskSubmit extends React.Component{
             let studentSubmission = state.submissions.find((element,index,array)=>{
                 return element["assignment-name"] === props.currentTask["task-name"];
             });
-            //console.log("cc",studentSubmission);
+            //// console.log("cc",studentSubmission);
 
                 if (typeof studentSubmission !== "undefined") {
                     let randomString = Math.random().toString(36);
@@ -81,7 +82,7 @@ export default class TaskSubmit extends React.Component{
                 return element["assignment-name"] === _this.state.currentTask["task-name"];
             })
 
-            //console.log("this is what we got in task submit" +data.submissions);
+            //// console.log("this is what we got in task submit" +data.submissions);
             //_this.state.submissions.push(data.submission);
             if(typeof studentSubmission !== "undefined"){
                 _this.setState({"submissions": data.submissions,"content":studentSubmission["content"],
@@ -100,58 +101,67 @@ export default class TaskSubmit extends React.Component{
 
 
     // function to handle submit button when clicked
-    handleSubmit(){
-       const _this = this;
-        const addTask = {"assignment-name":this.state["assignment-name"] , netId:this.state.netId,
-            content:this.state.content, fileName:this.state.fileName, submittedOn:new Date().toISOString()};
+    handleSubmit() {
+        const cookies = new Cookies();
+        //const gotCookie =cookies.get('user');
+        if (typeof cookies.get('user') === "undefined") {
+            alert("session expired");
+            this.props.onclickLogout()
+        } else {
+            const _this = this;
+            const addTask = {
+                "assignment-name": this.state["assignment-name"], netId: this.state.netId,
+                content: this.state.content, fileName: this.state.fileName, submittedOn: new Date().toISOString()
+            };
 
-        // if already submitted, replace the submission
-        let index = this.state.submissions.findIndex((task) => {
-            return (task["assignment-name"] === this.state["assignment-name"] && task["netId"] === this.state.netId);
-        });
-
-        if (index >= 0 ){
-            fetch('/submissions/'+this.state["assignment-name"]+'/student/'+this.state.netId, {
-                method: 'PUT',
-                headers: {
-                    "Content-type": "application/json"
-                },
-                body: JSON.stringify(addTask)
-            }).then(function (response) {
-                _this.state.submissions.splice(index,1,addTask);
-                _this.setState({
-                    submissions:_this.state.submissions
-                });
-                //console.log("submitted",this.state.submissions);
-                //_this.props.update();
-                //event.preventDefault();
+            // if already submitted, replace the submission
+            let index = this.state.submissions.findIndex((task) => {
+                return (task["assignment-name"] === this.state["assignment-name"] && task["netId"] === this.state.netId);
             });
 
-        }
-        // if not submiited, add a new submission
-        else{
-            fetch('/submissions/'+this.state["assignment-name"]+'/student/'+this.state.netId, {
-                method: 'PUT',
-                headers: {
-                    "Content-type": "application/json"
-                },
-                body: JSON.stringify(addTask)
-            }).then(function (response) {
-                _this.state.submissions.push(addTask);
-                let randomString = Math.random().toString(36);
-                // reset the filename to null
-                _this.setState({
-                   submissions:_this.state.submissions,
-                    theInputKey: randomString
-
+            if (index >= 0) {
+                fetch('/submissions/' + this.state["assignment-name"] + '/student/' + this.state.netId, {
+                    method: 'PUT',
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify(addTask)
+                }).then(function (response) {
+                    _this.state.submissions.splice(index, 1, addTask);
+                    _this.setState({
+                        submissions: _this.state.submissions
+                    });
+                    //// console.log("submitted",this.state.submissions);
+                    //_this.props.update();
+                    //event.preventDefault();
                 });
-                //console.log("submitted",this.state.submissions);
-                //console.log(this.state.submissions);
-               // _this.props.update();
-                //event.preventDefault();
-            });
+
+            }
+            // if not submiited, add a new submission
+            else {
+                fetch('/submissions/' + this.state["assignment-name"] + '/student/' + this.state.netId, {
+                    method: 'PUT',
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify(addTask)
+                }).then(function (response) {
+                    _this.state.submissions.push(addTask);
+                    let randomString = Math.random().toString(36);
+                    // reset the filename to null
+                    _this.setState({
+                        submissions: _this.state.submissions,
+                        theInputKey: randomString
+
+                    });
+                    //// console.log("submitted",this.state.submissions);
+                    //// console.log(this.state.submissions);
+                    // _this.props.update();
+                    //event.preventDefault();
+                });
+            }
+            //// console.log(this.state.submissions);
         }
-       //console.log(this.state.submissions);
     }
 
 // handle the upload button when clicked. Read the markdown file and save it in the state
@@ -165,7 +175,7 @@ export default class TaskSubmit extends React.Component{
                 // The file's text will be printed here
 
                 this.setState({content: e.target.result, fileName: file.name});
-                //console.log(this.state.content);
+                //// console.log(this.state.content);
             };
 
             reader.readAsText(file);
@@ -178,7 +188,7 @@ export default class TaskSubmit extends React.Component{
 
 
         render(){
-        console.log("state", this.state);
+        // console.log("state", this.state);
 
         // Get the submission time
         let submissionStatus ="";
@@ -201,7 +211,7 @@ export default class TaskSubmit extends React.Component{
         </div>
 
 
-        //console.log("rawhtml",rawHtml);
+        //// console.log("rawhtml",rawHtml);
             // Display details in page grid view
         return<Grid.Row>
            <Grid.Column computer={14}>

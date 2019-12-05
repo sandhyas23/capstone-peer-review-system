@@ -17,6 +17,7 @@ import TaskReview from "./taskReview";
 import ViewSubmission from "./viewSubmission";
 import ViewReviewed from './viewReviewed';
 import Prism from "prismjs";
+import Cookies from 'universal-cookie';
 
 
 export default class StudentView extends React.Component{
@@ -38,7 +39,7 @@ export default class StudentView extends React.Component{
             }
         }).then(response => response.json()).then(function(data) {
 
-            console.log("this is what we got" +data.submissionTasks);
+            // console.log("this is what we got" +data.submissionTasks);
             _this.setState({submissionTasks: data.submissionTasks});
 
         });
@@ -51,7 +52,7 @@ export default class StudentView extends React.Component{
             }
         }).then(response => response.json()).then(function(data) {
 
-            console.log("this is what we got" +data.reviewTasks);
+            // console.log("this is what we got" +data.reviewTasks);
             _this.setState({reviewTasks: data.reviewTasks});
 
         });
@@ -65,7 +66,7 @@ export default class StudentView extends React.Component{
             }
         }).then(response => response.json()).then(function(data) {
 
-            console.log("this is what we got in task submit" +data.submissions);
+            // console.log("this is what we got in task submit" +data.submissions);
             //_this.state.submissions.push(data.submission);
             _this.setState({"submissions": data.submissions});
 
@@ -80,7 +81,7 @@ export default class StudentView extends React.Component{
             }
         }).then(response => response.json()).then(function(data) {
 
-            console.log("this is what we got in task submit" +data.reviews);
+            // console.log("this is what we got in task submit" +data.reviews);
             //_this.state.submissions.push(data.submission);
             _this.setState({"reviews": data.reviews});
 
@@ -95,7 +96,7 @@ export default class StudentView extends React.Component{
             }
         }).then(response => response.json()).then(function(data) {
 
-            console.log("this is what we got in task submit" +data.studentAssignment);
+            // console.log("this is what we got in task submit" +data.studentAssignment);
             //_this.state.submissions.push(data.submission);
             _this.setState({"studentAssignment": data.studentAssignment});
 
@@ -106,59 +107,83 @@ export default class StudentView extends React.Component{
 
     // function to set state of current open submission task that is clicked
     handleOpenSubmissionItemClick(event, task){
-       // console.log("taskclicked" +task["task-name"]);
+       // // console.log("taskclicked" +task["task-name"]);
         this.setState({mode:"submit", currentTask:task})
-        //console.log("ccc",this.state.currentTask);
+        //// console.log("ccc",this.state.currentTask);
     }
 
     // function to set state of current closed submission task that is clicked
     handleClosedSubmissionItemClick(event, task){
-        // console.log("taskclicked" +task["task-name"]);
+        // // console.log("taskclicked" +task["task-name"]);
         this.setState({mode:"submitted", currentTask:task})
-        //console.log("ccc",this.state.currentTask);
+        //// console.log("ccc",this.state.currentTask);
     }
 
     // function to set state of current open review task that is clicked
     handleOpenReviewItemClick(event, task){
-        //console.log("taskclicked" +task["task-name"]);
+        //// console.log("taskclicked" +task["task-name"]);
         this.setState({mode:"review", currentTask:task})
-        //console.log("ddd",this.state.currentTask);
+        //// console.log("ddd",this.state.currentTask);
     }
 
     // function to set state of current closed review task that is clicked
     handleClosedReviewItemClick(event, task){
-        //console.log("taskclicked" +task["task-name"]);
+        //// console.log("taskclicked" +task["task-name"]);
         this.setState({mode:"reviewed", currentTask:task})
-        //console.log("ddd",this.state.currentTask);
+        //// console.log("ddd",this.state.currentTask);
     }
 
     // toggle between different views for student based on the task type clicked
     handleViewComponent(){
         const viewMode = this.state.mode;
         if(viewMode === "submit"){
-            //console.log("cliked" +this.state.currentTask["task-name"]);
-            return <TaskSubmit currentTask = {this.state.currentTask} netId={this.props.netId}/>
+            const cookies = new Cookies();
+            //const gotCookie =cookies.get('user');
+            if(typeof cookies.get('user') === "undefined") {
+                this.props.onlogoutClick()
+            }
+            //// console.log("cliked" +this.state.currentTask["task-name"]);
+            return <TaskSubmit currentTask = {this.state.currentTask} netId={this.props.netId}
+                               onclickLogout= {()=>this.props.onlogoutClick()}/>
 
 
         }
         else if(viewMode === "review"){
-           // console.log("cliked" +this.state.currentTask["task-name"]);
+           // // console.log("cliked" +this.state.currentTask["task-name"]);
+            const cookies = new Cookies();
+            //const gotCookie =cookies.get('user');
+            if(typeof cookies.get('user') === "undefined") {
+                this.props.onlogoutClick()
+            }
             return <TaskReview currentTask = {this.state.currentTask} netId={this.props.netId}
             reviewTask = {this.state.reviewTasks} studentAssignment={this.state.studentAssignment}
-            submissions={this.state.submissions} reviews={this.state.reviews}/>
+            submissions={this.state.submissions} reviews={this.state.reviews}
+                               onclickLogout= {()=>this.props.onlogoutClick()}/>
         }
         else if(viewMode === "submitted"){
-            // console.log("cliked" +this.state.currentTask["task-name"]);
+            const cookies = new Cookies();
+            //const gotCookie =cookies.get('user');
+            if(typeof cookies.get('user') === "undefined") {
+                this.props.onlogoutClick()
+            }
+            // // console.log("cliked" +this.state.currentTask["task-name"]);
             return <ViewSubmission currentTask = {this.state.currentTask} netId={this.props.netId}
                                reviewTask = {this.state.reviewTasks} studentAssignment={this.state.studentAssignment}
-                               submissions={this.state.submissions} reviews={this.state.reviews}/>
+                               submissions={this.state.submissions} reviews={this.state.reviews}
+                                   onclickLogout= {()=>this.props.onlogoutClick()}/>
         }
 
         else if(viewMode === "reviewed"){
-            // console.log("cliked" +this.state.currentTask["task-name"]);
+            const cookies = new Cookies();
+            //const gotCookie =cookies.get('user');
+            if(typeof cookies.get('user') === "undefined") {
+                this.props.onlogoutClick()
+            }
+            // // console.log("cliked" +this.state.currentTask["task-name"]);
             return <ViewReviewed currentTask = {this.state.currentTask} netId={this.props.netId}
                                reviewTask = {this.state.reviewTasks} studentAssignment={this.state.studentAssignment}
-                               submissions={this.state.submissions} reviews={this.state.reviews}/>
+                               submissions={this.state.submissions} reviews={this.state.reviews}
+                                 onclickLogout= {()=>this.props.onlogoutClick()}/>
         }
 
         else{
@@ -167,7 +192,7 @@ export default class StudentView extends React.Component{
                 let taskDue = new Date(task["due"]).getTime();
                 let now = new Date().getTime();
                 const timeDifference = now-taskDue;
-                //console.log("time of",task["task-name"],timeDifference);
+                //// console.log("time of",task["task-name"],timeDifference);
                 if(timeDifference < 0){
                     return <Menu.Item
                         name={task["task-name"]}
@@ -190,7 +215,7 @@ export default class StudentView extends React.Component{
                 let taskDue = new Date(task["due"]).getTime();
                 let now = new Date().getTime();
                 const timeDifference = now-taskDue;
-                //console.log("time of",task["task-name"],timeDifference);
+                //// console.log("time of",task["task-name"],timeDifference);
                 if(timeDifference < 0){
                     return <Menu.Item
                         name={task["peer-review-for"]}
@@ -208,19 +233,19 @@ export default class StudentView extends React.Component{
             });
 
 
-            return <div><Segment placeholder style={{overflow: 'auto',minHeight:230,maxHeight:330,maxWidth:1000,minWidth:200 }}>
-                <Header icon>
-                    <Icon name='tag' />
-                   You have the following assignments to submit
+            return <div><Segment placeholder style={{overflow: 'auto',minHeight:230,maxHeight:330,minWidth:200 }}>
+                <Header >
+                    <Icon name='tasks' circular inverted color={"blue"}/>
+                    <Header.Content>You have the following assignments to submit</Header.Content>
                 </Header>
                 <Menu>
                     {openSubmissionTaskItems}
                 </Menu>
             </Segment>
-                <Segment placeholder style={{overflow: 'auto',minHeight:230,maxHeight:330,maxWidth:1000,minWidth:200 }}>
-                    <Header icon>
-                        <Icon name='tag' />
-                        You have the following reviews to submit
+                <Segment placeholder style={{overflow: 'auto',minHeight:230,maxHeight:330,minWidth:200 }}>
+                    <Header >
+                        <Icon name='tasks' circular inverted color={"blue"} />
+                        <Header.Content>You have the following reviews to submit</Header.Content>
                     </Header>
                     <Menu>
                         {openReviewTaskItems}
@@ -239,7 +264,7 @@ export default class StudentView extends React.Component{
             let taskDue = new Date(task["due"]).getTime();
             let now = new Date().getTime();
             const timeDifference = now-taskDue;
-            //console.log("time of",task["task-name"],timeDifference);
+            //// console.log("time of",task["task-name"],timeDifference);
             if(timeDifference < 0){
                 return <Menu.Item
                     name={task["task-name"]}
@@ -248,7 +273,7 @@ export default class StudentView extends React.Component{
                     active={task === this.state.currentTask}
                 >
                     <span>
-                        <Icon name ="tag" />
+                        <Icon name ="tag" color='teal' />
                         {task["task-name"]}
                     </span>
                 </Menu.Item>
@@ -269,7 +294,7 @@ export default class StudentView extends React.Component{
                     active={task === this.state.currentTask}
                 >
                     <span>
-                        <Icon name ="tag" />
+                        <Icon name ="tag" color='teal'  />
                         {task["task-name"]}
                     </span>
                 </Menu.Item>
@@ -282,7 +307,7 @@ export default class StudentView extends React.Component{
             let taskDue = new Date(task["due"]).getTime();
             let now = new Date().getTime();
             const timeDifference = now-taskDue;
-            //console.log("time of",task["task-name"],timeDifference);
+            //// console.log("time of",task["task-name"],timeDifference);
             if(timeDifference < 0){
                 return <Menu.Item
                     name={task["peer-review-for"]}
@@ -291,7 +316,7 @@ export default class StudentView extends React.Component{
                     active={task === this.state.currentTask}
                 >
                     <span>
-                        <Icon name ="tag" />
+                        <Icon name ="tag" color='teal' />
                         {task["peer-review-for"]}
                     </span>
                 </Menu.Item>
@@ -304,7 +329,7 @@ export default class StudentView extends React.Component{
             let taskDue = new Date(task["due"]).getTime();
             let now = new Date().getTime();
             const timeDifference = now-taskDue;
-            //console.log("time of",task["task-name"],timeDifference);
+            //// console.log("time of",task["task-name"],timeDifference);
             if(timeDifference >= 0){
                 return <Menu.Item
                     name={task["peer-review-for"]}
@@ -313,7 +338,7 @@ export default class StudentView extends React.Component{
                     active={task === this.state.currentTask}
                 >
                     <span>
-                        <Icon name ="tag" />
+                        <Icon name ="tag" color='teal' />
                         {task["peer-review-for"]}
                     </span>
                 </Menu.Item>
@@ -338,14 +363,14 @@ export default class StudentView extends React.Component{
             {/*Sidebar with all task names*/}
 
             <Menu.Item>
-                <Icon name ="tasks"></Icon><Menu.Header>Tasks to submit</Menu.Header>
+                <Icon   name ="tasks"  color={"blue"}></Icon><Menu.Header>Tasks to submit</Menu.Header>
                 <Menu.Menu>
                     {openSubmissionTaskItems}
                 </Menu.Menu>
             </Menu.Item>
 
             <Menu.Item>
-                <Icon name ="tasks"></Icon><Menu.Header>Tasks to Review</Menu.Header>
+                <Icon name ="tasks" color={"blue"}></Icon><Menu.Header>Tasks to Review</Menu.Header>
 
                 <Menu.Menu>
                     {openReviewTaskItems}
@@ -353,7 +378,7 @@ export default class StudentView extends React.Component{
             </Menu.Item>
 
             <Menu.Item>
-                <Icon name ="tasks"></Icon><Menu.Header>my Submissions</Menu.Header>
+                <Icon name ="tasks" color={"red"}></Icon><Menu.Header>my Submissions</Menu.Header>
 
                 <Menu.Menu>
                     {closedSubmissionTaskItems}
@@ -362,7 +387,7 @@ export default class StudentView extends React.Component{
             </Menu.Item>
 
             <Menu.Item>
-                <Icon name ="tasks"></Icon><Menu.Header>View reviews for my assignments</Menu.Header>
+                <Icon name ="tasks" color={"red"}></Icon><Menu.Header>View reviews for my assignments</Menu.Header>
 
                 <Menu.Menu>
                     {closedReviewTaskItems}
@@ -380,18 +405,20 @@ export default class StudentView extends React.Component{
                            header
                            position={"right"}
                             onClick={()=> this.setState({mode:"",currentTask:""})}>
+                    <Icon name={"home"} />
                     Peer Review System
                 </Menu.Item>
                 <Menu.Item
                     as='a'
                     position={"right"}
-                >{`Welcome, ${this.props.netId} ${this.props.firstName}${this.props.lastName}`}</Menu.Item>
+                >{`Welcome, ${this.props.netId} -- ${this.props.firstName}, ${this.props.lastName}`}</Menu.Item>
                 <Menu.Item
                     as='a'
                     position={"right"}
                     margin-right={"150px"}
                     onClick ={this.props.onlogoutClick}
-                >Logout</Menu.Item>
+                ><Icon name={"sign-out"} />
+                          Logout</Menu.Item>
             </Container>
         </Menu>
 

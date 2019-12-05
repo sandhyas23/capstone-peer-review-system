@@ -16,6 +16,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Prism from "prismjs";
 import ReactCommonmark from "react-commonmark";
 import DatePicker from "react-datepicker";
+import Cookies from "universal-cookie";
 
 
 
@@ -50,15 +51,15 @@ export default class StudentReviewSummary extends React.Component{
     }
     
     componentDidUpdate(prevProps, prevState) {
-        //console.log('Component did update!',);
-        // console.log("prevprops",prevProps);
-        // console.log("prevState",prevState);
+        //// console.log('Component did update!',);
+        // // console.log("prevprops",prevProps);
+        // // console.log("prevState",prevState);
 
         // When another task is selected,  change the rubric details and review details in the state
         if(prevState["peer-review-for"] !== this.state["peer-review-for"]){
             // set rubric details
             let rubricsDisplay = this.state.currentRTask["rubric"].map((element, index, array) => {
-                //console.log("displayed for loop", index + 1, "times");
+                //// console.log("displayed for loop", index + 1, "times");
 
                 this.setState({
                     [`point${index}`]: element["points"],
@@ -69,7 +70,7 @@ export default class StudentReviewSummary extends React.Component{
             // set review details of students
             let reviewsDisplay = this.state.specificReviews.map((element,index,array)=>{
                 element["review"]["rubric"].map((item,ind,arr)=>{
-                    console.log("elementin update",element);
+                    // console.log("elementin update",element);
                     this.setState({
                         [`inputPoint${item["rubric-name"]}${element["submitter-id"]}${element["reviewer-id"]}`]: item["points-given"],
                         [`inputComment${item["rubric-name"]}${element["submitter-id"]}${element["reviewer-id"]}`]: item["comments"]
@@ -86,7 +87,7 @@ export default class StudentReviewSummary extends React.Component{
     componentDidMount() {
         // set the rubric details and review details in the state when the component is initially mounted
         let rubricsDisplay = this.state.currentRTask["rubric"].map((element, index, array) => {
-            //console.log("displayed for loop", index + 1, "times");
+            //// console.log("displayed for loop", index + 1, "times");
 
             this.setState({
                 [`point${index}`]: element["points"],
@@ -97,7 +98,7 @@ export default class StudentReviewSummary extends React.Component{
 
         let reviewsDisplay = this.state.specificReviews.map((element,index,array)=>{
             element["review"]["rubric"].map((item,ind,arr)=>{
-                console.log("elementin mount",element);
+                // console.log("elementin mount",element);
                 this.setState({
                     [`inputPoint${item["rubric-name"]}${element["submitter-id"]}${element["reviewer-id"]}`]: item["points-given"],
                     [`inputComment${item["rubric-name"]}${element["submitter-id"]}${element["reviewer-id"]}`]: item["comments"]
@@ -116,7 +117,7 @@ export default class StudentReviewSummary extends React.Component{
                 return element["submitter-id"] === item
             });
             let totalPoints = submitters.map((element,index,array)=>{
-                //console.log(element["total-points"]);
+                //// console.log(element["total-points"]);
                 if(element["review"]["total-points"] < 10){
                     return <Table.Cell negative key={`review${element["reviewer-id"]}`}>
                         {element["review"]["total-points"]}
@@ -135,10 +136,10 @@ export default class StudentReviewSummary extends React.Component{
 
     // function to get all reviewer details and submission content for each submitter and set in state
     handleItemClick(event,item){
-        console.log("clicked review item");
+        // console.log("clicked review item");
         let content="";
         let submission = this.state.specSubmissions.find((element,index,array)=>{
-            //console.log(element["assignment-name"]);
+            //// console.log(element["assignment-name"]);
             return element["netId"] === item;
         });
         if(typeof submission !="undefined"){
@@ -149,9 +150,9 @@ export default class StudentReviewSummary extends React.Component{
             return element["submitter-id"] === item;
 
         });
-        console.log("reviewDetails",reviewDetails);
+        // console.log("reviewDetails",reviewDetails);
 
-        //console.log("content",content)
+        //// console.log("content",content)
         this.setState({content:content, reviewDetails:reviewDetails,"student-id":item,
             viewReviews:false, "reviewer-id":""});
     }
@@ -169,7 +170,7 @@ export default class StudentReviewSummary extends React.Component{
 
     // function to set the state with the review points and comments for each submitter when a reviewer is clicked
     handleReviewClick(event,review){
-        console.log("clicked",review, review["review"]["rubric"]);
+        // console.log("clicked",review, review["review"]["rubric"]);
         this.setState({"reviewRubric": review["review"]["rubric"], "reviewer-id":review["reviewer-id"],
                      viewReviews:true
         });
@@ -206,7 +207,7 @@ export default class StudentReviewSummary extends React.Component{
     //         [`criteria${element}["rubric-name"]}${index}`]:undefined,
     //         rubrics:this.state.currentRTask["rubric"]})
 
-        // console.log(element);
+        // // console.log(element);
         // this.state.rubric.splice(index,1);
         // let i = this.state.rubricIds.indexOf(element);
         // this.state.rubricIds.splice(i,1);
@@ -214,7 +215,7 @@ export default class StudentReviewSummary extends React.Component{
         //     this.setState({[`point${element}`]:undefined, [`rubric${element}`]:undefined,
         //         [`criteria${element}`]:undefined,rubric:this.state.rubric,rubricIds:this.state.rubricIds});
         // }
-        //console.log("deleted", this.state.rubricIds);
+        //// console.log("deleted", this.state.rubricIds);
 
     //}
 
@@ -238,39 +239,47 @@ export default class StudentReviewSummary extends React.Component{
 
     // function to edit the review task details
     handleEditTask(e){
-        let taskIndex = this.state.reviewTasks.findIndex((item,index,arry)=>{
-            return item["peer-review-for"] === this.state["peer-review-for"];
-        });
-        const _this= this;
-        let reviewTask = {
-            "peer-review-for": this.state["peer-review-for"],
-            due: this.state.due.toISOString(),rubric:this.state.teacherRubrics,
-            instructions:this.state.instructions
-        };
-        let studentAssign =  this.state.specAssignments;
-        // Update the review task details
-        fetch('/reviewTask/'+this.state.currentRTask["peer-review-for"], {
-            method: 'PUT',
-            headers: {
-                "Content-type": "application/json"
-            },
-            body: JSON.stringify(reviewTask)
-        }).then(()=>{
-            // change task details in studentAssignment as well
-            fetch('/studentAssignment/'+this.state.currentRTask["task-name"], {
+        const cookies = new Cookies();
+        const gotCookie =cookies.get('user');
+        if(typeof cookies.get('user') === "undefined") {
+            alert("session expired");
+            this.props.onclickLogout()
+        }
+        else {
+            let taskIndex = this.state.reviewTasks.findIndex((item, index, arry) => {
+                return item["peer-review-for"] === this.state["peer-review-for"];
+            });
+            const _this = this;
+            let reviewTask = {
+                "peer-review-for": this.state["peer-review-for"],
+                due: this.state.due.toISOString(), rubric: this.state.teacherRubrics,
+                instructions: this.state.instructions
+            };
+            let studentAssign = this.state.specAssignments;
+            // Update the review task details
+            fetch('/reviewTask/' + this.state.currentRTask["peer-review-for"], {
                 method: 'PUT',
                 headers: {
                     "Content-type": "application/json"
                 },
-                body: JSON.stringify(studentAssign)
+                body: JSON.stringify(reviewTask)
+            }).then(() => {
+                // change task details in studentAssignment as well
+                fetch('/studentAssignment/' + this.state.currentRTask["task-name"], {
+                    method: 'PUT',
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify(studentAssign)
+                }).then(function (response) {
+                    // console.log("inside this");
+                    _this.props.update();
+                })
             }).then(function (response) {
-                console.log("inside this");
-                _this.props.update();
-            })
-        }).then(function (response) {
-            _this.state.reviewTasks.splice(taskIndex,1,reviewTask);
-            _this.setState({isTaskEdited:false,reviewTasks:_this.state.reviewTasks,});
-        });
+                _this.state.reviewTasks.splice(taskIndex, 1, reviewTask);
+                _this.setState({isTaskEdited: false, reviewTasks: _this.state.reviewTasks,});
+            });
+        }
     }
 
     // function to handle the input change
@@ -306,40 +315,47 @@ export default class StudentReviewSummary extends React.Component{
 
     // function to handle save button when clicked
     handleSaveReviews(e){
-        //Get total points
-        let totalPoints =0;
-        for(let i=0;i<this.state.reviewRubric.length;i++){
-            totalPoints +=parseInt(this.state.reviewRubric[i]["points-given"]);
+        const cookies = new Cookies();
+        //const gotCookie =cookies.get('user');
+        if(typeof cookies.get('user') === "undefined") {
+            alert("session expired");
+            this.props.onclickLogout()
         }
+        else {
+            //Get total points
+            let totalPoints = 0;
+            for (let i = 0; i < this.state.reviewRubric.length; i++) {
+                totalPoints += parseInt(this.state.reviewRubric[i]["points-given"]);
+            }
 
-        // get index of the review that is edited
-        let reviewIndex = this.state.specificReviews.findIndex((element)=>{
-            return element["reviewer-id"] === this.state["reviewer-id"] && element["submitter-id"] === this.state["student-id"];
-        })
+            // get index of the review that is edited
+            let reviewIndex = this.state.specificReviews.findIndex((element) => {
+                return element["reviewer-id"] === this.state["reviewer-id"] && element["submitter-id"] === this.state["student-id"];
+            })
 
-        const _this= this;
-        
-        let editedReviews = {
-            "assignment-name": this.state["peer-review-for"], "reviewer-id": this.state["reviewer-id"],
-            "submitter-id":this.state["student-id"],
-            review:{"total-points":totalPoints, "general-comments":"", rubric:this.state.reviewRubric}
-        };
-        
-        // Update the review details in the database
-        fetch('/reviews/'+this.state["peer-review-for"]+'/reviewer/'+this.state["reviewer-id"]+'/submitter/'+this.state["student-id"]
-            , {
-                method: 'PUT',
-                headers: {
-                    "Content-type": "application/json"
-                },
-                body: JSON.stringify(editedReviews)
-            }).then(function (response) {
-            _this.state.specificReviews.splice(reviewIndex,1,editedReviews);
-            _this.setState({
-                specificReviews:_this.state.specificReviews, isEdited:false
+            const _this = this;
+
+            let editedReviews = {
+                "assignment-name": this.state["peer-review-for"], "reviewer-id": this.state["reviewer-id"],
+                "submitter-id": this.state["student-id"],
+                review: {"total-points": totalPoints, "general-comments": "", rubric: this.state.reviewRubric}
+            };
+
+            // Update the review details in the database
+            fetch('/reviews/' + this.state["peer-review-for"] + '/reviewer/' + this.state["reviewer-id"] + '/submitter/' + this.state["student-id"]
+                , {
+                    method: 'PUT',
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify(editedReviews)
+                }).then(function (response) {
+                _this.state.specificReviews.splice(reviewIndex, 1, editedReviews);
+                _this.setState({
+                    specificReviews: _this.state.specificReviews, isEdited: false
+                });
             });
-        });
-
+        }
 
     }
 
@@ -356,56 +372,66 @@ export default class StudentReviewSummary extends React.Component{
 
     // function to handle yes button in the delete conform dialog box
     handleConfirm = ()=> {
-        let taskIndex = this.state.reviewTasks.findIndex((item,index,arry)=>{
-            return item["peer-review-for"] === this.state["peer-review-for"];
-        });
-        const _this= this;
-        //Delete task from database
-        fetch('/ReviewTask/'+this.state.currentRTask["peer-review-for"], {
-            method: 'DELETE',
-            headers: {
-                "Content-type": "application/json"
-            }
-        }).then(function (response) {
-            //alert("Task has been deleted");
-            _this.setState({open:false});
-            _this.props.update();
-
-        }).then(()=> {
-            // Delete reviews after deleting the review task
-            fetch('/reviews/' + this.state.currentRTask["peer-review-for"], {
+        const cookies = new Cookies();
+        //const gotCookie =cookies.get('user');
+        if(typeof cookies.get('user') === "undefined") {
+            alert("session expired");
+            this.props.onclickLogout()
+        }
+        else {
+            let taskIndex = this.state.reviewTasks.findIndex((item, index, arry) => {
+                return item["peer-review-for"] === this.state["peer-review-for"];
+            });
+            const _this = this;
+            //Delete task from database
+            fetch('/ReviewTask/' + this.state.currentRTask["peer-review-for"], {
                 method: 'DELETE',
                 headers: {
                     "Content-type": "application/json"
                 }
+            }).then(function (response) {
+                //alert("Task has been deleted");
+                _this.setState({open: false});
+                _this.props.update();
+
             }).then(() => {
-                //Delete the student assignments for a review task after deleting the task
-                fetch('/studentAssignment/' + this.state.currentRTask["peer-review-for"], {
+                // Delete reviews after deleting the review task
+                fetch('/reviews/' + this.state.currentRTask["peer-review-for"], {
                     method: 'DELETE',
                     headers: {
                         "Content-type": "application/json"
                     }
-                }).then(function (response) {
-                    console.log("specass",_this.state.specAssignments);
-                    alert("Task has been deleted");
-                    //Remove task from array and change student assignments object to empty
-                    _this.state.reviewTasks.splice(taskIndex, 1);
-                    _this.state.specAssignments={};
-                    _this.state.specificReviews=[];
-                    _this.setState({isDeleted: true, reviewTasks: _this.state.reviewTasks,
-                        specAssignments:_this.state.specAssignments,specificReviews:_this.state.specificReviews});
-                    //Display homepage after deletion
-                    _this.props.viewHome();
+                }).then(() => {
+                    //Delete the student assignments for a review task after deleting the task
+                    fetch('/studentAssignment/' + this.state.currentRTask["peer-review-for"], {
+                        method: 'DELETE',
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }).then(function (response) {
+                        // console.log("specass", _this.state.specAssignments);
+                        alert("Task has been deleted");
+                        //Remove task from array and change student assignments object to empty
+                        _this.state.reviewTasks.splice(taskIndex, 1);
+                        _this.state.specAssignments["studentsAssignment"] =[]
+                        _this.state.specificReviews = [];
+                        _this.setState({
+                            isDeleted: true, reviewTasks: _this.state.reviewTasks,
+                            specAssignments: _this.state.specAssignments, specificReviews: _this.state.specificReviews
+                        });
+                        //Display homepage after deletion
+                        _this.props.viewHome();
+                    });
                 });
             });
-        });
+        }
     }
 
 
     // function to handle the view of rubrics. Based on the number of rubrics in array, all rubrics are displayed
     displayRubrics() {
         let rubricsDisplay = this.state.teacherRubrics.map((element, index, array) => {
-            //console.log("displayed for loop", index + 1, "times");
+            //// console.log("displayed for loop", index + 1, "times");
             const criteriaMarkdown = this.state[`criteria${index}`];
             const criteriaHighlighted = <div id="rawHtml" className="language-html">
                 <ReactCommonmark source={criteriaMarkdown} />
@@ -495,7 +521,7 @@ export default class StudentReviewSummary extends React.Component{
 
     // Display how the students are assigned for peer-review
     displayAssignments(){
-        //console.log("function called");
+        //// console.log("function called");
         //function to display the reviewers for each student
         function viewStudents(element){
             let reviewers = element["reviewers"].map((item,index,array)=>{
@@ -507,7 +533,6 @@ export default class StudentReviewSummary extends React.Component{
             });
             return reviewers;
         }
-
 
         // Display all submitters for each task
         let submitterId = this.state.specAssignments["studentsAssignment"].map((element,index,array)=>{
@@ -527,7 +552,7 @@ export default class StudentReviewSummary extends React.Component{
 
                 <Modal.Description>
                     <Header>Modal Header</Header>
-                    <Table celled>
+                    <Table color={"blue"} celled >
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>Submitter Id</Table.HeaderCell>
@@ -553,14 +578,29 @@ export default class StudentReviewSummary extends React.Component{
 
 
     render(){
-        console.log("state",this.state);
+        //// console.log("state",this.state);
+
+        // Condition to check if all fields are filled before submit or disable submit button
+        let isEnabled = true;
+        let count =this.state.reviewRubric.length;
+        for(let i=0 ; i<this.state.reviewRubric.length;i++){
+            if(this.state.reviewRubric[i]["points-given"] ==="" ||  this.state.reviewRubric[i]["comments"] === ""){
+                count = count-1;
+            }
+        }
+        if(count !== this.state.reviewRubric.length){
+            isEnabled =false
+        }
+
+
+        // Show all submitter Ids who have submitted assignments for a Homework in a table
         let submittersSet = new Set();
         let students = this.state.specificReviews.map((item,index,array)=>{
             submittersSet.add(item["submitter-id"]);
         });
 
         let newArray = Array.from(submittersSet);
-        //console.log("newarray",newArray);
+        //// console.log("newarray",newArray);
         let studentsSubmissions = newArray.map((item,index,array)=>{
             return <Table.Row key={`row${item}`}>
                 <Table.Cell key={`submission${item}`}
@@ -574,7 +614,7 @@ export default class StudentReviewSummary extends React.Component{
 
 
              let reviewerIds = this.state.reviewDetails.map((review,index,array)=> {
-                 console.log("getting printd");
+                 // console.log("getting printd");
 
                      return <Menu.Item
                          name={`ReviewDisplay${index}`}
@@ -697,8 +737,8 @@ export default class StudentReviewSummary extends React.Component{
                                                 }}/>
                                             :
 
-                                            <Segment style={{overflow: 'auto', marginLeft:"20em",
-                                                minHeight:330,maxHeight:330,maxWidth:600,minWidth:200 }}
+                                            <Segment style={{overflow: 'auto', marginLeft:"25em",
+                                                minHeight:300,maxHeight:300,maxWidth:600,minWidth:200 }}
                                                      textAlign="left">
                                                 {highlightedInstruction}
                                             </Segment>
@@ -708,17 +748,17 @@ export default class StudentReviewSummary extends React.Component{
 
 
                                     <Grid textAlign={"center"}>
-                                        <Grid.Column width={10}>
+                                        <Grid.Column width={8}>
                                             {this.displayRubrics()}
                                         </Grid.Column>
                                     </Grid>
 
 
-                                <Button onClick={(e)=>this.handleEditTaskDetails(e)}
+                                <Button onClick={(e)=>this.handleEditTaskDetails(e)} color={"blue"}
                                         disabled={this.state.isTaskEdited}>Edit this task</Button>
-                                <Button onClick={(e)=>this.handleEditTask(e)}
+                                <Button onClick={(e)=>this.handleEditTask(e)} color={"teal"}
                                         disabled={!this.state.isTaskEdited}>Save task details!</Button>
-                                <Button onClick={(e)=>this.handleDeleteTask(e)}> Delete task</Button>
+                                <Button onClick={(e)=>this.handleDeleteTask(e)} color={"red"}> Delete task</Button>
                                     {this.displayAssignments()}
                                     {/*Display confirm dialog box when edit button is clicked*/}
                                 <Confirm
@@ -735,8 +775,11 @@ export default class StudentReviewSummary extends React.Component{
                 <Grid.Row>
                     <Grid>
                         <Grid.Row>
-                            <Grid.Column width={4}>
-                                <Table>
+                            <Grid.Column width={5}>
+                                {this.viewContents()}
+                            </Grid.Column>
+                            <Grid.Column width={6}>
+                                <Table color={"teal"}>
                                     <Table.Header>
                                         <Table.Row>
                                             <Table.HeaderCell>Student Ids submitted</Table.HeaderCell>
@@ -749,18 +792,16 @@ export default class StudentReviewSummary extends React.Component{
                                     </Table.Body>
                                 </Table>
                             </Grid.Column>
-                            <Grid.Column width={7}>
-                                {this.viewContents()}
-                            </Grid.Column>
                             <Grid.Column width={4}>
                                 {/*Display all reviewer ids for each submitter*/}
-                                <Segment style={{overflow: 'auto',minHeight:300,maxHeight:400,maxWidth:2000,minWidth:300 }}>
+                                <Segment style={{overflow: 'auto',minHeight:300,maxHeight:400,maxWidth:3000,minWidth:400 }}>
                                 <Menu pointing secondary>
                                     {reviewerIds}
                                 </Menu>
                                     {/*Display all review details for each review*/}
                                 {this.state.viewReviews === true ?
-                                  <Table>
+                                    <div>
+                                  <Table color={"blue"}>
                                     <Table.Header>
                                     <Table.Row>
                                     <Table.HeaderCell>Rubric name</Table.HeaderCell>
@@ -772,12 +813,13 @@ export default class StudentReviewSummary extends React.Component{
                                     <Table.Body>
                                         {/*Display all details of reviews*/}
                                     {data}
-                                        <Button onClick={(e)=>this.handleEditReviews(e)}
-                                        disabled={this.state.isEdited}>Edit this review</Button>
-                                        <Button onClick={(e)=>this.handleSaveReviews(e)}
-                                        disabled={!this.state.isEdited}>Save this review</Button>
                                     </Table.Body>
                                     </Table>
+                                    <span><Button onClick={(e)=>this.handleEditReviews(e)} color={"blue"}
+                                    disabled={this.state.isEdited}>Edit review</Button> </span>
+                                    <span><Button onClick={(e)=>this.handleSaveReviews(e)} color={"teal"}
+                                    disabled={!this.state.isEdited || !isEnabled}>Save review</Button> </span>
+                                    </div>
                                     /*tif a reviewer id is not clicked, display this*/
                                     :
                                     <div>Click on a Reviewer id</div>

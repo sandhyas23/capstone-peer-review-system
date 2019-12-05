@@ -5,20 +5,8 @@
 const express = require("express");
 const router = express.Router();
 router.use(express.json());
-const app = express();
+//const app = express();
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-    // allow preflight
-    if (req.method === 'OPTIONS') {
-        res.send(200);
-    } else {
-        next();
-    }
-    next();
-});
 
 const reviewsDb = require("../models/reviewsModel");
 // We need the task database to validate reviews.
@@ -88,7 +76,7 @@ router.get("/:taskName", function(req, res) {
             res.json({ reviews: docs });
         })
         .catch(function(err) {
-            console.log(`Something bad happened: ${err}`);
+            // console.log(`Something bad happened: ${err}`);
             res.status(500).json({ error: "internal error" });
         });
 });
@@ -103,7 +91,7 @@ router.get("/", function(req, res) {
             res.json({ reviews: docs });
         })
         .catch(function(err) {
-            console.log(`Something bad happened: ${err}`);
+            // console.log(`Something bad happened: ${err}`);
             res.status(500).json({ error: "internal error" });
         });
 });
@@ -117,7 +105,7 @@ router.get("/reviewer/:reviewerId", function(req, res) {
             res.status(200).json({ reviews: docs });
         })
         .catch(function(err) {
-            console.log(`Something bad happened: ${err}`);
+            // console.log(`Something bad happened: ${err}`);
             res.status(500).json({ error: "internal error" });
         });
 });
@@ -137,7 +125,7 @@ router.get("/:taskName/reviewer/:reviewerId", function(req, res) {
             }
         })
         .catch(function(err) {
-            console.log(`Something bad happened: ${err}`);
+            // console.log(`Something bad happened: ${err}`);
             res.status(500).json({ error: "internal error" });
         });
 });
@@ -157,7 +145,7 @@ router.get("/:taskName/submitter/:submitterId", function(req, res) {
             }
         })
         .catch(function(err) {
-            console.log(`Something bad happened: ${err}`);
+            // console.log(`Something bad happened: ${err}`);
             res.status(500).json({ error: "internal error" });
         });
 });
@@ -169,7 +157,7 @@ router.delete("/:taskName/reviewer/:reviewerId/submitter/:submitterId", function
     const taskName = req.params.taskName;
     const reviewerId = req.params.reviewerId;
     const submitterId = req.params.submitterId
-    // console.log(taskName);
+    // // console.log(taskName);
     reviewsDb
         .remove({ "assignment-name": taskName, "reviewer-id": reviewerId ,"submitter-id":submitterId})
         .then(function(num) {
@@ -188,7 +176,7 @@ router.delete("/:taskName/reviewer/:reviewerId/submitter/:submitterId", function
 //Teacher interface
 router.delete("/:taskName", function(req, res) {
     const taskName = req.params.taskName;
-    // console.log(taskName);
+    // // console.log(taskName);
     reviewsDb
         .remove({ "assignment-name": taskName})
         .then(function(num) {
@@ -236,7 +224,7 @@ router.put("/:taskName/reviewer/:reviewerId/submitter/:submitterId", function(re
             )
             .then(function(doc) {
                 if (doc) {
-                    // console.log(doc);
+                    // // console.log(doc);
                     res.status(200).json(doc);
                 } else {
                     res.status(404).json({ error: "Task not found" });

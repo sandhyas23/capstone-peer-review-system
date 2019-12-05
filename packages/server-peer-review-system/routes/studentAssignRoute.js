@@ -5,20 +5,8 @@
 const express = require("express");
 const router = express.Router();
 router.use(express.json());
-const app = express();
+//const app = express();
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-    // allow preflight
-    if (req.method === 'OPTIONS') {
-        res.send(200);
-    } else {
-        next();
-    }
-    next();
-});
 
 const reviewTaskDb = require("../models/reviewTaskModel");
 const studentAssignDb = require("../models/studentAssignModel");
@@ -53,15 +41,15 @@ router.post("/",  function(req, res) {
     studentAssignDb
         .find({ "peer-review-for": reviewTaskInfo["peer-review-for"] }) // task name already used?
         .then(function(docs) {
-            // console.log(`docs: ${docs}`);
+            // // console.log(`docs: ${docs}`);
             if (docs.length > 0) {
-                // console.log(`Task: ${taskInfo["peer-review-for"]} already in DB`);
+                // // console.log(`Task: ${taskInfo["peer-review-for"]} already in DB`);
                 res.status(400); // Bad request
                 return { error: "peer-review-for already used" };
             } else {
                 // Not in DB so insert it
                 return studentAssignDb.insert(reviewTaskInfo).then(function(newDoc) {
-                    //console.log(`new doc: ${JSON.stringify(newDoc)}`);
+                    //// console.log(`new doc: ${JSON.stringify(newDoc)}`);
                     res.status(201); // Created
                     return { ...newDoc };
                 });
@@ -72,7 +60,7 @@ router.post("/",  function(req, res) {
         })
         .catch(function(err) {
             // Really important for debugging too!
-            console.log(`Something bad happened: ${err}`);
+            // console.log(`Something bad happened: ${err}`);
             res.json({
                 status:"failed",
                 reason: "internal error"
@@ -88,7 +76,7 @@ router.get("/", function(req, res) {
             res.json({ studentAssignment: docs });
         })
         .catch(function(err) {
-            console.log(`Something bad happened: ${err}`);
+            // console.log(`Something bad happened: ${err}`);
             res.status(500).json({ error: "internal error" });
         });
 });
@@ -105,7 +93,7 @@ router.get("/:taskName", function(req, res) {
             }
         })
         .catch(function(err) {
-            console.log(`Something bad happened: ${err}`);
+            // console.log(`Something bad happened: ${err}`);
             res.status(500).json({ error: "internal error" });
         });
 });
@@ -113,7 +101,7 @@ router.get("/:taskName", function(req, res) {
 //Delete student assignment for specific review task
 router.delete("/:taskName", function(req, res) {
     let taskName = req.params.taskName;
-    // console.log(taskName);
+    // // console.log(taskName);
     studentAssignDb
         .remove({ "peer-review-for": taskName })
         .then(function(num) {
@@ -142,7 +130,7 @@ router.put("/:taskName/", function(req, res) {
             )
             .then(function(doc) {
                 if (doc) {
-                    // console.log(doc);
+                    // // console.log(doc);
                     res.status(200).json(doc);
                 } else {
                     res.status(404).json({ error: "Task not found" });

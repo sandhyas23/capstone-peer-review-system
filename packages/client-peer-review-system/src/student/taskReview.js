@@ -9,6 +9,7 @@ import {Button, Form, Grid, Header, Icon, Input, Label, Segment,Menu,Modal,Table
 import 'prismjs/themes/prism-coy.css';
 import Prism from "prismjs";
 import ReactCommonmark from "react-commonmark";
+import Cookies from "universal-cookie";
 
 
 
@@ -24,7 +25,7 @@ export default class TaskReview extends React.Component{
             totalRubricsToReview:[],
             rubric:[],
             rubricName:""}
-            //console.log(this.state);
+            //// console.log(this.state);
     }
 
     // called when a prop changed to return a new state
@@ -55,10 +56,10 @@ export default class TaskReview extends React.Component{
             }
         }).then(response => response.json()).then(function (data) {
 
-            //console.log("this is what we got in task submit" + data.reviews);
+            //// console.log("this is what we got in task submit" + data.reviews);
             //_this.state.submissions.push(data.submission);
             const reviewerReviews = data.reviews;
-           // console.log("reviewerReviews", reviewerReviews);
+           // // console.log("reviewerReviews", reviewerReviews);
 
             //Get all review details and set in state initially to display
             let foundElements = reviewerReviews.map((element, index, array) => {
@@ -95,10 +96,10 @@ export default class TaskReview extends React.Component{
                 }
             }).then(response => response.json()).then(function (data) {
 
-                //console.log("this is what we got in task submit" + data.reviews);
+                //// console.log("this is what we got in task submit" + data.reviews);
                 //_this.state.submissions.push(data.submission);
                 const reviewerReviews = data.reviews;
-               // console.log("reviewerReviews", reviewerReviews);
+               // // console.log("reviewerReviews", reviewerReviews);
 
                 // get all review points and comments and set in state to display
                 let foundElements = reviewerReviews.map((element, index, array) => {
@@ -137,7 +138,7 @@ export default class TaskReview extends React.Component{
         }
         // get all rubrics to review for the clicked task
         let totalRubricsToReview = this.state.currentTask["rubric"];
-       // console.log("content when clicked",submission["content"]);
+       // // console.log("content when clicked",submission["content"]);
 
 
             //Display all rubrics to be reviewed. Get points and comments values from state and display it .
@@ -145,7 +146,7 @@ export default class TaskReview extends React.Component{
             let displayRubrics = this.state.totalRubricsToReview.map((item,index,array)=> {
                  if (this.state[`pointGiven${this.state.netId}${review}${item["rubric-name"]}`] &&
                     this.state[`comment${this.state.netId}${review}${item["rubric-name"]}`]) {
-                    console.log("inside if....");
+                    // console.log("inside if....");
                     let rubric_task = {
                         "rubric-name": item["rubric-name"],
                         "possible-points": item["points"],
@@ -154,7 +155,7 @@ export default class TaskReview extends React.Component{
                     };
 
                      this.state.rubric.splice(index,1,rubric_task);
-                     console.log("spliced array",this.state.rubric);
+                     // console.log("spliced array",this.state.rubric);
 
 
                 }
@@ -165,7 +166,7 @@ export default class TaskReview extends React.Component{
             this.setState({rubric:this.state.rubric,reviewNo:review,totalRubricsToReview:totalRubricsToReview,
                 content: content
             });
-        //console.log("state after ",this.state.content,this.state.rubric);
+        //// console.log("state after ",this.state.content,this.state.rubric);
     }
 
 
@@ -175,7 +176,7 @@ export default class TaskReview extends React.Component{
         const target = e.target;
         const value = target.value;
         const name = target.name;
-       // console.log("event:",e, "target",target);
+       // // console.log("event:",e, "target",target);
 
 
         this.setState({
@@ -208,79 +209,100 @@ export default class TaskReview extends React.Component{
 
 
 // function to handle submit button of reviews
-    handleSubmit(event){
-        // get total points for each review
-        let totalPoints =0;
-        for (let i=0;i<this.state.rubric.length;i++){
-            totalPoints += parseInt(this.state.rubric[i]["points-given"]);
+    handleSubmit(event) {
+        const cookies = new Cookies();
+        //const gotCookie =cookies.get('user');
+        if (typeof cookies.get('user') === "undefined") {
+            alert("session expired");
+            this.props.onclickLogout()
+        } else {
+
+            let unacceptedPoints = this.state["rubric"].filter((element,index,array)=>{
+                return parseInt(element["points-given"] )> parseInt(element["possible-points"]) ||
+                    parseInt(element["points-given"]) < 0
+            });
+            if(unacceptedPoints.length > 0){
+                alert("Given points not valid. Please change them");
+            }
+            else {
+                // get total points for each review
+                let totalPoints = 0;
+                for (let i = 0; i < this.state.rubric.length; i++) {
+                    totalPoints += parseInt(this.state.rubric[i]["points-given"]);
+                }
+
+                // find if a review has been posted already for the submitter
+                let reviewToPost = this.state.studentsReview.findIndex((element, index, array) => {
+                    return (element["assignment-name"] === this.state["assignment-name"] &&
+                        element["reviewer-id"] === this.state.netId && element["submitter-id"] === this.state.reviewNo);
+                });
+                //// console.log("length", reviewToPost["tasksToReview"]);
+
+                // if review not submitted, create a new review object and update in database and array
+                if (reviewToPost === -1) {
+                    // console.log("inside if");
+                    let reviewTask = {
+                        "reviewerId": this.state.netId, "submitter-id": this.state.reviewNo,
+                        "assignment-name": this.state["assignment-name"], review: {
+                            "general-comments": "", rubric: this.state.rubric,
+                            "total-points": totalPoints
+                        }
+                    };
+
+                    const _this = this;
+                    fetch('/reviews/' + this.state["assignment-name"] + '/reviewer/' + this.state.netId + '/submitter/' + this.state.reviewNo
+                        , {
+                            method: 'PUT',
+                            headers: {
+                                "Content-type": "application/json"
+                            },
+                            body: JSON.stringify(reviewTask)
+                        }).then(function (response) {
+                        _this.state.studentsReview.push(reviewTask);
+                        _this.setState({
+                            studentsReview: _this.state.studentsReview,
+                            [`submittedOn${_this.state.reviewNo}${_this.state.netId}`]: new Date()
+                        });
+                        alert("submitted review for this submitter");
+                        // console.log("submitted", _this.state.studentsReview);
+                    });
+
+
+                }
+
+                // if review already submitted, update the submitted review in the array and database
+                else {
+                    let reviewTask = {
+                        "reviewerId": this.state.netId,
+                        "submitter-id": this.state.reviewNo,
+                        "assignment-name": this.state["assignment-name"],
+                        review: {"general-comments": "", rubric: this.state.rubric},
+                        "total-points": totalPoints
+                    };
+
+                    const _this = this;
+                    fetch('/reviews/' + this.state["assignment-name"] + '/reviewer/' + this.state.netId + '/submitter/' + this.state.reviewNo
+                        , {
+                            method: 'PUT',
+                            headers: {
+                                "Content-type": "application/json"
+                            },
+                            body: JSON.stringify(reviewTask)
+                        }).then(function (response) {
+                        _this.state.studentsReview.splice(reviewToPost, 1, reviewTask);
+                        //_this.state.studentsReview.push(reviewTask);
+                        _this.setState({
+                            studentsReview: _this.state.studentsReview,
+                            [`submittedOn${_this.state.reviewNo}${_this.state.netId}`]: new Date()
+                        });
+                        // console.log("submitted", _this.state.studentsReview);
+                        alert("submitted review for this submitter");
+                    });
+                }
+            }
+
         }
-
-       // find if a review has been posted already for the submitter
-       let reviewToPost = this.state.studentsReview.findIndex((element,index,array)=>{
-           return (element["assignment-name"] === this.state["assignment-name"] &&
-               element["reviewer-id"] === this.state.netId  && element["submitter-id"]=== this.state.reviewNo);
-       });
-        //console.log("length", reviewToPost["tasksToReview"]);
-
-        // if review not submitted, create a new review object and update in database and array
-       if(reviewToPost === -1){
-           console.log("inside if");
-            let reviewTask ={"reviewerId": this.state.netId , "submitter-id":this.state.reviewNo,
-            "assignment-name":this.state["assignment-name"],review:{"general-comments":"", rubric:this.state.rubric,
-                "total-points":totalPoints}};
-
-            const _this =this;
-           fetch('/reviews/'+this.state["assignment-name"]+'/reviewer/'+this.state.netId+'/submitter/'+this.state.reviewNo
-               , {
-               method: 'PUT',
-               headers: {
-                   "Content-type": "application/json"
-               },
-               body: JSON.stringify(reviewTask)
-           }).then(function (response) {
-               _this.state.studentsReview.push(reviewTask);
-               _this.setState({
-                   studentsReview:_this.state.studentsReview,
-                   [`submittedOn${_this.state.reviewNo}${_this.state.netId}`]: new Date()
-               });
-               alert("submitted review for this submitter");
-               console.log("submitted",_this.state.studentsReview);
-           });
-
-
-       }
-
-       // if review already submitted, update the submitted review in the array and database
-       else {
-           let reviewTask = {
-               "reviewerId": this.state.netId,
-               "submitter-id": this.state.reviewNo,
-               "assignment-name": this.state["assignment-name"],
-               review: {"general-comments": "", rubric: this.state.rubric},
-               "total-points":totalPoints
-           };
-
-           const _this = this;
-           fetch('/reviews/' + this.state["assignment-name"] + '/reviewer/' + this.state.netId + '/submitter/' + this.state.reviewNo
-               , {
-                   method: 'PUT',
-                   headers: {
-                       "Content-type": "application/json"
-                   },
-                   body: JSON.stringify(reviewTask)
-               }).then(function (response) {
-               _this.state.studentsReview.splice(reviewToPost, 1,reviewTask);
-               //_this.state.studentsReview.push(reviewTask);
-               _this.setState({
-                   studentsReview: _this.state.studentsReview,
-                   [`submittedOn${_this.state.reviewNo}${_this.state.netId}`]: new Date()
-               });
-               console.log("submitted",_this.state.studentsReview);
-               alert("submitted review for this submitter");
-           });
-       }
-
-       }
+    }
 
 
        // function to display the submission content in highlighted form
@@ -299,8 +321,30 @@ export default class TaskReview extends React.Component{
     // render function to display
     render(){
 
+        // Condition to check if all fields are filled before submit or disable submit button
+        let isEnabled = true;
+        let count =this.state.totalRubricsToReview.length;
+        for(let i=0 ; i<this.state.totalRubricsToReview.length;i++){
+            if(this.state.rubric[i]){
+               // // console.log("inside this noe")
+                //// console.log("comments",this.state.rubric[i]["comments"] )
+                if(this.state.rubric[i]["points-given"] === undefined ||  this.state.rubric[i]["comments"] === undefined){
+                    //// console.log("comments",this.state.rubric[i]["comments"] )
+                    isEnabled=false
+                }
+            }
+            else{
+                isEnabled =false;
+            }
+        }
+        if(count !== this.state.totalRubricsToReview.length){
+            isEnabled =false
+        }
+
+
+
         let reviewsToPost;
-       // console.log("content in state", this.state);
+       // // console.log("content in state", this.state);
 
 
        //Get all students for which the reviewer needs to submit reviews without displaying the id or name
@@ -310,11 +354,11 @@ export default class TaskReview extends React.Component{
 
          if(typeof currentReview !== "undefined") {
              let currentStudent = currentReview["studentsAssignment"].find((student, index, array) => {
-                 //console.log("student",student["student"] === this.state.netId);
+                 //// console.log("student",student["student"] === this.state.netId);
                  return student["student"] === this.state.netId;
              });
               if(typeof currentStudent !== "undefined"){
-                  //console.log("inside kkkk");
+                  //// console.log("inside kkkk");
                   reviewsToPost = currentStudent["reviewees"].map((review, index, array) => {
 
                       //Display all reviews to be submitted in a menu
@@ -361,10 +405,13 @@ export default class TaskReview extends React.Component{
             return <Form.Group key={`rubric${rubric["rubric-name"]}${index}`}>
                 <Label tag content={rubric["rubric-name"]}/>
                 <Label content={rubric["points"]} />
-                <Form.Input name={`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`} type= 'number' label='Points'
+                <Form.Input name={`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`}
+                            type= 'number'
+                            label='Points'
                             placeholder='Points' width={4} min="0" max={rubric["points"]}
                             required
-                            onChange={(e)=>this.afterHandleChange(e,rubric,index)} key={`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`}
+                            onChange={(e)=>this.afterHandleChange(e,rubric,index)}
+                            key={`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`}
                             value ={this.state[`pointGiven${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`] || ""}/>
                 <Form.Input name={`comment${this.state.netId}${this.state.reviewNo}${rubric["rubric-name"]}`}
                             required label='Comments' placeholder='comments' width={10}
@@ -478,10 +525,13 @@ export default class TaskReview extends React.Component{
                                 {/*Display each rubric for reviewer to enter points and comments*/}
                                {questionsToDisplay}
 
-                                {this.state.reviewNo ?  <Button icon='file' content='Submit' type={"button"} color={"green"}
-                                                                onClick={(event) =>this.handleSubmit(event)}
-                                                                disabled={!this.state[`pointGiven${this.state.netId}${this.state.reviewNo}${this.state.rubricName}`]  ||
-                                                                !this.state[`comment${this.state.netId}${this.state.reviewNo}${this.state.rubricName}`] }
+                                {this.state.reviewNo ?
+                                    <Button icon='file'
+                                            content='Submit'
+                                            type={"button"}
+                                            color={"green"}
+                                            onClick={(event) =>this.handleSubmit(event)}
+                                            disabled={!isEnabled || this.state.rubric.length <= 0}
                                 />
                                 :
                                     /*if no submitter id exists or clicked, display this*/

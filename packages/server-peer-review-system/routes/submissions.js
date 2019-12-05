@@ -5,20 +5,8 @@
 const express = require("express");
 const router = express.Router();
 router.use(express.json());
-const app = express();
+//const app = express();
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-    // allow preflight
-    if (req.method === 'OPTIONS') {
-        res.send(200);
-    } else {
-        next();
-    }
-    next();
-});
 
 const submissionsHwDb = require("../models/submissionsHwModel");
 // We need the task database to validate submissions.
@@ -81,7 +69,7 @@ router.get("/:taskName", function(req, res) {
             res.json({ submissions: docs });
         })
         .catch(function(err) {
-            console.log(`Something bad happened: ${err}`);
+            // console.log(`Something bad happened: ${err}`);
             res.status(500).json({ error: "internal error" });
         });
 });
@@ -94,7 +82,7 @@ router.get("/", function(req, res) {
             res.json({ submissions: docs });
         })
         .catch(function(err) {
-            console.log(`Something bad happened: ${err}`);
+            // console.log(`Something bad happened: ${err}`);
             res.status(500).json({ error: "internal error" });
         });
 });
@@ -109,7 +97,7 @@ router.get("/student/:netId", function(req, res) {
             res.status(200).json({ submissions: docs });
         })
         .catch(function(err) {
-            console.log(`Something bad happened: ${err}`);
+            // console.log(`Something bad happened: ${err}`);
             res.status(500).json({ error: "internal error" });
         });
 });
@@ -129,7 +117,7 @@ router.get("/:taskName/student/:netId", function(req, res) {
             }
         })
         .catch(function(err) {
-            console.log(`Something bad happened: ${err}`);
+            // console.log(`Something bad happened: ${err}`);
             res.status(500).json({ error: "internal error" });
         });
 });
@@ -140,7 +128,7 @@ router.get("/:taskName/student/:netId", function(req, res) {
 router.delete("/:taskName/student/:netId", function(req, res) {
     const taskName = req.params.taskName;
     const netId = req.params.netId;
-    // console.log(taskName);
+    // // console.log(taskName);
     submissionsHwDb
         .remove({ "assignment-name": taskName, "netId": netId })
         .then(function(num) {
@@ -158,7 +146,7 @@ router.delete("/:taskName/student/:netId", function(req, res) {
 //Delete submissions for a taskname
 router.delete("/:taskName/", function(req, res) {
     const taskName = req.params.taskName;
-    // console.log(taskName);
+    // // console.log(taskName);
     submissionsHwDb
         .remove({ "assignment-name": taskName})
         .then(function(num) {
@@ -191,7 +179,7 @@ router.put("/:taskName/student/:netId", function(req, res) {
             )
             .then(function(doc) {
                 if (doc) {
-                    // console.log(doc);
+                    // // console.log(doc);
                     res.status(200).json(doc);
                 } else {
                     res.status(404).json({ error: "Task not found" });

@@ -16,22 +16,10 @@ router.use(function(req, res, next) {
     //   let newCookie = Math.random().toString();
     //   res.cookie('cookieName', newCookie);
     // }
-    // console.log("cooke: " + cookieName);
+    // // console.log("cooke: " + cookieName);
     next();
 });
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-    // allow preflight
-    if (req.method === 'OPTIONS') {
-        res.send(200);
-    } else {
-        next();
-    }
-    //next();
-});
 
 // Validate login for teacher and students
 router.post('/', (req, res, next) => {
@@ -45,11 +33,21 @@ router.post('/', (req, res, next) => {
             // set cookie for user
             userJson = {"netId" : user.netId,"role" : user.role,
                 "email" : user.email,"firstName" : user.firstName,"lastName" : user.lastName};
-           // console.log("logged in as: ",(userJson));
-            console.log("req cookie",req.cookies.user);
+           // // console.log("logged in as: ",(userJson));
+            // console.log("req cookie",req.cookies.user);
             // if cookie already exists, cookie not set, else set a cookie
             if(typeof req.cookies.user === "undefined"){
-                res.cookie("user", JSON.stringify(userJson));
+                const cookieOpts = {
+                    // domain: "blah",  // defaults to domain name
+                    // expires: new Date() + 1000, // defaults to session cookie
+                    httpOnly: false, // Browser JavaScript can't see it
+                    maxAge: 900000, // Time from when it is set in ms, defaults to session cookie
+                    path: "/", // default
+                    //secure: false, // Require HTTPS
+                    signed: false, //
+                   // sameSite: "Lax"
+                };
+                res.cookie("user", JSON.stringify(userJson),cookieOpts);
                 res.status(201).json(userJson);
             }
             else if(req.cookies.user === JSON.stringify(userJson)){

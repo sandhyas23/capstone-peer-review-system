@@ -19,10 +19,10 @@ export default class App extends React.Component {
         super(props);
         const cookies = new Cookies();
         const gotCookie =cookies.get('user');
-         console.log("cookies",cookies.get('user'));
+         // console.log("cookies",cookies.get('user'));
         // const gotCookie = JSON.parse(Cookies.get('user'));
         if(typeof cookies.get('user') !== "undefined"){
-            //console.log("kkkk","cookies",JSON.parse(Cookies.get('user')).role);
+            //// console.log("kkkk","cookies",JSON.parse(Cookies.get('user')).role);
             this.state = { netId: gotCookie.netId , role:gotCookie.role,firstName:gotCookie.firstName,
                 lastName:gotCookie.lastName};
         }
@@ -54,7 +54,7 @@ export default class App extends React.Component {
             body:JSON.stringify(loginDetails)
         }).then(response => response.json())
             .then(function(data) {
-                console.log (data);
+                // console.log (data);
                 // change role in state based on the user details
                 if(!data.netId || data.netId !== _this.state.netId ){
                     _this.setState({netId: "" , password: "" ,message:data.message, firstName:"",lastName:""})
@@ -75,7 +75,7 @@ export default class App extends React.Component {
     }
     // function to handle logout button
     logout(){
-        console.log("clicked logout in app");
+        // console.log("clicked logout in app");
         const _this = this;
         fetch('/logout', {
             method:"GET" ,
@@ -84,14 +84,14 @@ export default class App extends React.Component {
                 'Accept': 'application/json'
             }
         }).then(function(response) {
-            console.log("logged out");
+            // console.log("logged out");
             _this.setState({netId:"", password:"", role:"", message:""});
         })
     }
 
     // Render the elements
     render() {
-        console.log("state,", this.state);
+        // console.log("state,", this.state);
         if(this.state.role === "") {
             return <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
                 <Grid.Column style={{ maxWidth: 450 }}>

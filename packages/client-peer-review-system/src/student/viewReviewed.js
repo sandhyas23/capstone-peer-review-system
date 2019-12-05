@@ -19,7 +19,7 @@ export default class ViewReviewed extends React.Component {
             theInputKey: "", fileName: "", rubric:[],
             submissions:props.submissions
         }
-        //console.log(this.state.newTask);
+        //// console.log(this.state.newTask);
     }
 
     // called when a prop changed to return a new state
@@ -65,18 +65,18 @@ export default class ViewReviewed extends React.Component {
 
         // get the number of reviewers for a particular submitter
         let reviewsToPost;
-        console.log("content in state", this.state);
+        // console.log("content in state", this.state);
 
         let currentReview = this.state.reviews.filter((review,index,array)=>{
             return review["assignment-name"] === this.state["assignment-name"] &&
                 review["submitter-id"] === this.state.netId;
         });
-        //console.log("aaaa",currentReview);
+        //// console.log("aaaa",currentReview);
 
             // display all the reviewers in a menu without displaying the reviewer id or name
             reviewsToPost = currentReview.map((review, index, array) => {
 
-                //console.log("printed this",count+1,"times");
+                //// console.log("printed this",count+1,"times");
                 return <Menu.Item
                     name={`Review${index}`}
                     as='a'

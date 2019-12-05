@@ -17,6 +17,7 @@ import 'prismjs/themes/prism-coy.css';
 import Prism from "prismjs";
 import ReactCommonmark from "react-commonmark";
 import DatePicker from "react-datepicker";
+import Cookies from "universal-cookie";
 
 
 
@@ -55,7 +56,7 @@ export default class StudentSubmissionSummary extends React.Component{
 
     // function to set the state with the submission of each student when a student id is clicked
     handleClick(event,item){
-        //console.log(item["content"]);
+        //// console.log(item["content"]);
         this.setState({content:item["content"], "student-id":item["netId"],submittedOn:item["submittedOn"]});
     }
 
@@ -66,7 +67,7 @@ export default class StudentSubmissionSummary extends React.Component{
             <ReactCommonmark source={markdownInstruction} />
         </div>
         return <Segment style={{overflow: 'auto',minHeight:500,maxHeight:330,maxWidth:1000,minWidth:200 }}>
-            <Button onClick={(e)=>this.handleDeleteSubmission(e)}
+            <Button onClick={(e)=>this.handleDeleteSubmission(e)} color={"red"}
                 disabled={this.state.content==="Click on a student ID to view their submission"}>
                 Delete submission</Button>
             <Label>Submitted on:{new Date(this.state.submittedOn).toLocaleString()}</Label>
@@ -77,49 +78,65 @@ export default class StudentSubmissionSummary extends React.Component{
     // function to handle delete submission button when clicked by instructor
     handleDeleteSubmission(e)
     {
-        // let nextStudent="";
-        let clickedStudentIndex = this.state.specificSubmissions.findIndex((item,index,array)=>{
-                  return item["netId"] === this.state["student-id"];
-         });
-        // if(clickedStudentIndex === 0){
-        //     nextStudent = this.state.specificSubmissions
-        // }
-        const _this=this;
-        fetch('/submissions/'+this.state.currentSTask["task-name"]+'/student/'+this.state["student-id"], {
-            method: 'DELETE',
-            headers: {
-                "Content-type": "application/json"
-            }
-        }).then(function (response) {
-            console.log("inside this");
-            _this.state.specificSubmissions.splice(clickedStudentIndex,1);
-            _this.setState({specificSubmissions:_this.state.specificSubmissions, content:""});
-            _this.props.update();
-        })
+        const cookies = new Cookies();
+        const gotCookie =cookies.get('user');
+        if(typeof cookies.get('user') === "undefined") {
+            alert("session expired");
+            this.props.onclickLogout()
+        }
+        else {
+            // let nextStudent="";
+            let clickedStudentIndex = this.state.specificSubmissions.findIndex((item, index, array) => {
+                return item["netId"] === this.state["student-id"];
+            });
+            // if(clickedStudentIndex === 0){
+            //     nextStudent = this.state.specificSubmissions
+            // }
+            const _this = this;
+            fetch('/submissions/' + this.state.currentSTask["task-name"] + '/student/' + this.state["student-id"], {
+                method: 'DELETE',
+                headers: {
+                    "Content-type": "application/json"
+                }
+            }).then(function (response) {
+                // console.log("inside this");
+                _this.state.specificSubmissions.splice(clickedStudentIndex, 1);
+                _this.setState({specificSubmissions: _this.state.specificSubmissions, content: ""});
+                _this.props.update();
+            })
+        }
     }
 
     // function to handle the edit task button
     handleEditTask(e){
-        let taskIndex = this.state.submissionTasks.findIndex((item,index,arry)=>{
-            return item["task-name"] === this.state["task-name"];
-        });
-        const _this= this;
-        let submissionTask = {
-            type: "submission", "task-name": this.state["task-name"],
-            due: this.state.due.toISOString()
-        };
-        fetch('/submissionTask/'+this.state.currentSTask["task-name"], {
-            method: 'PUT',
-            headers: {
-                "Content-type": "application/json"
-            },
-            body: JSON.stringify(submissionTask)
-        }).then(function (response) {
-            alert("Task has been edited");
-            _this.state.submissionTasks.splice(taskIndex,1,submissionTask);
-            _this.setState({isEdited:true, submissionTasks:_this.state.submissionTasks});
-            _this.props.update();
-        })
+        const cookies = new Cookies();
+        const gotCookie =cookies.get('user');
+        if(typeof cookies.get('user') === "undefined") {
+            alert("session expired");
+            this.props.onclickLogout()
+        }
+        else {
+            let taskIndex = this.state.submissionTasks.findIndex((item, index, arry) => {
+                return item["task-name"] === this.state["task-name"];
+            });
+            const _this = this;
+            let submissionTask = {
+                type: "submission", "task-name": this.state["task-name"],
+                due: this.state.due.toISOString()
+            };
+            fetch('/submissionTask/' + this.state.currentSTask["task-name"], {
+                method: 'PUT',
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify(submissionTask)
+            }).then(function (response) {
+                alert("Task has been edited");
+                _this.state.submissionTasks.splice(taskIndex, 1, submissionTask);
+                _this.setState({isEdited: true, submissionTasks: _this.state.submissionTasks});
+                _this.props.update();
+            })
+        }
     }
 
 
@@ -134,46 +151,56 @@ export default class StudentSubmissionSummary extends React.Component{
 
     // function to handle yes button in the delete conform dialog box
     handleConfirm = ()=>{
-        let taskIndex = this.state.submissionTasks.findIndex((item,index,arry)=>{
-            return item["task-name"] === this.state["task-name"];
-        });
-        const _this= this;
-        // Deleted the submission task
-        fetch('/submissionTask/'+this.state.currentSTask["task-name"], {
-            method: 'DELETE',
-            headers: {
-                "Content-type": "application/json"
-            }
-        }).then(function (response) {
-            _this.setState({open:false});
-            _this.props.update();
-
-        }).then(()=>{
-            // Deleted the submissions from the deleted submission task
-            console.log("deleteeeeee",this.state.currentSTask["task-name"]);
-            fetch('/submissions/'+this.state.currentSTask["task-name"], {
+        const cookies = new Cookies();
+        const gotCookie =cookies.get('user');
+        if(typeof cookies.get('user') === "undefined") {
+            alert("session expired");
+            this.props.onclickLogout()
+        }
+        else {
+            let taskIndex = this.state.submissionTasks.findIndex((item, index, arry) => {
+                return item["task-name"] === this.state["task-name"];
+            });
+            const _this = this;
+            // Deleted the submission task
+            fetch('/submissionTask/' + this.state.currentSTask["task-name"], {
                 method: 'DELETE',
                 headers: {
                     "Content-type": "application/json"
                 }
             }).then(function (response) {
-                //console.log("inside this");
-                alert("Task has been deleted");
-                _this.state.submissionTasks.splice(taskIndex,1);
-                _this.state.specificSubmissions=[];
-                _this.setState({isDeleted:true,submissionTasks:_this.state.submissionTasks,
-                    specificSubmissions:_this.state.specificSubmissions});
-                //Display homepage after deletion
-                _this.props.viewHome();
-            })
-        });
+                _this.setState({open: false});
+                _this.props.update();
+
+            }).then(() => {
+                // Deleted the submissions from the deleted submission task
+                // console.log("deleteeeeee", this.state.currentSTask["task-name"]);
+                fetch('/submissions/' + this.state.currentSTask["task-name"], {
+                    method: 'DELETE',
+                    headers: {
+                        "Content-type": "application/json"
+                    }
+                }).then(function (response) {
+                    //// console.log("inside this");
+                    alert("Task has been deleted");
+                    _this.state.submissionTasks.splice(taskIndex, 1);
+                    _this.state.specificSubmissions = [];
+                    _this.setState({
+                        isDeleted: true, submissionTasks: _this.state.submissionTasks,
+                        specificSubmissions: _this.state.specificSubmissions
+                    });
+                    //Display homepage after deletion
+                    _this.props.viewHome();
+                })
+            });
+        }
 
     }
 
 
 // function to render all details
     render(){
-     console.log(this.state);
+     // console.log(this.state);
         // function to display all student ids that have submitted the assignment
        let students = this.state.specificSubmissions.map((item,index,array)=>{
            return <Table.Row key={`row${item["netId"]}`}><Table.Cell key={`submission${item["netId"]}`}
@@ -233,7 +260,7 @@ export default class StudentSubmissionSummary extends React.Component{
                         <Grid.Row>
                     <Grid.Column width={4}>
                         {/*Table that displays all submitter ids of an assignment*/}
-                        <Table>
+                        <Table color={"blue"}>
                             <Table.Header>
                                 <Table.Row>
                                 <Table.HeaderCell>Student Ids submitted</Table.HeaderCell>
