@@ -158,6 +158,7 @@ export default class StudentSubmissionSummary extends React.Component{
             this.props.onclickLogout()
         }
         else {
+            console.log("submission tasks",this.state.submissionTasks);
             let taskIndex = this.state.submissionTasks.findIndex((item, index, arry) => {
                 return item["task-name"] === this.state["task-name"];
             });
