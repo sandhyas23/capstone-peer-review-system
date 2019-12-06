@@ -142,7 +142,15 @@ export default class StudentSubmissionSummary extends React.Component{
 
     // function to handle the delete task. Displays a confirm dialog box with cancel and yes buttons
     handleDeleteTask(){
-        this.setState({ open: true })
+        const cookies = new Cookies();
+        //const gotCookie =cookies.get('user');
+        if(typeof cookies.get('user') === "undefined") {
+            alert("session expired");
+            this.props.onclickLogout()
+        }
+        else {
+            this.setState({open: true})
+        }
     }
    // function to handle cancel button in the delete confirm dialog box
     handleCancel =() =>{
@@ -151,13 +159,7 @@ export default class StudentSubmissionSummary extends React.Component{
 
     // function to handle yes button in the delete conform dialog box
     handleConfirm = ()=>{
-        const cookies = new Cookies();
-        //const gotCookie =cookies.get('user');
-        if(typeof cookies.get('user') === "undefined") {
-            alert("session expired");
-            this.props.onclickLogout()
-        }
-        else {
+
             console.log("submission tasks",this.state.submissionTasks);
             console.log("state", this.state);
             let taskIndex = this.state.submissionTasks.findIndex((item, index, arry) => {
@@ -195,8 +197,6 @@ export default class StudentSubmissionSummary extends React.Component{
                     _this.props.viewHome();
                 })
             });
-        }
-
     }
 
 
