@@ -86,52 +86,52 @@ export default class TeacherView extends React.Component{
                 });
 
         }
-
-        else if(prevState["currentSubmissionTask"] !== this.state["currentSubmissionTask"]) {
-            const _this = this;
-            fetch('/submissionTask', {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            }).then(response => response.json()).then(function (data) {
-
-                //// console.log("this is what we got in sub tasks" +data);
-                _this.setState({submissionTasks: data.submissionTasks});
-
-            });
-        }
-        else if(prevState["currentReviewTask"] !== this.state["currentReviewTask"]) {
-                const _this = this;
-                fetch('/reviewTask',{
-                    method: "GET",
-                    headers : {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
-                }).then(response => response.json()).then(function(data) {
-                    fetch('/studentAssignment/',{
-                        method: "GET",
-                        headers : {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        }
-                    }).then(response => response.json()).then(function(data) {
-
-                        // console.log("this is what we got in stu ass" +data.studentAssignment);
-                        //_this.state.submissions.push(data.submission);
-                        _this.setState({"studentAssignment": data.studentAssignment});
-
-
-                    });
-
-                    //// console.log("this is what we got in sub tasks" +data);
-                    _this.setState({reviewTasks: data.reviewTasks});
-
-                });
-
-        }
+        //
+        // else if(prevState["currentSubmissionTask"] !== this.state["currentSubmissionTask"]) {
+        //     const _this = this;
+        //     fetch('/submissionTask', {
+        //         method: "GET",
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'Accept': 'application/json'
+        //         }
+        //     }).then(response => response.json()).then(function (data) {
+        //
+        //         //// console.log("this is what we got in sub tasks" +data);
+        //         _this.setState({submissionTasks: data.submissionTasks});
+        //
+        //     });
+        // }
+        // else if(prevState["currentReviewTask"] !== this.state["currentReviewTask"]) {
+        //         const _this = this;
+        //         fetch('/reviewTask',{
+        //             method: "GET",
+        //             headers : {
+        //                 'Content-Type': 'application/json',
+        //                 'Accept': 'application/json'
+        //             }
+        //         }).then(response => response.json()).then(function(data) {
+        //             fetch('/studentAssignment/',{
+        //                 method: "GET",
+        //                 headers : {
+        //                     'Content-Type': 'application/json',
+        //                     'Accept': 'application/json'
+        //                 }
+        //             }).then(response => response.json()).then(function(data) {
+        //
+        //                 // console.log("this is what we got in stu ass" +data.studentAssignment);
+        //                 //_this.state.submissions.push(data.submission);
+        //                 _this.setState({"studentAssignment": data.studentAssignment});
+        //
+        //
+        //             });
+        //
+        //             //// console.log("this is what we got in sub tasks" +data);
+        //             _this.setState({reviewTasks: data.reviewTasks});
+        //
+        //         });
+        //
+        // }
 
         Prism.highlightAll();
 
