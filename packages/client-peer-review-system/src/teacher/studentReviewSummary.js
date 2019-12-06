@@ -379,10 +379,10 @@ export default class StudentReviewSummary extends React.Component{
             this.props.onclickLogout()
         }
         else {
-            let taskIndex = this.state.reviewTasks.findIndex((item, index, arry) => {
+            const _this = this;
+            let taskIndex = _this.state.reviewTasks.findIndex((item, index, arry) => {
                 return item["peer-review-for"] === this.state["peer-review-for"];
             });
-            const _this = this;
             //Delete task from database
             fetch('/ReviewTask/' + this.state.currentRTask["peer-review-for"], {
                 method: 'DELETE',

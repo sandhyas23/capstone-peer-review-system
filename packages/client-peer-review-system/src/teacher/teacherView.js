@@ -449,7 +449,7 @@ export default class TeacherView extends React.Component{
                     <Menu.Item
                         as='a'
                         position={"right"}
-                    >{`Welcome, ${this.props.netId}`}</Menu.Item>
+                    >{`Welcome, ${this.props.netId} -- Instructor`} </Menu.Item>
                     <Menu.Item
                         as='a'
                         position={"right"}
