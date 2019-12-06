@@ -152,13 +152,14 @@ export default class StudentSubmissionSummary extends React.Component{
     // function to handle yes button in the delete conform dialog box
     handleConfirm = ()=>{
         const cookies = new Cookies();
-        const gotCookie =cookies.get('user');
+        //const gotCookie =cookies.get('user');
         if(typeof cookies.get('user') === "undefined") {
             alert("session expired");
             this.props.onclickLogout()
         }
         else {
             console.log("submission tasks",this.state.submissionTasks);
+            console.log("state", this.state);
             let taskIndex = this.state.submissionTasks.findIndex((item, index, arry) => {
                 return item["task-name"] === this.state["task-name"];
             });
