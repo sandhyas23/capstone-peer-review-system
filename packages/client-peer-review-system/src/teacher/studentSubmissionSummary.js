@@ -154,28 +154,23 @@ export default class StudentSubmissionSummary extends React.Component{
     }
    // function to handle cancel button in the delete confirm dialog box
     handleCancel =() =>{
+        console.log("fffffff");
         this.setState({open:false})
     }
 
     // function to handle yes button in the delete conform dialog box
     handleConfirm = ()=>{
-
-            console.log("submission tasks",this.state.submissionTasks);
-            console.log("state", this.state);
-            let taskIndex = this.state.submissionTasks.findIndex((item, index, arry) => {
-                return item["task-name"] === this.state["task-name"];
-            });
-            const _this = this;
+        console.log("deeeeeeee");
+        const _this = this;
+        let taskIndex = _this.state.submissionTasks.findIndex((item, index, arry) => {
+            return item["task-name"] === this.state["task-name"];
+        });
             // Deleted the submission task
             fetch('/submissionTask/' + this.state.currentSTask["task-name"], {
                 method: 'DELETE',
                 headers: {
                     "Content-type": "application/json"
                 }
-            }).then(function (response) {
-                _this.setState({open: false});
-                _this.props.update();
-
             }).then(() => {
                 // Deleted the submissions from the deleted submission task
                 // console.log("deleteeeeee", this.state.currentSTask["task-name"]);
@@ -191,7 +186,8 @@ export default class StudentSubmissionSummary extends React.Component{
                     _this.state.specificSubmissions = [];
                     _this.setState({
                         isDeleted: true, submissionTasks: _this.state.submissionTasks,
-                        specificSubmissions: _this.state.specificSubmissions
+                        specificSubmissions: _this.state.specificSubmissions,
+                        open: false
                     });
                     //Display homepage after deletion
                     _this.props.viewHome();
