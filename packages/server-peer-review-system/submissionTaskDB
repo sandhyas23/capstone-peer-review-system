@@ -1,10 +1,4 @@
-{"$$deleted":true,"_id":"kYxnKTX6sy04B1Tw"}
-{"$$deleted":true,"_id":"Tr7vkkaqYBG3rYKb"}
-{"type":"submission","task-name":"HW1","due":"2019-12-06T05:24:47.877Z","_id":"mPCX9tvv4lsbXja4"}
-{"type":"submission","task-name":"hw3","due":"2019-12-06T05:24:54.468Z","_id":"tigc7K3AXxP6Ohly"}
-{"type":"submission","task-name":"HW5","due":"2019-12-06T05:25:02.578Z","_id":"UAgv77A99zG09rPt"}
-{"$$deleted":true,"_id":"tigc7K3AXxP6Ohly"}
-{"$$deleted":true,"_id":"mPCX9tvv4lsbXja4"}
-{"$$deleted":true,"_id":"UAgv77A99zG09rPt"}
-{"type":"submission","task-name":"fff","due":"2019-12-06T14:18:38.062Z","_id":"QhLQUvMPPd0Kqkch"}
-{"$$deleted":true,"_id":"QhLQUvMPPd0Kqkch"}
+{"$$indexCreated":{"fieldName":"task-name","unique":true,"sparse":false}}
+{"type":"submission","task-name":"test","due":"2019-12-10T16:28:48.204Z","_id":"x2VvVnGYpKEzN8wb"}
+{"type":"submission","task-name":"test","due":"2019-12-10T16:30:00.204Z","_id":"x2VvVnGYpKEzN8wb"}
+{"type":"submission","task-name":"test","due":"2019-12-10T16:32:00.000Z","_id":"x2VvVnGYpKEzN8wb"}

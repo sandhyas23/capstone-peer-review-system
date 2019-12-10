@@ -361,7 +361,15 @@ export default class StudentReviewSummary extends React.Component{
 
     // function to handle the delete task. Displays a confirm dialog box with cancel and yes buttons
     handleDeleteTask(){
-        this.setState({ open: true })
+        const cookies = new Cookies();
+        //const gotCookie =cookies.get('user');
+        if(typeof cookies.get('user') === "undefined") {
+            alert("session expired");
+            this.props.onclickLogout()
+        }
+        else {
+            this.setState({open: true});
+        }
 
     }
 
@@ -372,13 +380,6 @@ export default class StudentReviewSummary extends React.Component{
 
     // function to handle yes button in the delete conform dialog box
     handleConfirm = ()=> {
-        const cookies = new Cookies();
-        //const gotCookie =cookies.get('user');
-        if(typeof cookies.get('user') === "undefined") {
-            alert("session expired");
-            this.props.onclickLogout()
-        }
-        else {
             const _this = this;
             let taskIndex = _this.state.reviewTasks.findIndex((item, index, arry) => {
                 return item["peer-review-for"] === this.state["peer-review-for"];
@@ -389,11 +390,6 @@ export default class StudentReviewSummary extends React.Component{
                 headers: {
                     "Content-type": "application/json"
                 }
-            }).then(function (response) {
-                //alert("Task has been deleted");
-                _this.setState({open: false});
-                _this.props.update();
-
             }).then(() => {
                 // Delete reviews after deleting the review task
                 fetch('/reviews/' + this.state.currentRTask["peer-review-for"], {
@@ -417,7 +413,8 @@ export default class StudentReviewSummary extends React.Component{
                         _this.state.specificReviews = [];
                         _this.setState({
                             isDeleted: true, reviewTasks: _this.state.reviewTasks,
-                            specAssignments: _this.state.specAssignments, specificReviews: _this.state.specificReviews
+                            specAssignments: _this.state.specAssignments, specificReviews: _this.state.specificReviews,
+                            open: false
                         });
                         //Display homepage after deletion
                         _this.props.viewHome();
@@ -425,7 +422,7 @@ export default class StudentReviewSummary extends React.Component{
                 });
             });
         }
-    }
+
 
 
     // function to handle the view of rubrics. Based on the number of rubrics in array, all rubrics are displayed
@@ -737,7 +734,7 @@ export default class StudentReviewSummary extends React.Component{
                                                 }}/>
                                             :
 
-                                            <Segment style={{overflow: 'auto', marginLeft:"25em",
+                                            <Segment style={{overflow: 'auto', marginLeft:"25em", marginRight:"25em",
                                                 minHeight:300,maxHeight:300,maxWidth:600,minWidth:200 }}
                                                      textAlign="left">
                                                 {highlightedInstruction}
