@@ -1,4 +1,2 @@
-{"$$indexCreated":{"fieldName":"task-name","unique":true,"sparse":false}}
-{"type":"submission","task-name":"test","due":"2019-12-10T16:28:48.204Z","_id":"x2VvVnGYpKEzN8wb"}
-{"type":"submission","task-name":"test","due":"2019-12-10T16:30:00.204Z","_id":"x2VvVnGYpKEzN8wb"}
 {"type":"submission","task-name":"test","due":"2019-12-10T16:32:00.000Z","_id":"x2VvVnGYpKEzN8wb"}
+{"$$indexCreated":{"fieldName":"task-name","unique":true,"sparse":false}}
