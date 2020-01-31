@@ -1,11 +1,13 @@
 /*Main app  that renders the student or teacher view based on login*/
+//Project Owner: Sandhya Sankaran
 
 import React from 'react';
-import {Button, Form,Grid,Header,Segment,Message} from 'semantic-ui-react'
+import {Button, Form, Grid, Header, Segment, Message, Menu, Container, Icon,Rail,Sticky,Checkbox} from 'semantic-ui-react'
 //import students from './data/students.json';
 import StudentView from './student/studentView';
 import TeacherView from './teacher/teacherView';
 import Cookies from 'universal-cookie';
+import ExternalLinks from "./externalLinks";
 //import Cookies from 'js-cookie';
 //import submissionTasks from './data/createdSubmissionTasks';
 //import reviewTasks from './data/createdReviewTasks'
@@ -95,6 +97,11 @@ export default class App extends React.Component {
         if(this.state.role === "") {
             return <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
                 <Grid.Column style={{ maxWidth: 450 }}>
+                    <Menu fixed='top' stackable inverted>
+                        <Menu.Item
+                        style={{marginLeft:'45em',marginRight:'45em'}}>Peer Review System</Menu.Item>
+
+                    </Menu>
                     <Header as='h2' color='blue' textAlign='center'>
                          Log-in to your account
                     </Header>
@@ -129,13 +136,17 @@ export default class App extends React.Component {
                         </Header>
                         Having trouble ? Contact the Instructor
                     </Message>
+                    {/*Added github and linkedin profile*/}
+                    <ExternalLinks/>
                 </Grid.Column>
+
+
             </Grid>
         }
         // Display different components based on the role of user
         else if(this.state.role === "instructor"){
             return <TeacherView netId={this.state.netId} role={this.state.role}
-                                onlogoutClick={()=>this.logout()}/>
+                                     onlogoutClick={()=>this.logout()}/>
         }
 
         else if(this.state.role === "student"){

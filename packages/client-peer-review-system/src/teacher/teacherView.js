@@ -6,7 +6,7 @@ import React from 'react';
 import {
     Menu,
     Grid,
-    Dropdown, Icon, Segment, Header,
+    Dropdown, Icon, Segment, Header, Rail, Sticky, Checkbox, Button, Container
 
 } from 'semantic-ui-react';
 //import createdSubmissionTasks from '../data/createdSubmissionTasks';
@@ -14,6 +14,7 @@ import {
 import Prism from "prismjs";
 import CreateReviewTask from "./createReviewTask";
 import StudentSubmissionSummary from "./studentSubmissionSummary";
+import ExternalLinks from "../externalLinks";
 //import submissionsHW from '../data/submissionsHw';
 //import reviews from '../data/reviewTasksStudents';
 import StudentReviewSummary from './studentReviewSummary';
@@ -495,6 +496,10 @@ export default class TeacherView extends React.Component{
                         {/*Call function to change the view for teacher */}
                         {this.handleViewComponent()}
                     </Grid.Row>
+
+                        {/*Added github and linkedin profile*/}
+                       <ExternalLinks/>
+
                     </Grid.Column>
 
                 </Grid>

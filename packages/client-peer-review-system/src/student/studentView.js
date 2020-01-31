@@ -11,13 +11,14 @@ import {
     Container,
     Segment,
     Header,
-    Button
+    Button, Rail, Sticky
 } from 'semantic-ui-react';
 import TaskReview from "./taskReview";
 import ViewSubmission from "./viewSubmission";
 import ViewReviewed from './viewReviewed';
 import Prism from "prismjs";
 import Cookies from 'universal-cookie';
+import ExternalLinks from "../externalLinks";
 
 
 export default class StudentView extends React.Component{
@@ -429,8 +430,9 @@ export default class StudentView extends React.Component{
             <Grid.Column >
            {/*toggle different between views for student based on task click*/}
             {this.handleViewComponent()}
-
-               </Grid.Column>
+                {/*Added github and linkedin profile*/}
+                <ExternalLinks/>
+            </Grid.Column>
 
         </Grid>
     </div>

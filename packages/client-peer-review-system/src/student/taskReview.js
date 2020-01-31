@@ -2,7 +2,7 @@
 
 
 import React from 'react';
-import {Button, Form, Grid, Header, Icon, Input, Label, Segment,Menu,Modal,Table} from "semantic-ui-react";
+import {Button, Form, Grid, Header, Icon, Input, Label, Segment, Menu, Modal, Table, Dropdown} from "semantic-ui-react";
 // import studentsReview from "../data/reviewTasksStudents";
 // import studentAssignment from '../data/studentAssignment';
 // import submissions from '../data/submissionsHw';
@@ -359,19 +359,35 @@ export default class TaskReview extends React.Component{
              });
               if(typeof currentStudent !== "undefined"){
                   //// console.log("inside kkkk");
-                  reviewsToPost = currentStudent["reviewees"].map((review, index, array) => {
+                  if(this.state.studentAssignment.length < 4){
+                      reviewsToPost = currentStudent["reviewees"].map((review, index, array) => {
 
-                      //Display all reviews to be submitted in a menu
-                      return <Menu.Item
-                          name={`Review${index}`}
-                          active={review === this.state.reviewNo}
-                          as='a'
-                          onClick={(event) => this.handleItemClick(event, review)}
-                          key={`Review${review}${index}`}
-                      >
-                          {`Review${index}`}
-                      </Menu.Item>
-                  });
+                          //Display all reviews to be submitted in a menu
+                          return <Menu.Item
+                              name={`Review${index}`}
+                              active={review === this.state.reviewNo}
+                              as='a'
+                              onClick={(event) => this.handleItemClick(event, review)}
+                              key={`Review${review}${index}`}
+                          >
+                              {`Review${index}`}
+                          </Menu.Item>
+                      });
+                  }
+                  else{
+                      reviewsToPost = currentStudent["reviewees"].map((review, index, array) => {
+                          return <Dropdown.Item
+                              name={`Review${index}`}
+                              active={review === this.state.reviewNo}
+                              as='a'
+                              onClick={(event) => this.handleItemClick(event, review)}
+                              key={`Review${review}${index}`}
+                          >
+                              {`Review${index}`}
+                          </Dropdown.Item>
+                      });
+                  }
+
               }
 
          }
@@ -502,9 +518,17 @@ export default class TaskReview extends React.Component{
                     <Grid.Column width={8}>
 
                         {/*display submitter ids to review in a menu*/}
-                        <Menu pointing secondary>
+                        {this.state.studentAssignment.length < 4 ?
+                            <Menu pointing secondary>
                                 {reviewsToPost}
-                        </Menu>
+                            </Menu>
+                            :
+                            <Dropdown button color={"teal"} text='Submission tasks' labeled className='icon' floating  icon='tasks'>
+                                <Dropdown.Menu>
+                                    {reviewsToPost}
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        }
 
                         {/*Display the submission content*/}
                         {this.viewContent()}
